@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DashboardController!{% endblock %}
+
+{% block body %}
+    <div class="col align-items-center justify-content-center pt-5">
+        <div class="col" id="register-staff-screen">
+            <div class="col-6 border p-3">
+                <h1 class="h3 mb-3 font-weight-normal">Create new HotBox</h1>
+
+                {{ form_start(hotboxform) }}
+                <div class="row mb-2">
+                    {{ form_label(hotboxform.name) }}
+                    <div class="col">{{ form_widget(hotboxform.name) }}</div>
+                </div>
+                <div class="row mb-2">
+                    {{ form_label(hotboxform.code) }}
+                    <div class="col">{{ form_widget(hotboxform.code) }}</div>
+                </div>
+                <div class="row mb-2">
+                    {{ form_label(hotboxform.active) }}
+                    <div class="col">{{ form_widget(hotboxform.active) }}</div>
+                </div>
+                <div class="row mb-2">
+                    {{ form_label(hotboxform.comics) }}
+                    <div class="col">{{ form_widget(hotboxform.comics) }}</div>
+                </div>
+                {{ form_rest(hotboxform) }}
+                <button class="btn btn-lg btn-primary" type="submit">Create new HotBox</button>
+                {{ form_end(hotboxform) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

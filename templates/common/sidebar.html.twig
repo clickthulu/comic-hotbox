@@ -1,0 +1,77 @@
+<div class="col mt-5 panel p-3" id="user-sidebar">
+    <div class="row">
+        <div class="col nav-expanded"><h5>Hello {{ app.user.name }}</h5></div>
+    </div>
+
+    <div class="row ps-3 mb-2">
+        <div class="col-1 ms-2 me-4"><a href="/account" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="fas fa-user"></i></a></div>
+        <div class="col nav-expanded"><a href="/account" class="nav-link">Account</a></div>
+    </div>
+
+    <div class="row ps-3 mb-2">
+        <div class="col-1 ms-2 me-4"><a href="/forgotpassword/reset-password" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="fas fa-key"></i></a></div>
+        <div class="col nav-expanded"><a href="/forgotpassword/reset-password" class="nav-link">Reset Password</a></div>
+    </div>
+    <div class="row ps-3 mb-2">
+        <div class="col-1 ms-2 me-4"><a href="/logout" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout"><i class="fas fa-right-from-bracket"></i></a></div>
+        <div class="col nav-expanded"><a href="/logout" class="nav-link">Logout</a></div>
+    </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="row border-top mt-3 pt-3 "></div>
+        <div class="row nav-expanded"><h5>Administration</h5></div>
+        <div class="row nav-expanded"><h6>HotBox</h6></div>
+
+        {% for hb in hotboxservice.hotboxes %}
+            <div class="row ps-3 mb-2 text-warning">
+                <div class="col-1 ms-2 me-4"><a href="/hotbox/edit/{{ hb.id }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes"><i class="fas fa-box"></i></a></div>
+                <div class="col nav-expanded"><a href="/hotbox/edit/{{ hb.id }}" class="nav-link">{{ hb.name }}</a></div>
+            </div>
+        {% endfor %}
+        <div class="row ps-3 mb-4">
+            <div class="col-1 ms-2 me-4"><a href="/hotbox/create" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New HotBox"><i class="fas fa-box-open"></i></a></div>
+            <div class="col nav-expanded"><a href="/hotbox/create" class="nav-link">New HotBox</a></div>
+        </div>
+        <div class="row nav-expanded"><h6>Users</h6></div>
+        <div class="row ps-3 mb-2  text-warning">
+            <div class="col-1 ms-2 me-4"><a href="/user" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-users"></i></a></div>
+            <div class="col nav-expanded"><a href="/user" class="nav-link">Manage Users</a></div>
+        </div>
+
+        <div class="row ps-3 mb-2">
+            <div class="col-1 ms-2 me-4"><a href="/user/invite" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-user-plus"></i></a></div>
+            <div class="col nav-expanded"><a href="/user/invite" class="nav-link">Invite Users</a></div>
+        </div>
+
+        <div class="row nav-expanded"><h6>Approvals</h6></div>
+
+        <div class="row ps-3 mb-2 text-warning">
+            <div class="col-1 ms-2 me-4"><a href="/approve/comics" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Comics"><i class="fas fa-check"></i></a></div>
+            <div class="col nav-expanded"><a href="/approve/comics" class="nav-link">Approve Comics</a></div>
+        </div>
+        <div class="row ps-3 mb-2 text-warning">
+            <div class="col-1 ms-2 me-4"><a href="/approve/images" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-search"></i></a></div>
+            <div class="col nav-expanded"><a href="/approve/images" class="nav-link">Approve Images</a></div>
+        </div>
+
+    {% endif %}
+
+    <div class="row border-top mt-3 pt-3 "></div>
+    <div class="row nav-expanded"><h5>My Stuff</h5></div>
+    {% for comic in app.user.comics %}
+        <div class="row ps-3 mb-2 text-warning">
+            <div class="col-1 ms-2 me-4">
+                <a href="/comic/edit/{{ comic.id }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ comic.name }}"><i class="fas fa-book"></i></a>
+            </div>
+            <div class="col nav-expanded"><a href="/comic/edit/{{ comic.id }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="comic.name">{{ comic.name }}</a></div>
+        </div>
+    {% endfor %}
+    <div class="row ps-3 mb-2">
+        <div class="col-1 ms-2 me-4">
+            <a href="/comic/new" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Comic"><i class="fas fa-plus"></i></a>
+        </div>
+        <div class="col nav-expanded"><a href="/comic/create" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Comic">New Comic</a></div>
+    </div>
+
+
+</div>

@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="card col p-3 mt-5 panel" id="c4-comic-admin">
+            <div class="row mb-3">
+                <div class="col">
+                    <h1>User Management</h1>
+                </div>
+                <div class="col-2"><a href="/admin/users/invite" class="btn btn-outline-light"><i class="fas fa-user-plus"></i> Invite Users</a></div>
+            </div>
+            {% for user in users %}
+                {% set isOwner = 'ROLE_OWNER' in user.roles %}
+                {% set isAdmin = 'ROLE_ADMIN' in user.roles %}
+                {% set isCreator = 'ROLE_CREATOR' in user.roles %}
+                {% set ownerDisabled = '' %}
+                {% if isOwner %}
+                    {% set isAdmin = true %}
+                    {% set isCreator = true %}
+                {% endif %}
+                <div class="row c4-user-admin-row {% if user.deleted  %}text-secondary{% endif %} mb-3" data-user="{{ user.username }}">
+                    <div class="col-1 text-end">
+                        <span class="fa-stack fa-fw">
+                            <i class="fas {{ user.getIcon }} fa-stack-2x"></i>
+                            {% if user.requestRole == 'creator' %}
+                                <i class="fas fa-circle-exclamation badge text-warning fa-bounce fa-stack-1x"></i>
+                            {% endif %}
+                            {% if user.deleted  %}
+                                <i class="fas fa-trash badge text-danger fa-stack-1x"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="col-3">
+                        <a href="/@{{ user.username }}">@{{ user.username }}</a>
+                    </div>
+                    <div class="col-3">
+                        {{ user.createdon|date("Y-m-d") }}
+                    </div>
+                    <div class="col">
+                        <div class="btn-group" role="group">
+                        {% if isOwner %}
+                            <button class="btn btn-light" title="Owner status cannot be changed" disabled>
+                                <span class="fa-stack">
+                                    <i class="fas fa-palette fa-stack-2x"></i>
+                                    <i class="fas fa-crown fa-stack-1x text-warning"></i>
+                                </span>
+                            </button>
+                            <button class="btn btn-light" title="Owner status cannot be changed" disabled>
+                                <span class="fa-stack">
+                                    <i class="fas fa-screwdriver-wrench fa-stack-2x"></i>
+                                    <i class="fas fa-crown text-warning fa-stack-1x "></i>
+                                </span>
+                            </button>
+                            <button class="btn btn-light" title="Owner status cannot be deleted" disabled>
+                                <span class="fa-stack">
+                                    <i class="fas fa-trash fa-stack-2x"></i>
+                                    <i class="fas fa-crown text-warning fa-stack-1x "></i>
+                                </span>
+                            </button>
+                        {% else %}
+                            <a href="/admin/{% if isCreator %}removerole{% else %}addrole{% endif %}/{{ user.username }}/creator" type="button" class="btn btn-light">
+                                <span class="fa-stack">
+                                    <i class="fas fa-palette fa-stack-2x"></i>
+                                    {% if not isCreator %}
+                                        <i class="fas fa-ban text-danger fa-stack-1x"></i>
+                                    {% endif %}
+                                </span>
+                            </a>
+                            <a href="/admin/{% if isAdmin %}removerole{% else %}addrole{% endif %}/{{ user.username }}/admin" type="button" class="btn btn-light">
+                                <span class="fa-stack">
+                                    <i class="fas fa-screwdriver-wrench fa-stack-2x"></i>
+                                    {% if not isAdmin %}
+                                        <i class="fas fa-ban text-danger fa-stack-1x"></i>
+                                    {% endif %}
+                                </span>
+                            </a>
+                            <a href="/admin/{% if user.deleted %}undeleteuser{% else %}deleteuser{% endif %}/{{ user.username }}" type="button" class="btn btn-light">
+                                <span class="fa-stack">
+                                    <i class="fas fa-trash fa-stack-2x"></i>
+                                    {% if user.deleted %}
+                                        <i class="fas fa-ban text-danger fa-stack-1x"></i>
+                                    {% endif %}
+                                </span>
+                            </a>
+                        {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

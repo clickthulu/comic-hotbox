@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create/Edit Comic{% endblock %}
+
+{% block body %}
+    <div class="col align-items-center justify-content-center pt-5">
+        <div class="col" id="register-staff-screen">
+            <div class="row">
+                <div class="col-7 border p-3">
+                    <div class="row">
+                        <h1 class="h3 mb-3 font-weight-normal">Manage Users</h1>
+                    </div>
+                    {% if users|length == 0 %}
+
+                    {% else %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}
