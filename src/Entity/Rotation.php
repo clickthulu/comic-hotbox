@@ -80,7 +80,7 @@ class Rotation
         $hotboxRotations = $this->hotbox->getRotations();
         $lastDate = RotationFrequencyEnumeration::getStarting($frequency);
 
-        if (empty($hotboxRotations)) {
+        if ($hotboxRotations->count() === 0) {
             $this->start = $lastDate;
             return $this;
         }
@@ -100,7 +100,6 @@ class Rotation
 
     function calculateExpire(): static
     {
-        $now = new \DateTime();
         $this->expire = RotationFrequencyEnumeration::getNextStart($this->hotbox->getRotationFrequency(), $this->start);
         return $this;
     }

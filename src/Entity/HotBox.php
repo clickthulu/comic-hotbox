@@ -185,4 +185,10 @@ class HotBox
 
         return $this;
     }
+
+    public function clearRotations(): self
+    {
+        $this->rotations = new ArrayCollection();
+        return $this;
+    }
 }

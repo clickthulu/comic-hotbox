@@ -3,33 +3,86 @@
 {% block title %}Hello DashboardController!{% endblock %}
 
 {% block body %}
-    <div class="col align-items-center justify-content-center pt-5">
-        <div class="col" id="register-staff-screen">
-            <div class="col-6 border p-3">
-                <h1 class="h3 mb-3 font-weight-normal">Create new HotBox</h1>
-
-                {{ form_start(hotboxform) }}
-                <div class="row mb-2">
-                    {{ form_label(hotboxform.name) }}
-                    <div class="col">{{ form_widget(hotboxform.name) }}</div>
-                </div>
-                <div class="row mb-2">
-                    {{ form_label(hotboxform.code) }}
-                    <div class="col">{{ form_widget(hotboxform.code) }}</div>
-                </div>
-                <div class="row mb-2">
-                    {{ form_label(hotboxform.active) }}
-                    <div class="col">{{ form_widget(hotboxform.active) }}</div>
-                </div>
-                <div class="row mb-2">
-                    {{ form_label(hotboxform.comics) }}
-                    <div class="col">{{ form_widget(hotboxform.comics) }}</div>
-                </div>
-                {{ form_rest(hotboxform) }}
-                <button class="btn btn-lg btn-primary" type="submit">Create new HotBox</button>
-                {{ form_end(hotboxform) }}
+    <div class="col align-items-center justify-content-center pt-5" xmlns="http://www.w3.org/1999/html">
+        <div class="col-10" id="register-staff-screen">
+            <div class="row mb-3">
+                <h1 class="h3 mb-3 font-weight-normal">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</h1>
             </div>
+            <div class="row mb-3">
+                <div class="col border p-3">
+                    <div class="row">
+                        <h2>Details</h2>
+                    </div>
+                    {{ form_start(hotboxform) }}
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.name) }}
+                        <div class="col">{{ form_widget(hotboxform.name) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.code) }}
+                        <div class="col">{{ form_widget(hotboxform.code) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.rotationFrequency) }}
+                        <div class="col">{{ form_widget(hotboxform.rotationFrequency) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.active) }}
+                        <div class="col">{{ form_widget(hotboxform.active) }}</div>
+                    </div>
+
+                    {{ form_rest(hotboxform) }}
+                    <div class="row mb-2">
+                        <div class="col offset-3">
+                            <button class="btn btn-lg btn-primary" type="submit">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</button>
+                        </div>
+                    </div>
+                    {{ form_end(hotboxform) }}
+                </div>
+            </div>
+            {% if hotboxform.vars.data.id is not empty and comics|length > 0%}
+                <div class="row">
+                    <div class="col border p-3">
+                        <div class="row mb-2">
+                            <h2>Comic Rotation</h2>
+                        </div>
+                        {% for comic in comics %}
+                            {% set hasRotation = false %}
+                            {% set sDate = "" %}
+                            {% set eDate = "" %}
+                            {% set dConn = "" %}
+                            {% for rot in comic.rotations %}
+                                {% if rot.hotbox.id == hotboxform.vars.data.id %}
+                                    {% set dConn = " to " %}
+                                    {% set hasRotation = true %}
+                                    {% if hotboxform.vars.data.rotationFrequency == 'Hour' %}
+                                        {% set sDate = rot.start|date("H:i") %}
+                                        {% set eDate = rot.expire|date("H:i") %}
+                                    {% elseif hotboxform.vars.data.rotationFrequency == 'Month' %}
+                                        {% set sDate = rot.start|date("Y-m") %}
+                                        {% set eDate = rot.expire|date("Y-m") %}
+                                    {% else %}
+                                        {% set sDate = rot.start|date("Y-m-d") %}
+                                        {% set eDate = rot.expire|date("Y-m-d") %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="row mb-2">
+                                {% if hasRotation %}
+                                    <div class="col-1"><a href="/hotbox/delrotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn btn-outline-primary"><i class="fas fa-minus"></i></a></div>
+                                {% else %}
+                                    <div class="col-1"><a href="/hotbox/addrotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn btn-primary"><i class="fas fa-plus"></i></a></div>
+                                {% endif %}
+                                <div class="col"><strong>{{ comic.Name }}</strong> by {% if comic.user.name is not empty %}{{ comic.user.name }}{% else %}{{ comic.user.email }}{% endif %}</div>
+                                <div class="col-4">{{ sDate }}{{dConn}}{{ eDate }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
+
     </div>
 {% endblock %}
 

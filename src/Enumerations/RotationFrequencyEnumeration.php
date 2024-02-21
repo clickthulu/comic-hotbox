@@ -37,8 +37,9 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
         return $current;
     }
 
-    public static function getNextStart(string $length, \DateTimeInterface $lastDate): \DateTime
+    public static function getNextStart(string $length, \DateTimeInterface $start): \DateTimeInterface
     {
+        $lastDate = clone $start;
         switch ($length) {
             case self::LENGTH_HOUR:
                 $lastDate->modify("+1 hour");
@@ -58,5 +59,15 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
                 break;
         }
         return $lastDate;
+    }
+
+    public static function getChoices()
+    {
+        return [
+            self::LENGTH_HOUR => self::LENGTH_HOUR,
+            self::LENGTH_DAY => self::LENGTH_DAY,
+            self::LENGTH_WEEK => self::LENGTH_WEEK,
+            self::LENGTH_MONTH => self::LENGTH_MONTH
+        ];
     }
 }

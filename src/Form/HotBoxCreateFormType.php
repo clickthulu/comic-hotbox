@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Entity\Comic;
 use App\Entity\HotBox;
+use App\Enumerations\RotationFrequencyEnumeration;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,12 +22,12 @@ class HotBoxCreateFormType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => true,
                 'attr' => ['class' => 'form-horizontal form-control'],
-                'label_attr' => ['class' => 'col-form-label col-2 text-end']
+                'label_attr' => ['class' => 'col-form-label col-3 text-end']
             ])
             ->add('code', TextType::class, [
                 'required' => true,
                 'attr' => ['class' => 'form-horizontal form-control'],
-                'label_attr' => ['class' => 'col-form-label col-2 text-end']
+                'label_attr' => ['class' => 'col-form-label col-3 text-end']
             ])
             ->add('active', CheckboxType::class, [
                 'required' => false,
@@ -32,20 +35,24 @@ class HotBoxCreateFormType extends AbstractType
                     'class' => 'checkbox-toggle'
                 ],
                 'label_attr' => [
-                    'class' => 'col-form-label checkbox-toggle-icon col-2 text-end'
+                    'class' => 'col-form-label checkbox-toggle-icon col-3 text-end'
                 ]
             ])
-            ->add('comics', EntityType::class, [
-                'attr' => [
-                    'class' => 'form-select'
-                ],
-                'label_attr' => ['class' => 'col-form-label col-2 text-end'],
-                'expanded' => true,
-                'required' => false,
-                'class' => Comic::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
+            ->add('rotationFrequency', ChoiceType::class,
+                [
+                    'choices' => RotationFrequencyEnumeration::getChoices(),
+                    'label' => 'Rotation Frequency:',
+                    'label_attr' => [
+                        'class' => 'col-3 col-form-label text-end'
+                    ],
+                    'attr' => [
+                        'class' => 'form-select'
+                    ],
+                    'required' => true,
+                    'multiple' => false,
+                ]
+            )
+
         ;
     }
 
