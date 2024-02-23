@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox{% endblock %}
 
 {% block body %}
-    <div class="col align-items-center justify-content-center pt-5" xmlns="http://www.w3.org/1999/html">
-        <div class="col-10" id="register-staff-screen">
+    <div class="col align-items-center justify-content-center pt-5">
+        <div class="col-10" id="hb-createupdate-hotbox">
             <div class="row mb-3">
                 <h1 class="h3 mb-3 font-weight-normal">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</h1>
             </div>
@@ -25,6 +25,14 @@
                     <div class="row mb-2">
                         {{ form_label(hotboxform.rotationFrequency) }}
                         <div class="col">{{ form_widget(hotboxform.rotationFrequency) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.imageWidth) }}
+                        <div class="col">{{ form_widget(hotboxform.imageWidth) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        {{ form_label(hotboxform.imageHeight) }}
+                        <div class="col">{{ form_widget(hotboxform.imageHeight) }}</div>
                     </div>
                     <div class="row mb-2">
                         {{ form_label(hotboxform.active) }}
@@ -69,11 +77,8 @@
                             {% endfor %}
 
                             <div class="row mb-2">
-                                {% if hasRotation %}
-                                    <div class="col-1"><a href="/hotbox/delrotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn btn-outline-primary"><i class="fas fa-minus"></i></a></div>
-                                {% else %}
-                                    <div class="col-1"><a href="/hotbox/addrotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn btn-primary"><i class="fas fa-plus"></i></a></div>
-                                {% endif %}
+                                <div class="col-1"><a href="/hotbox/toggleRotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn {% if hasRotation %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if hasRotation %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
+                                <div class="col-1"><i class="fas {% if comic.hotboxMatch %}fa-check text-success{% else %}fa-close text-danger{% endif %}"></i></div>
                                 <div class="col"><strong>{{ comic.Name }}</strong> by {% if comic.user.name is not empty %}{{ comic.user.name }}{% else %}{{ comic.user.email }}{% endif %}</div>
                                 <div class="col-4">{{ sDate }}{{dConn}}{{ eDate }}</div>
                             </div>

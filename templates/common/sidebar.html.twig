@@ -4,7 +4,13 @@
     </div>
 
     <div class="row ps-3 mb-2">
-        <div class="col-1 ms-2 me-4"><a href="/account" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="fas fa-user"></i></a></div>
+        <div class="col-1 ms-2 me-4"><a href="/" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Dashboard"><i class="fas fa-home"></i></a></div>
+        <div class="col nav-expanded"><a href="/" class="nav-link">Dashboard</a></div>
+    </div>
+
+
+    <div class="row ps-3 mb-2">
+        <div class="col-1 ms-2 me-4"><a href="/account" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Account Details"><i class="fas fa-user"></i></a></div>
         <div class="col nav-expanded"><a href="/account" class="nav-link">Account</a></div>
     </div>
 
@@ -23,7 +29,7 @@
         <div class="row nav-expanded"><h6>HotBox</h6></div>
 
         {% for hb in hotboxservice.hotboxes %}
-            <div class="row ps-3 mb-2 text-warning">
+            <div class="row ps-3 mb-2">
                 <div class="col-1 ms-2 me-4"><a href="/hotbox/edit/{{ hb.id }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes"><i class="fas fa-box"></i></a></div>
                 <div class="col nav-expanded"><a href="/hotbox/edit/{{ hb.id }}" class="nav-link">{{ hb.name }}</a></div>
             </div>
@@ -33,7 +39,7 @@
             <div class="col nav-expanded"><a href="/hotbox/create" class="nav-link">New HotBox</a></div>
         </div>
         <div class="row nav-expanded"><h6>Users</h6></div>
-        <div class="row ps-3 mb-2  text-warning">
+        <div class="row ps-3 mb-2">
             <div class="col-1 ms-2 me-4"><a href="/user" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-users"></i></a></div>
             <div class="col nav-expanded"><a href="/user" class="nav-link">Manage Users</a></div>
         </div>
@@ -45,11 +51,11 @@
 
         <div class="row nav-expanded"><h6>Approvals</h6></div>
 
-        <div class="row ps-3 mb-2 text-warning">
+        <div class="row ps-3 mb-2">
             <div class="col-1 ms-2 me-4"><a href="/approve/comics" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Comics"><i class="fas fa-check"></i></a></div>
             <div class="col nav-expanded"><a href="/approve/comics" class="nav-link">Approve Comics</a></div>
         </div>
-        <div class="row ps-3 mb-2 text-warning">
+        <div class="row ps-3 mb-2">
             <div class="col-1 ms-2 me-4"><a href="/approve/images" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-search"></i></a></div>
             <div class="col nav-expanded"><a href="/approve/images" class="nav-link">Approve Images</a></div>
         </div>
@@ -59,7 +65,7 @@
     <div class="row border-top mt-3 pt-3 "></div>
     <div class="row nav-expanded"><h5>My Stuff</h5></div>
     {% for comic in app.user.comics %}
-        <div class="row ps-3 mb-2 text-warning">
+        <div class="row ps-3 mb-2">
             <div class="col-1 ms-2 me-4">
                 <a href="/comic/edit/{{ comic.id }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ comic.name }}"><i class="fas fa-book"></i></a>
             </div>

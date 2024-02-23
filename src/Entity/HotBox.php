@@ -151,6 +151,23 @@ class HotBox
         return $this;
     }
 
+    public function getCurrentRotation(): Rotation|null
+    {
+        $rotations = $this->rotations->toArray();
+        if (empty($rotations)) {
+            return null;
+        }
+
+        usort($rotations, function(Rotation $a, Rotation $b){
+            if ($a->getStart() === $b->getStart()) {
+                return 0;
+            }
+            return $a->getStart() > $b->getStart() ? 1 : -1;
+        });
+
+        return $rotations[0];
+    }
+
     public function getRotationFrequency(): ?string
     {
         return $this->rotationFrequency;

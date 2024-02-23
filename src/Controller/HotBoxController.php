@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class HotBoxController extends AbstractController
 {
@@ -37,28 +36,123 @@ class HotBoxController extends AbstractController
             $code = $form->get('code')->getData();
             $active = $form->get('active')->getData();
             $freq = $form->get('rotationFrequency')->getData();
+            $wid = $form->get('imageWidth')->getData();
+            $hei = $form->get('imageHeight')->getData();
 
             $hotbox
                 ->setName($name)
                 ->setCode($code)
                 ->setActive($active)
                 ->setRotationFrequency($freq)
+                ->setImageWidth($wid)
+                ->setImageHeight($hei)
             ;
-            $this->retimeRotations($hotbox->getId(), $entityManager);
+            $entityManager->persist($hotbox);
+            $entityManager->flush();
+                $this->retimeRotations($entityManager, $hotbox->getId());
             return new RedirectResponse("/hotbox/edit/{$hotbox->getId()}");
         }
 
 
-        $comics = $entityManager->getRepository(Comic::class)->findAll();
+        $comics = $entityManager->getRepository(Comic::class)->findBy(['active' => true, 'approved' => true]);
         $comics = $this->orderByRotation($comics, $hotbox);
-
+        /**
+         * @var Comic $comic
+         */
+        foreach ($comics as $comic) {
+            $comic->imageSizeMatch($hotbox);
+        }
         return $this->render('hotbox/create.html.twig', [
             'hotboxform' => $form->createView(),
             'comics' => $comics
         ]);
     }
 
-    private function orderByRotation(array $comics, HotBox $hotBox)
+    #[Route('/hotbox/toggleRotation/{hotboxid}/{comicid}', name: 'app_addrotation')]
+    public function toggleRotation(Request $request, EntityManagerInterface $entityManager, int $hotboxid, int $comicid): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
+        /**
+         * @var HotBox $hotbox
+         */
+        $hotbox = $entityManager->getRepository(HotBox::class)->find($hotboxid);
+        /**
+         * @var Comic $comic
+         */
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        $rotation = $entityManager->getRepository(Rotation::class)->findOneBy(['hotbox' => $hotbox, 'comic' => $comic]);
+
+        if (!empty($rotation)) {
+            // Remove the rotation
+            $entityManager->remove($rotation);
+        } else {
+            $rotation = new Rotation();
+            $rotation->setHotbox($hotbox)->setComic($comic)->calculateNextStart()->calculateExpire();
+            $entityManager->persist($rotation);
+        }
+
+        $entityManager->flush();
+        $this->retimeRotations($entityManager, $hotbox->getId());
+
+        return new RedirectResponse("/hotbox/edit/{$hotboxid}");
+    }
+
+
+
+    protected function retimeRotations(EntityManagerInterface $entityManager, ?int $id): static
+    {
+        if(empty($id)) {
+            return $this;
+        }
+        $hotbox = $entityManager->getRepository(HotBox::class)->find($id);
+
+        // First sort rotations by date
+        $rotations = $hotbox->getRotations()->toArray();
+        usort($rotations, function(Rotation $a, Rotation $b){
+            if ($a->getStart() === $b->getStart()) {
+                return 0;
+            }
+            return ($a->getStart() < $b->getStart()) ? -1 : 1;
+        });
+        $now = new \DateTime();
+        /**
+         * @var Rotation $rotation
+         */
+        foreach ($rotations as &$rotation) {
+            // Move any expired rotations to the back of the line
+            if ($now >= $rotation->getExpire()) {
+                $rotation->calculateNextStart()->calculateExpire();
+                $entityManager->persist($rotation);
+            }
+        }
+        // Resort rotations by date
+        usort($rotations, function(Rotation $a, Rotation $b){
+            if ($a->getStart() === $b->getStart()) {
+                return 0;
+            }
+            return ($a->getStart() < $b->getStart()) ? -1 : 1;
+        });
+
+        $started = RotationFrequencyEnumeration::getStarting($hotbox->getRotationFrequency());
+        $startedflag = false;
+        foreach ($rotations as &$rotation) {
+            if (!$startedflag) {
+                $rotation->setStart($started);
+                $startedflag = true;
+            } else {
+                $rotation->setStart(RotationFrequencyEnumeration::getNextStart($hotbox->getRotationFrequency(), $started));
+            }
+            $rotation->calculateExpire();
+            $entityManager->persist($rotation);
+            $started = $rotation->getStart();
+        }
+        $entityManager->flush();
+        return $this;
+    }
+
+
+    protected function orderByRotation(array $comics, HotBox $hotBox)
     {
         $inHotBox = [];
         $outHotBox = [];
@@ -110,93 +204,4 @@ class HotBoxController extends AbstractController
         return $out;
     }
 
-    #[Route('/hotbox/addrotation/{hotboxid}/{comicid}', name: 'app_addrotation')]
-    public function addRotation(Request $request, EntityManagerInterface $entityManager, int $hotboxid, int $comicid): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
-        /**
-         * @var HotBox $hotbox
-         */
-        $hotbox = $entityManager->getRepository(HotBox::class)->find($hotboxid);
-        /**
-         * @var Comic $comic
-         */
-        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
-        $rotation = $entityManager->getRepository(Rotation::class)->findOneBy(['hotbox' => $hotbox, 'comic' => $comic]);
-
-        if (!empty($rotation)) {
-            throw new HotBoxException("Cannot create a rotation, rotation already exists");
-        }
-
-        $rotation = new Rotation();
-        $rotation->setHotbox($hotbox)->setComic($comic)->calculateNextStart()->calculateExpire();
-        $entityManager->persist($rotation);
-        $entityManager->flush();
-        $this->retimeRotations($hotbox->getId(), $entityManager);
-
-        return new RedirectResponse("/hotbox/edit/{$hotboxid}");
-    }
-
-    protected function retimeRotations(int $id, EntityManagerInterface $entityManager): static
-    {
-        $hotbox = $entityManager->getRepository(HotBox::class)->find($id);
-        $rotations = $hotbox->getRotations()->toArray();
-        usort($rotations, function(Rotation $a, Rotation $b){
-            if ($a->getStart() === $b->getStart()) {
-                return 0;
-            }
-            return ($a->getStart() < $b->getStart()) ? -1 : 1;
-        });
-        $started = null;
-        $now = new \DateTime();
-        /**
-         * @var Rotation $rotation
-         */
-        foreach ($rotations as &$rotation) {
-            if ($now >= $rotation->getExpire()) {
-                $rotation->calculateNextStart()->calculateExpire();
-                $entityManager->persist($rotation);
-                continue;
-            }
-            if (!empty($started)) {
-                $rotation->setStart(RotationFrequencyEnumeration::getNextStart($hotbox->getRotationFrequency(), $started));
-            }
-            $rotation->calculateExpire();
-            $entityManager->persist($rotation);
-            $started = $rotation->getStart();
-        }
-        $entityManager->flush();
-        return $this;
-    }
-
-    #[Route('/hotbox/delrotation/{hotboxid}/{comicid}', name: 'app_delrotation')]
-    public function delRotation(Request $request, EntityManagerInterface $entityManager, int $hotboxid, int $comicid): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
-        /**
-         * @var HotBox $hotbox
-         */
-        $hotbox = $entityManager->getRepository(HotBox::class)->find($hotboxid);
-        /**
-         * @var Comic $comic
-         */
-        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
-        /**
-         * @var Rotation $rotation
-         */
-        $rotation = $entityManager->getRepository(Rotation::class)->findOneBy(['hotbox' => $hotbox, 'comic' => $comic]);
-
-        if (empty($rotation)) {
-            throw new HotBoxException("Cannot delete a rotation that doesn't exist");
-        }
-
-        $entityManager->remove($rotation);
-        $entityManager->flush();
-
-        $this->retimeRotations($hotbox->getId(), $entityManager);
-
-        return new RedirectResponse("/hotbox/edit/{$hotboxid}");
-    }
 }

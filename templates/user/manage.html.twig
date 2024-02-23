@@ -1,21 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create/Edit Comic{% endblock %}
+{% block title %}Manage Users{% endblock %}
 
 {% block body %}
     <div class="col align-items-center justify-content-center pt-5">
-        <div class="col" id="register-staff-screen">
+        <div class="col-10" id="hb-manage-users">
             <div class="row">
-                <div class="col-7 border p-3">
-                    <div class="row">
-                        <h1 class="h3 mb-3 font-weight-normal">Manage Users</h1>
-                    </div>
-                    {% if users|length == 0 %}
+                <h1 class="h3 mb-3 font-weight-normal">Manage Users</h1>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Comics</th>
+                                <th>Images</th>
+                                <th>Status</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                {% set imgCount = 0 %}
+                                {% for comic in user.comics %}
+                                    {% set imgCount =  imgCount + comic.images|length %}
+                                {% endfor %}
 
-                    {% else %}
+                                <tr>
+                                    <td>{% if user.Name %}{{ user.Name }}{% else %}{{ user.email }}{% endif %}</td>
+                                    <td>{{ user.comics|length }}</td>
+                                    <td>{{ imgCount }}</td>
+                                    <td>{% if user.active %}Active{% else %}Suspended{% endif %}</td>
+                                    <td>
+                                        <a href="/admin/toggle/user/{{ user.id }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
+                                        {% if app.user.id != user.id %}
+                                        <a href="/admin/delete/user/{{ user.id }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
 
-                    {% endif %}
+                            {% endfor %}
 
+                        </tbody>
+
+                    </table>
                 </div>
             </div>
         </div>

@@ -24,3 +24,6 @@ vendor/
 /.env.test
 /bin/phpunit
 /storage/*
+/public/test/
+/custom/public/*
+!/custom/public/*.dist

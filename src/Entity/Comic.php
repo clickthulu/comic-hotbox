@@ -44,6 +44,8 @@ class Comic
     #[ORM\OneToMany(mappedBy: 'comic', targetEntity: Rotation::class, orphanRemoval: true)]
     private Collection $rotations;
 
+    private bool $hotboxMatch = false;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -120,6 +122,21 @@ class Comic
         }
 
         return $this;
+    }
+
+    public function getRandomImage(HotBox $hotBox): Image
+    {
+        $allowed = [];
+        /**
+         * @var Image $image
+         */
+        foreach ($this->images as $image) {
+            if ($image->isApproved() && ($image->getWidth() === $hotBox->getImageWidth()) && ($image->getHeight() === $hotBox->getImageHeight())) {
+                $allowed[] = $image;
+            }
+        }
+        shuffle($allowed);
+        return array_pop($allowed);
     }
 
     public function getUser(): ?User
@@ -199,4 +216,39 @@ class Comic
 
         return $this;
     }
+
+    public function imageSizeMatch(Hotbox $hotbox): bool
+    {
+        /**
+         * @var Image $image
+         */
+        foreach ($this->images as $image)
+        {
+            if ($image->isApproved() && $image->getWidth() === $hotbox->getImageWidth() && $image->getHeight() === $hotbox->getImageHeight()) {
+                $this->hotboxMatch = true;
+                return true;
+            }
+
+        }
+        $this->hotboxMatch = false;
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHotboxMatch(): bool
+    {
+        return $this->hotboxMatch;
+    }
+
+    /**
+     * @param bool $hotboxMatch
+     */
+    public function setHotboxMatch(bool $hotboxMatch): void
+    {
+        $this->hotboxMatch = $hotboxMatch;
+    }
+
+
 }
