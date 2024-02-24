@@ -6,6 +6,8 @@
 parameters:
     emailFrom: '%env(resolve:MAILER_FROMADDR)%'
     serverURL: '%env(resolve:SERVER_URL)%'
+    serverName: '%env(resolve:SERVER_TITLE)%'
+    serverOwner: '%env(resolve:SERVER_OWNER)%'
     imageLimit: '%env(resolve:IMAGE_LIMIT)%'
     timezone: '%env(APP_TIMEZONE)%'
 

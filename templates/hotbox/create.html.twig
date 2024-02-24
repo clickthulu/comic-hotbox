@@ -59,10 +59,15 @@
                             {% set sDate = "" %}
                             {% set eDate = "" %}
                             {% set dConn = "" %}
+                            {% set buttonTitle = "Add Comic to HotBox" %}
+                            {% if not comic.hotboxMatch %}
+                                {% set buttonTitle = "Comic has no images that fit HotBox size constraints" %}
+                            {% endif %}
                             {% for rot in comic.rotations %}
                                 {% if rot.hotbox.id == hotboxform.vars.data.id %}
                                     {% set dConn = " to " %}
                                     {% set hasRotation = true %}
+                                    {% set buttonTitle = "Remove comic from HotBox" %}
                                     {% if hotboxform.vars.data.rotationFrequency == 'Hour' %}
                                         {% set sDate = rot.start|date("H:i") %}
                                         {% set eDate = rot.expire|date("H:i") %}
@@ -77,8 +82,8 @@
                             {% endfor %}
 
                             <div class="row mb-2">
-                                <div class="col-1"><a href="/hotbox/toggleRotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" class="btn {% if hasRotation %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if hasRotation %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
-                                <div class="col-1"><i class="fas {% if comic.hotboxMatch %}fa-check text-success{% else %}fa-close text-danger{% endif %}"></i></div>
+                                <div class="col-1"><a href="/hotbox/toggleRotation/{{ hotboxform.vars.data.id }}/{{ comic.id }}" title="{{ buttonTitle }}" class="btn {% if not comic.hotboxMatch %}disabled{% elseif hasRotation %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if hasRotation %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
+                                <div class="col-1"><i title="{% if comic.hotboxMatch %}Comic has ad ready for HotBox{% elseif comic.images|length > 0%}Comic has ads but non of the correct size{% else %}Comic has no ads{% endif %}" class="fas {% if comic.hotboxMatch %}fa-check text-success{% elseif comic.images|length > 0%}fa-image text-warning{% else %}fa-close text-danger{% endif %}"></i></div>
                                 <div class="col"><strong>{{ comic.Name }}</strong> by {% if comic.user.name is not empty %}{{ comic.user.name }}{% else %}{{ comic.user.email }}{% endif %}</div>
                                 <div class="col-4">{{ sDate }}{{dConn}}{{ eDate }}</div>
                             </div>

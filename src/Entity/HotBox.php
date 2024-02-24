@@ -208,4 +208,24 @@ class HotBox
         $this->rotations = new ArrayCollection();
         return $this;
     }
+
+    public function getUserRotations(User $user): array
+    {
+        $rotations = [];
+        /**
+         * @var Rotation $rotation
+         */
+        foreach ($this->rotations as $rotation) {
+            if ($rotation->getComic()->getUser()->getId() === $user->getId()) {
+                $rotations[] = $rotation;
+            }
+        }
+        return $rotations;
+    }
+
+    public function getUserAllowed(User $user): bool
+    {
+        $rot = $this->getUserRotations($user);
+        return !empty($rot);
+    }
 }
