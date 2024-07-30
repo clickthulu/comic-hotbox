@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Comic;
+use App\Entity\HotBox;
 use App\Entity\Image;
 use App\Entity\User;
 use App\Exceptions\HotBoxException;
@@ -88,7 +89,7 @@ class ComicController extends AbstractController
         return new RedirectResponse("/");
     }
 
-    #[Route('/comic/uploadimage/{comicid}/{imageid?}', name: 'app_deletecomic')]
+    #[Route('/comic/uploadimage/{comicid}/{imageid?}', name: 'app_uploadimage')]
     public function uploadimage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -136,10 +137,87 @@ class ComicController extends AbstractController
         $image = new Image();
         $image
             ->setComic($comic)
+            ->setActive(true)
             ->setPath("{$storageDir}/{$files['name']}")
             ->setWidth($imageWidth)
             ->setHeight($imageHeight)
         ;
+        $entityManager->persist($image);
+        $entityManager->flush();
+        return new RedirectResponse("/comic/edit/{$comicid}");
+    }
+
+    #[Route('/comic/image/delete/{comicid}/{imageid}', name: 'app_deleteimage')]
+    public function deleteImage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Image $image
+         */
+        $image = $entityManager->getRepository(Image::class)->find($imageid);
+        $entityManager->remove($image);
+        $entityManager->flush();
+        return new RedirectResponse("/comic/edit/{$comicid}");
+    }
+
+
+    #[Route('/comic/image/activate/{comicid}/{imageid}', name: 'app_activateimage')]
+    public function activateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
+    {
+        return $this->changeImageActiveFlag($entityManager, $comicid, $imageid, true);
+    }
+
+
+    #[Route('/comic/image/deactivate/{comicid}/{imageid}', name: 'app_deactivateimage')]
+    public function deactivateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
+    {
+        $return = $this->changeImageActiveFlag($entityManager, $comicid, $imageid, false);
+        /**
+         * @var Comic $comic
+         */
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
+
+        foreach ($hotboxes as $hotbox) {
+            if (!$comic->imageSizeMatch($hotbox)) {
+                // Remove comic from hotbox rotation;
+                $comic->clearRotationsFromHotBox($hotbox);
+            }
+
+        }
+
+
+
+        return $return;
+    }
+
+
+    protected function changeImageActiveFlag(EntityManagerInterface $entityManager, int $comicid, int $imageid, bool $active = true)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Image $image
+         */
+        $image = $entityManager->getRepository(Image::class)->find($imageid);
+        $image->setActive($active);
         $entityManager->persist($image);
         $entityManager->flush();
         return new RedirectResponse("/comic/edit/{$comicid}");

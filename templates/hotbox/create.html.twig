@@ -71,6 +71,12 @@
                                     {% if hotboxform.vars.data.rotationFrequency == 'Hour' %}
                                         {% set sDate = rot.start|date("H:i") %}
                                         {% set eDate = rot.expire|date("H:i") %}
+                                    {% elseif hotboxform.vars.data.rotationFrequency == 'Minute' %}
+                                        {% set sDate = rot.start|date("H:i") %}
+                                        {% set eDate = rot.expire|date("H:i") %}
+                                    {% elseif hotboxform.vars.data.rotationFrequency == '15 Minutes' %}
+                                        {% set sDate = rot.start|date("H:i") %}
+                                        {% set eDate = rot.expire|date("H:i") %}
                                     {% elseif hotboxform.vars.data.rotationFrequency == 'Month' %}
                                         {% set sDate = rot.start|date("Y-m") %}
                                         {% set eDate = rot.expire|date("Y-m") %}

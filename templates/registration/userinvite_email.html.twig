@@ -1,8 +1,8 @@
 <h3>You have been invited!</h3>
-<p>{% if user.name is not empty %}{{ user.name }}{% else %}{{ user.email}}{% endif %} has invited you to join {{ settings.serverurl }}!</p>
+<p>{% if user.name is not empty %}{{ user.name }}{% else %}{{ user.email}}{% endif %} has invited you to join {{ settings.get("server_url").value }}!</p>
 <p>Please use the following link (or copy/paste it into your browser) to activate your new account:</p>
 <p>&nbsp;</p>
-<p><a href="{{ settings.serverurl }}/acceptinvite/{{ reg.code }}">{{ settings.serverurl }}/acceptinvite/{{ reg.code }}</a></p>
+<p><a href="{{ settings.get("server_url").value }}/acceptinvite/{{ reg.code }}">{{ settings.get("server_url").value }}/acceptinvite/{{ reg.code }}</a></p>
 <p>&nbsp;</p>
 <p>This is a one-time use code specific to your email address.</p>
 <p>Thanks!</p>

@@ -41,14 +41,36 @@
                             <h1 class="h3 mb-3 font-weight-normal">Comic images</h1>
                         </div>
                         <div class="row">
-                            {% set blankslots = settings.imagelimit - images|length %}
+                            {% set blankslots = settings.get('image_limit').value - images|length %}
                             {% for image in images %}
                                 <div class="col-4">
                                     <div class="col text-center border p-3 m-1">
-                                        <img src="{{ image.path }}" alt="{{ image.alttext }}"><br/>
-                                        <form method="POST" enctype="multipart/form-data" action="/comic/uploadimage/{{ comicform.vars.data.id }}/{{ image.id }}">
-                                            <input type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
-                                        </form>
+                                        <div class="row">
+                                            <div class="col text-center  ">
+                                            <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img img-fluid border border-4 {% if image.active %}border-success{% else %}border-secondary{% endif %}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col text-center">
+                                            {{ image.width }} x {{ image.height }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <form method="POST" enctype="multipart/form-data" action="/comic/uploadimage/{{ comicform.vars.data.id }}/{{ image.id }}">
+                                                <input type="file" name="imagefile" class="hidden-file-input" id="comic_image_upload_current_{{ image.id }}" onchange="form.submit()" value="Upload File" />
+                                                <div class="row mt-3">
+                                                    <div class="btn-group" role="group">
+                                                        <label for="comic_image_upload_current_{{ image.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
+                                                        {% if image.active %}
+                                                            <a class="btn btn-secondary" href="/comic/image/deactivate/{{ comicform.vars.data.id }}/{{ image.id }}" title="Image is currently active"><i class="far fa-lightbulb"></i></a>
+                                                        {% else %}
+                                                            <a class="btn btn-outline-secondary" href="/comic/image/activate/{{ comicform.vars.data.id }}/{{ image.id }}" title="Image is currently inactive"><i class="fas fa-lightbulb"></i></a>
+                                                        {% endif %}
+                                                        <a class="btn btn-danger" href="/comic/image/delete/{{ comicform.vars.data.id }}/{{ image.id }}" title="Delete this image"><i class="fas fa-trash"></i></a>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -56,7 +78,8 @@
                                 <div class="col-4">
                                     <div class="col text-center border p-3 m-1">
                                         <form method="POST" enctype="multipart/form-data" action="/comic/uploadimage/{{ comicform.vars.data.id }}">
-                                            <input type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
+                                            <label for="comic_image_upload_new_{{ i }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
+                                            <input id="comic_image_upload_new_{{ i }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
                                         </form>
                                     </div>
                                 </div>

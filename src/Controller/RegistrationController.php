@@ -38,8 +38,10 @@ class RegistrationController extends AbstractController
              * @var RegistrationCode $regcode
              */
             $regcode = $entityManager->getRepository(RegistrationCode::class)->findOneBy(['code' => $code]);
-            if ($regcode->isActivated() === true || $regcode->getExpireson() < new \DateTime() || $regcode->getEmail() !== $email) {
-                throw new HotBoxException("This registration code is no longer available");
+            if ($regcode->getExpireson() < new \DateTime()) {
+                throw new HotBoxException("This registration code has expired");
+            } elseif (  $regcode->isActivated() === false || $regcode->getEmail() !== $email) {
+                throw new HotBoxException("This registration code has is no longer available");
             }
 
         }

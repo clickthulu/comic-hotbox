@@ -131,7 +131,7 @@ class Comic
          * @var Image $image
          */
         foreach ($this->images as $image) {
-            if ($image->isApproved() && ($image->getWidth() === $hotBox->getImageWidth()) && ($image->getHeight() === $hotBox->getImageHeight())) {
+            if ($image->isApproved() && $image->isActive() && ($image->getWidth() === $hotBox->getImageWidth()) && ($image->getHeight() === $hotBox->getImageHeight())) {
                 $allowed[] = $image;
             }
         }
@@ -217,6 +217,24 @@ class Comic
         return $this;
     }
 
+    public function clearRotations(): static
+    {
+        $this->rotations->clear();
+        return $this;
+    }
+
+    public function clearRotationsFromHotBox(HotBox $hotBox): static
+    {
+
+        foreach ($this->getRotations() as $rotation) {
+            if ($rotation->getHotbox() === $hotBox) {
+                $hotBox->removeRotation($rotation);
+                $this->removeRotation($rotation);
+            }
+        }
+        return $this;
+    }
+
     public function imageSizeMatch(Hotbox $hotbox): bool
     {
         /**
@@ -224,7 +242,7 @@ class Comic
          */
         foreach ($this->images as $image)
         {
-            if ($image->isApproved() && $image->getWidth() === $hotbox->getImageWidth() && $image->getHeight() === $hotbox->getImageHeight()) {
+            if ($image->isApproved() && $image->isActive() && $image->getWidth() === $hotbox->getImageWidth() && $image->getHeight() === $hotbox->getImageHeight()) {
                 $this->hotboxMatch = true;
                 return true;
             }

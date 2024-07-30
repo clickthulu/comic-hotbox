@@ -13,10 +13,10 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>User</th>
-                                <th>Comics</th>
-                                <th>Images</th>
-                                <th>Status</th>
+                                <th>Comics / Images</th>
+
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -28,15 +28,32 @@
                                 {% endfor %}
 
                                 <tr>
-                                    <td>{% if user.Name %}{{ user.Name }}{% else %}{{ user.email }}{% endif %}</td>
-                                    <td>{{ user.comics|length }}</td>
-                                    <td>{{ imgCount }}</td>
-                                    <td>{% if user.active %}Active{% else %}Suspended{% endif %}</td>
                                     <td>
-                                        <a href="/admin/toggle/user/{{ user.id }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
-                                        {% if app.user.id != user.id %}
-                                        <a href="/admin/delete/user/{{ user.id }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                        <i class="fas
+                                        {% if roles.role('ROLE_OWNER') in user.roles %}
+                                            fa-crown
+                                        {% elseif roles.role('ROLE_ADMIN') in user.roles %}
+                                            fa-hat-wizard
+                                        {% elseif roles.role('ROLE_MODERATOR')in user.roles %}
+                                            fa-hat-cowboy-side
+                                        {% else %}
+                                            fa-paint-roller
                                         {% endif %}
+                                        "></i>
+                                    </td>
+                                    <td>{% if user.Name %}{{ user.Name }}{% else %}{{ user.email }}{% endif %}</td>
+                                    <td>{{ user.comics|length }} / {{ imgCount }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="/admin/edit/user/{{ user.id }}" class="btn {% if user.active %}btn-success{% else %}btn-outline-success{% endif %}"><i class="fas fa-edit"></i></a>
+                                            {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
+                                                <a href="/admin/user/toggle/{{ user.id }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
+                                            {% endif %}
+                                            {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
+                                                <a href="/admin/user/delete/{{ user.id }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            {% endif %}
+
+                                        </div>
                                     </td>
                                 </tr>
 

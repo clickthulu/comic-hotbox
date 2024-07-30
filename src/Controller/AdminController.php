@@ -6,10 +6,13 @@ use App\Entity\Comic;
 use App\Entity\Image;
 use App\Entity\InviteUser;
 use App\Entity\RegistrationCode;
+use App\Entity\Settings;
+use App\Entity\SettingsCollection;
 use App\Entity\User;
 use App\Enumerations\RoleEnumeration;
 use App\Exceptions\HotBoxException;
 use App\Form\InviteUsersType;
+use App\Form\SettingsType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,6 +77,7 @@ class AdminController extends AbstractController
             }
         } catch (Exception $e){
             $err = new FormError($e->getMessage());
+            $this->addFlash('error', "{$e->getMessage()}");
             $form->addError($err);
         }
 
@@ -111,7 +115,7 @@ class AdminController extends AbstractController
     }
 
 
-    #[Route('/admin/toggle/comic/{id}', name: 'app_togglecomic')]
+    #[Route('/admin/comic/toggle/{id}', name: 'app_togglecomicapprove')]
     public function toggleComic(EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -128,7 +132,7 @@ class AdminController extends AbstractController
 
 
 
-    #[Route('/admin/toggle/user/{id}', name: 'app_toggleuser')]
+    #[Route('/admin/user/toggle/{id}', name: 'app_toggleuser')]
     public function toggleUser(EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -143,7 +147,7 @@ class AdminController extends AbstractController
         return new RedirectResponse("/user");
     }
 
-    #[Route('/admin/toggle/image/{id}', name: 'app_toggleuser')]
+    #[Route('/admin/image/toggle/{id}', name: 'app_toggleuser')]
     public function toggleImage(EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -158,7 +162,7 @@ class AdminController extends AbstractController
         return new RedirectResponse("/approve/images");
     }
 
-    #[Route('/admin/delete/user/{id}', name: 'app_deleteuser')]
+    #[Route('/admin/user/delete/{id}', name: 'app_deleteuser')]
     public function deleteUser(EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -171,4 +175,73 @@ class AdminController extends AbstractController
         $entityManager->flush();
         return new RedirectResponse("/user");
     }
+
+
+    #[Route('/admin/user/edit/{id}', name: 'app_edituser')]
+    public function editUser(EntityManagerInterface $entityManager, int $id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
+        /**
+         * @var User $usr
+         */
+        $usr = $entityManager->getRepository(User::class)->find($id);
+
+        return new RedirectResponse("/user");
+    }
+
+
+
+    #[Route('/settings', name: 'app_settings')]
+    public function getSettings(EntityManagerInterface $entityManager, Request $request): Response
+    {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        if (!in_array("ROLE_OWNER", $user->getRoles()) && !in_array("ROLE_ADMIN", $user->getRoles())) {
+            $this->addFlash('error', 'You do not have permission to perform this action');
+            return new RedirectResponse($this->generateUrl("app_profile"), 403);
+        }
+
+        $items = $entityManager->getRepository(\App\Entity\Settings::class)->findAll();
+        $settingsCollection = new SettingsCollection();
+        /**
+         * @var Settings $item
+         */
+        foreach ($items as $item) {
+            $settingsCollection->addItem($item);
+        }
+        $form = $this->createForm(SettingsType::class, $settingsCollection);
+        $form->handleRequest($request);
+
+        try {
+            if ($form->isSubmitted() && $form->isValid()) {
+                /**
+                 * @var Settings $item
+                 */
+                foreach ($settingsCollection->getItems() as $item) {
+                    $entityManager->persist($item);
+                }
+                $entityManager->flush();
+                $this->addFlash('info', 'Settings have been updated');
+                return new RedirectResponse($this->generateUrl('app_settings'));
+            }
+        } catch (\Exception $e){
+            $err = new FormError($e->getMessage());
+            $form->addError($err);
+        }
+
+
+
+        return $this->render(
+            'admin/settings.html.twig',
+            [
+                'settingsForm' => $form->createView()
+            ]
+        );
+    }
+
 }

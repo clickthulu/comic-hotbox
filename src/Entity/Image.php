@@ -36,6 +36,9 @@ class Image
     #[ORM\Column(nullable: true)]
     private ?int $height = null;
 
+    #[ORM\Column]
+    private ?bool $active = true;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -126,6 +129,18 @@ class Image
     public function setHeight(?int $height): static
     {
         $this->height = $height;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

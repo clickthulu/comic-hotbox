@@ -49,13 +49,13 @@ class HotBoxController extends AbstractController
             ;
             $entityManager->persist($hotbox);
             $entityManager->flush();
-                $this->retimeRotations($entityManager, $hotbox->getId());
+            $this->retimeRotations($entityManager, $hotbox);
             return new RedirectResponse("/hotbox/edit/{$hotbox->getId()}");
         }
 
 
         $comics = $entityManager->getRepository(Comic::class)->findBy(['active' => true, 'approved' => true]);
-        $comics = $this->orderByRotation($comics, $hotbox);
+        $comics = $this->orderByRotation($entityManager, $comics, $hotbox);
         /**
          * @var Comic $comic
          */
@@ -93,19 +93,18 @@ class HotBoxController extends AbstractController
         }
 
         $entityManager->flush();
-        $this->retimeRotations($entityManager, $hotbox->getId());
+        $this->retimeRotations($entityManager, $hotbox);
 
         return new RedirectResponse("/hotbox/edit/{$hotboxid}");
     }
 
 
 
-    protected function retimeRotations(EntityManagerInterface $entityManager, ?int $id): static
+    protected function retimeRotations(EntityManagerInterface $entityManager, HotBox $hotbox): static
     {
-        if(empty($id)) {
+        if(empty($hotbox)) {
             return $this;
         }
-        $hotbox = $entityManager->getRepository(HotBox::class)->find($id);
 
         // First sort rotations by date
         $rotations = $hotbox->getRotations()->toArray();
@@ -152,17 +151,29 @@ class HotBoxController extends AbstractController
     }
 
 
-    protected function orderByRotation(array $comics, HotBox $hotBox)
+    protected function orderByRotation(EntityManagerInterface $entityManager, array $comics, HotBox $hotBox)
     {
         $inHotBox = [];
         $outHotBox = [];
+
+        $reset = false;
 
         /**
          * @var Comic $comic
          */
         foreach ($comics as $comic) {
             $seen = false;
+            if (!$comic->imageSizeMatch($hotBox) && !$comic->getRotations()->isEmpty()) {
+
+                // Get rotations that belong to this comic and hotbox, then remove them from both comic and hotbox
+
+                $comic->clearRotationsFromHotBox($hotBox);
+
+                $outHotBox[] = $comic;
+                continue;
+            }
             foreach ($comic->getRotations() as $rotation) {
+
                 if ($rotation->getHotbox()->getId() === $hotBox->getId()) {
                     $inHotBox[] = $comic;
                     $seen = true;
@@ -172,6 +183,7 @@ class HotBoxController extends AbstractController
                 $outHotBox[] = $comic;
             }
         }
+        $this->retimeRotations($entityManager, $hotBox);
 
         usort($inHotBox, function (Comic $a, Comic $b) use ($hotBox) {
             /**

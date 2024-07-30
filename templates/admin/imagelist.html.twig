@@ -11,19 +11,19 @@
         </div>
         <div class="row mb-2">
                 {% for image in images %}
-                   <div class="col-4 mb-2">
-                       <div class="col border m-1 p-2 {% if image.approved %}bg-success text-white{% endif %}">
+                   <div class="col-3 mb-2">
+                       <div class="col border m-1 p-2 ">
                            <div class="row mb-1">
                                <div class="col text-center"><h4>{{ image.comic.name }}</h4></div>
                            </div>
                            <div class="row mb-1">
                                <div class="col text-center">
-                                   <img src="{{ image.path }}" alt="{{ image.alttext }}" class="border-3 border-white">
+                                   <img src="{{ image.path }}" alt="{{ image.alttext }}" class="border border-5 {% if image.approved %}border-success{% endif %} img-fluid">
                                </div>
                            </div>
                            <div class="row mb-1">
                                <div class="col text-center">
-                                   <a href="/admin/toggle/image/{{ image.id }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if image.approved %}fa-check{% else %}fa-hourglass{% endif %}"></i></a>
+                                   <a href="/admin/image/toggle/{{ image.id }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
                                </div>
                            </div>
                        </div>

@@ -7,6 +7,8 @@ use Monolog\DateTimeImmutable;
 
 class RotationFrequencyEnumeration extends AbstractEnumeration
 {
+    const LENGTH_MINUTE = 'Minute'; // Testing only
+    const LENGTH_QUARTER = '15 Minutes'; // Testing only
     const LENGTH_HOUR = 'Hour';
     const LENGTH_DAY = 'Day';
     const LENGTH_WEEK = 'Week';
@@ -17,6 +19,14 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
     {
         $current = new \DateTime();
         switch ($length) {
+            case self::LENGTH_MINUTE:
+                $current->setTime($current->format('H'), $current->format('i'), 0);
+                break;
+            case self::LENGTH_QUARTER:
+                $minNow = $current->format("i");
+                $quarter = 15 * (floor((int)$minNow/15));
+                $current->setTime($current->format('H'), $quarter, 0);
+                break;
             case self::LENGTH_HOUR:
                 $current->setTime($current->format('H'), 0, 0);
                 break;
@@ -41,6 +51,12 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
     {
         $lastDate = clone $start;
         switch ($length) {
+            case self::LENGTH_MINUTE:
+                $lastDate->modify("+1 minute");
+                break;
+            case self::LENGTH_QUARTER:
+                $lastDate->modify("+15 minute");
+                break;
             case self::LENGTH_HOUR:
                 $lastDate->modify("+1 hour");
                 break;
@@ -64,6 +80,8 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
     public static function getChoices()
     {
         return [
+            self::LENGTH_MINUTE => self::LENGTH_MINUTE,
+            self::LENGTH_QUARTER => self::LENGTH_QUARTER,
             self::LENGTH_HOUR => self::LENGTH_HOUR,
             self::LENGTH_DAY => self::LENGTH_DAY,
             self::LENGTH_WEEK => self::LENGTH_WEEK,

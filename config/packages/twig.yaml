@@ -3,6 +3,7 @@ twig:
     globals:
         hotboxservice: '@App\Service\HotBoxService'
         settings: '@App\Service\SettingsService'
+        roles: '@App\Service\RoleService'
 when@test:
     twig:
         strict_variables: true

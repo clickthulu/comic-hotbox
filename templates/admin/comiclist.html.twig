@@ -19,7 +19,7 @@
             <tbody>
                 {% for comic in comics %}
                     <tr class="{% if comic.approved %}bg-success text-white{% endif %}">
-                        <td><a class="btn {% if comic.approved %}btn-primary{% else %}btn-outline-primary{% endif %}" href="/admin/toggle/comic/{{ comic.id }}"><i class="fas fa-check"></i></a></td>
+                        <td><a class="btn {% if comic.approved %}btn-primary{% else %}btn-outline-primary{% endif %}" href="/admin/comic/toggle/{{ comic.id }}"><i class="fas fa-check"></i></a></td>
                         <td>{{ comic.name }}</td>
                         <td>{% if comic.user.Name %}{{ comic.user.Name }}{% else %}{{ comic.user.email }}{% endif %}</td>
                         <td>
