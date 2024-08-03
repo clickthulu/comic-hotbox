@@ -14,6 +14,7 @@ use App\Exceptions\HotBoxException;
 use App\Form\EditUserType;
 use App\Form\InviteUsersType;
 use App\Form\SettingsType;
+use App\Service\SettingsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,7 +36,7 @@ class AdminController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/user/invite', name: 'app_admininviteusers')]
-    public function inviteUsers(MailerInterface $mailer, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, Request $request): Response
+    public function inviteUsers(MailerInterface $mailer, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, SettingsService $settings, Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
@@ -64,11 +65,12 @@ class AdminController extends AbstractController
                         throw new HotBoxException("Email From address is not configured.");
                     }
 
+                    $servername = $settings->get('server_name')->getValue() ?? 'HotBox';
 
                     $message = (new Email())
                         ->from($emailfrom)
                         ->to($email)
-                        ->subject("You have been invited to join HotBox")
+                        ->subject("You have been invited to join {$servername}")
                         ->html($this->render("registration/userinvite_email.html.twig", [ "user" => $user,  "reg" => $regcode ])->getContent());
                     $mailer->send($message);
 
