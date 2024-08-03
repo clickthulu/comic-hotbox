@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hosted Comics{% endblock %}
+
+{% block body %}
+
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="col-10" id="hb-approve-comics">
+        <div class="row">
+            <h1>Approve Images</h1>
+        </div>
+        <div class="row mb-2">
+                {% for image in images %}
+                   <div class="col-3 mb-2">
+                       <div class="col border m-1 p-2 ">
+                           <div class="row mb-1">
+                               <div class="col text-center"><h4>{{ image.comic.name }}</h4></div>
+                           </div>
+                           <div class="row mb-1">
+                               <div class="col text-center">
+                                   <img src="{{ image.path }}" alt="{{ image.alttext }}" class="border border-5 {% if image.approved %}border-success{% endif %} img-fluid">
+                               </div>
+                           </div>
+                           <div class="row mb-1">
+                               <div class="col text-center">
+                                   <a href="{{ url('app_toggleimage', { id: image.id}) }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}
+

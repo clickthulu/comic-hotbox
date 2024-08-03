@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hosted Comics{% endblock %}
+
+{% block body %}
+
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="col-10" id="hb-approve-comics">
+        <h1>Approve Comics</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>&nbsp</th>
+                    <th>Comic</th>
+                    <th>Author</th>
+                    <th># Images</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comic in comics %}
+                    <tr class="{% if comic.approved %}bg-success text-white{% endif %}">
+                        <td><a class="btn {% if comic.approved %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url('app_togglecomicapprove', { id: comic.id}) }}"><i class="fas fa-check"></i></a></td>
+                        <td>{{ comic.name }}</td>
+                        <td>{% if comic.user.Name %}{{ comic.user.Name }}{% else %}{{ comic.user.email }}{% endif %}</td>
+                        <td>
+                            <span class="fa-layers fa-fw" >
+                                <i class="fas fa-image"></i>
+                                <span class="fa-layers-text">{{ comic.images|length }}</span>
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}
+

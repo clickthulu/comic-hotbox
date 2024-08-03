@@ -1,0 +1,31 @@
+function HotBox() {
+    this.SERVERURL = "{{ settings.serverurl|raw }}";
+
+    this.init = function() {
+        const collection = document.getElementsByClassName("hotbox");
+        for ( let i = 0; i < collection.length; i++) {
+            let code = collection[i].getAttribute('data-hotbox');
+            this.call(code, collection[i]);
+        }
+    }
+
+    this.call = function(code, target) {
+        let dataurl = this.SERVERURL + "/api/hotbox/" + code;
+        fetch(dataurl)
+            .then((response) => response.json())
+            .then((data) => this.build(data, target))
+            .catch((error) => console.log(error));
+    }
+
+    this.build = function(data, target) {
+        target.innerHTML = "{% include "@custom/public/hotbox-widget.js.twig" %}";
+    }
+
+    this.init();
+}
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+    let hotbox = new HotBox();
+});

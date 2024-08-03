@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block body %}
+    <div class="col align-items-center justify-content-center pt-5">
+        <div class="col-10" id="hb-manage-users">
+            <div class="row">
+                <h1 class="h3 mb-3 font-weight-normal">Manage Users</h1>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>User</th>
+                                <th>Comics / Images</th>
+
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                {% set imgCount = 0 %}
+                                {% for comic in user.comics %}
+                                    {% set imgCount =  imgCount + comic.images|length %}
+                                {% endfor %}
+
+                                <tr>
+                                    <td>
+                                        <i class="fas
+                                        {% if roles.role('ROLE_OWNER') in user.roles %}
+                                            fa-crown
+                                        {% elseif roles.role('ROLE_ADMIN') in user.roles %}
+                                            fa-hat-wizard
+                                        {% elseif roles.role('ROLE_MODERATOR')in user.roles %}
+                                            fa-hat-cowboy-side
+                                        {% else %}
+                                            fa-paint-roller
+                                        {% endif %}
+                                        "></i>
+                                    </td>
+                                    <td>{% if user.Name %}{{ user.Name }}{% else %}{{ user.email }}{% endif %}</td>
+                                    <td>{{ user.comics|length }} / {{ imgCount }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url('app_edituser', {id: user.id}) }}" class="btn {% if user.active %}btn-success{% else %}btn-outline-success{% endif %}"><i class="fas fa-edit"></i></a>
+                                            {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
+                                                <a href="{{ url('app_toggleuser', { id: user.id}) }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
+                                            {% endif %}
+                                            {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
+                                                <a href="{{ url('app_deleteuser', { id: user.id}) }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            {% endif %}
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Server Settings{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card col p-3 mt-5 panel" id="c4-comic-admin">
+        <div class="row mb-3">
+            <div class="col">
+                <h1>Server Settings</h1>
+            </div>
+        </div>
+        {{ form_start(settingsForm)}}
+
+            {% for item in settingsForm.items %}
+                <div class="row mb-3">
+                    {{ form_label(item.children['value'], item.children['value'].vars['label'], { "label_attr": {"class": "col-4 text-end fw-bold" } }) }}
+                    <div class="col">
+                        {{ form_widget(item.children['value']) }}
+                        {{ form_help(item.children['value'], { "help_attr": { "class": "fw-light"} }) }}
+                    </div>
+                </div>
+            {% endfor %}
+            {% do settingsForm.items.setRendered() %}
+
+            <div class="row mb-3">
+                <div class="col offset-3">
+                    {{ form_widget(settingsForm.submit) }}
+                </div>
+            </div>
+
+
+
+        {{ form_end(settingsForm)}}
+
+
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

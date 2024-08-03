@@ -1,0 +1,123 @@
+<div class="col mt-5" >
+    {% if settings.get('brand_header') != '' or settings.get('brand_header') is not null %}
+        {% set brand = settings.get('brand_header').value %}
+    <div class="row">
+
+        <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid">
+    </div>
+    {% endif %}
+    <div class="row panel p-3" id="user-sidebar">
+        <div class="row">
+            <div class="col nav-expanded"><h5>Hello {{ app.user.name }}</h5></div>
+        </div>
+
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4"><a href="{{ url('app_dashboard') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Dashboard"><i class="fas fa-home"></i></a></div>
+            <div class="col nav-expanded"><a href="{{ url('app_dashboard') }}" class="nav-link">Dashboard</a></div>
+        </div>
+
+
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4"><a href="{{ url('app_account') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Account Details"><i class="fas fa-user"></i></a></div>
+            <div class="col nav-expanded"><a href="{{ url('app_account') }}" class="nav-link">Account</a></div>
+        </div>
+
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4"><a href="{{ url('app_forgot_password_request') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="fas fa-key"></i></a></div>
+            <div class="col nav-expanded"><a href="{{ url('app_forgot_password_request') }}" class="nav-link">Reset Password</a></div>
+        </div>
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4"><a href="{{ url('app_logout') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout"><i class="fas fa-right-from-bracket"></i></a></div>
+            <div class="col nav-expanded"><a href="{{ url('app_logout') }}" class="nav-link">Logout</a></div>
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="row border-top mt-3 pt-3 "></div>
+            <div class="row nav-expanded"><h5>Administration</h5></div>
+            <div class="row nav-expanded"><h6>HotBox</h6></div>
+
+            {% for hb in hotboxservice.hotboxes %}
+                <div class="row ps-3 mb-2">
+                    <div class="col-2 ms-2 me-4"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes"><i class="fas fa-box"></i></a></div>
+                    <div class="col nav-expanded"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link">{{ hb.name }}</a></div>
+                </div>
+            {% endfor %}
+            <div class="row ps-3 mb-4">
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_createhotbox') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New HotBox"><i class="fas fa-box-open"></i></a></div>
+                <div class="col nav-expanded"><a href="{{ url('app_createhotbox') }}" class="nav-link">New HotBox</a></div>
+            </div>
+            <div class="row nav-expanded"><h6>Users</h6></div>
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_manageuser') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-users"></i></a></div>
+                <div class="col nav-expanded"><a href="{{ url('app_manageuser') }}" class="nav-link">Manage Users</a></div>
+            </div>
+
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_admininviteusers') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-user-plus"></i></a></div>
+                <div class="col nav-expanded"><a href="{{ url('app_admininviteusers') }}" class="nav-link">Invite Users</a></div>
+            </div>
+
+            <div class="row nav-expanded"><h6>Approvals</h6></div>
+
+            {% set comicCount = settings.get('comics_pending').value %}
+            {% set imageCount = settings.get('images_pending').value %}
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4">
+                    <a href="{{ url('app_adminapprovecomic') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Comics">
+                        <div class="{% if comicCount > 0 %}fa-2x fa-bounce sidebar-alert {% endif %}">
+                            <span class="fa-layers fa-fw">
+                                <i class="fas fa-certificate" {% if comicCount > 0 %} style="color: red;" {% endif %}></i>
+                                <span class="fa-layers-text fa-inverse sidebar-alert-text" data-fa-transform="shrink-8">{% if comicCount > 0 %}{{ comicCount }}{% endif %}</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="col nav-expanded"><a href="{{ url('app_adminapprovecomic') }}" class="nav-link">Approve Comics</a></div>
+            </div>
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4">
+                    <a href="{{ url('app_adminapproveimages') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Images">
+                        <div class="{% if imageCount > 0 %}fa-2x fa-bounce sidebar-alert {% endif %}">
+                            <span class="fa-layers fa-fw">
+                                <i class="fas fa-file" {% if imageCount > 0 %} style="color: red;" {% endif %}></i>
+                                <span class="fa-layers-text fa-inverse sidebar-alert-text" data-fa-transform="shrink-8">{% if imageCount > 0 %}{{ imageCount }}{% endif %}</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="col nav-expanded"><a href="{{ url('app_adminapproveimages') }}" class="nav-link">Approve Images</a></div>
+            </div>
+
+            <div class="row nav-expanded"><h6>Settings</h6></div>
+
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_settings') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Site Settings"><i class="fas fa-gears"></i></a></div>
+                <div class="col nav-expanded"><a href="{{ url('app_settings') }}" class="nav-link">Manage Settings</a></div>
+            </div>
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_managemedia') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Media Manager"><i class="fas fa-image"></i></a></div>
+                <div class="col nav-expanded"><a href="{{ url('app_managemedia') }}" class="nav-link">Manage Media</a></div>
+            </div>
+
+        {% endif %}
+
+        <div class="row border-top mt-3 pt-3 "></div>
+        <div class="row nav-expanded"><h5>My Stuff</h5></div>
+        {% for comic in app.user.comics %}
+            <div class="row ps-3 mb-2">
+                <div class="col-2 ms-2 me-4">
+                    <a href="{{ url('app_editcomic', { id: comic.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ comic.name }}"><i class="fas fa-book"></i></a>
+                </div>
+                <div class="col nav-expanded"><a href="{{ url('app_editcomic', { id: comic.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="comic.name">{{ comic.name }}</a></div>
+            </div>
+        {% endfor %}
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4">
+                <a href="{{ url('app_newcomic') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Comic"><i class="fas fa-plus"></i></a>
+            </div>
+            <div class="col nav-expanded"><a href="{{ url('app_newcomic') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Comic">New Comic</a></div>
+        </div>
+
+
+    </div>
+</div>

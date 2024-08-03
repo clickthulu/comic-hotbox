@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invite Users{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card col p-3 mt-5 panel" id="c4-comic-admin">
+        <div class="row mb-3">
+            <div class="col">
+                <h1>Invite Users</h1>
+            </div>
+            <div class="col-2"><a href="{{ url('app_manageuser') }}" class="btn btn-outline-light"><i class="fas fa-users"></i> User Management</a></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-4">
+                <h5>Instructions</h5>
+                <p>Put one email per line.  An invite code will be generated and emailed to each user.</p>
+            </div>
+            <div class="col-4">
+                {{ form_start(inviteForm) }}
+                {{ form_end(inviteForm) }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

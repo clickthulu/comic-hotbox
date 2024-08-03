@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HotBox Account{% endblock %}
+
+{% block body %}
+    <div class="col align-items-center justify-content-center pt-5">
+        <div class="col" id="register-staff-screen">
+            <div class="col-6 border p-3">
+                <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
+
+                {{ form_start(accountform) }}
+                <div class="row mb-2">
+                    <div class='col-2 text-end'>Email</div>
+                    <div class="col">{{ app.user.email }}</div>
+                </div>
+
+                <div class="row mb-2">
+                    {{ form_label(accountform.name) }}
+                    <div class="col">{{ form_widget(accountform.name) }}</div>
+                </div>
+
+                {{ form_rest(accountform) }}
+                <button class="btn btn-lg btn-primary" type="submit">Update User</button>
+                {{ form_end(accountform) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}
