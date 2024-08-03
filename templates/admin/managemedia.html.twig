@@ -24,7 +24,7 @@
             <div class="col-3"><img src="{{ file.path }}" class="img-fluid" alt="{{ file.file }}"></div>
             <div class="col">{{ file.file }}</div>
             <div class="col-3">{{ file.upload }}</div>
-            <div class="col-1"><a class="btn btn-danger" href=""><i class="fas fa-trash"></i></a></div>
+            <div class="col-1"><a class="btn btn-danger" href="{{ url('app_deletemedia', { file: file.file }) }}"><i class="fas fa-trash"></i></a></div>
         </div>
     {% endfor %}
     </div>

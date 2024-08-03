@@ -306,4 +306,15 @@ class AdminController extends AbstractController
         move_uploaded_file($files['tmp_name'], $path);
         return new RedirectResponse("/admin/media");
     }
+
+    #[Route('/admin/media/delete/{file}', name: 'app_deletemedia')]
+    public function deleteMedia(string $file): Response
+    {
+        $uploadDir = __DIR__ . "/../../storage/_admin";
+
+        if (file_exists("{$uploadDir}/{$file}")) {
+            @unlink("{$uploadDir}/{$file}");
+        }
+        return new RedirectResponse("/admin/media");
+    }
 }
