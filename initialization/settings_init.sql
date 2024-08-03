@@ -6,5 +6,7 @@ INSERT INTO settings (setting, value, defaultvalue, modifiedon, type, help, disp
     ('email_from_name', null, null, NOW(), 'string', 'Name used to send mail', 'From Name', null),
     ('email_from_address', null, null, NOW(), 'string', 'Email address used to send mail', 'From Address', null),
     ('image_limit', 6, 6, NOW(), "int", "Maximum number of images per comic", "Image Limit", null),
-    ('debug_mode', '0', '0', NOW(), 'bool', 'Turn on debug features for testing', 'Debug Mode:', null)
+    ('debug_mode', '0', '0', NOW(), 'bool', 'Turn on debug features for testing', 'Debug Mode:', null),
+    ('brand_header',null,null, NOW(),'fileselect',"Select a brand header from the media folder","Brand Header","../storage/_admin/*"),
+    ('bug_tracking', null, null, NOW(), 'string', 'Location of a bug tracker/feature request site', 'Bug Tracking', null)
 ;
