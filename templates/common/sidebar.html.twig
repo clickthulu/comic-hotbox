@@ -20,10 +20,19 @@
             <div class="col-2 ms-2 me-4"><a href="{{ url('app_forgot_password_request') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="fas fa-key"></i></a></div>
             <div class="col nav-expanded"><a href="{{ url('app_forgot_password_request') }}" class="nav-link">Reset Password</a></div>
         </div>
+        {% if settings.get('bug_tracking').value is not empty %}
+        <div class="row ps-3 mb-2">
+            <div class="col-2 ms-2 me-4"><a href="{{ settings.get('bug_tracking').value }}" target="_blank" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Bugs & Feature Requests"><i class="fas fa-bug"></i></a></div>
+            <div class="col nav-expanded"><a href="{{ settings.get('bug_tracking').value }}" target="_blank" class="nav-link">Bug & Feature Requests</a></div>
+        </div>
+        {% endif %}
         <div class="row ps-3 mb-2">
             <div class="col-2 ms-2 me-4"><a href="{{ url('app_logout') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout"><i class="fas fa-right-from-bracket"></i></a></div>
             <div class="col nav-expanded"><a href="{{ url('app_logout') }}" class="nav-link">Logout</a></div>
         </div>
+
+
+
 
         {% if is_granted('ROLE_ADMIN') %}
             <div class="row border-top mt-3 pt-3 "></div>
@@ -111,6 +120,8 @@
             </div>
             <div class="col nav-expanded"><a href="{{ url('app_newcomic') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Comic">New Comic</a></div>
         </div>
+
+
 
 
     </div>
