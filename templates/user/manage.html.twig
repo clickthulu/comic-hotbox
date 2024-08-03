@@ -45,22 +45,19 @@
                                     <td>{{ user.comics|length }} / {{ imgCount }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="/admin/edit/user/{{ user.id }}" class="btn {% if user.active %}btn-success{% else %}btn-outline-success{% endif %}"><i class="fas fa-edit"></i></a>
+                                            <a href="{{ url('app_edituser', {id: user.id}) }}" class="btn {% if user.active %}btn-success{% else %}btn-outline-success{% endif %}"><i class="fas fa-edit"></i></a>
                                             {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
-                                                <a href="/admin/user/toggle/{{ user.id }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
+                                                <a href="{{ url('app_toggleuser', { id: user.id}) }}" class="btn {% if user.active %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="fas {% if user.active %}fa-pause-circle{% else %}fa-play-circle{% endif %}"></i></a>
                                             {% endif %}
                                             {% if app.user.id != user.id and roles.role('ROLE_OWNER') not in user.roles %}
-                                                <a href="/admin/user/delete/{{ user.id }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                                <a href="{{ url('app_deleteuser', { id: user.id}) }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                             {% endif %}
 
                                         </div>
                                     </td>
                                 </tr>
-
                             {% endfor %}
-
                         </tbody>
-
                     </table>
                 </div>
             </div>

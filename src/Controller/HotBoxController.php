@@ -7,7 +7,6 @@ use App\Entity\HotBox;
 use App\Entity\Rotation;
 use App\Enumerations\RoleEnumeration;
 use App\Enumerations\RotationFrequencyEnumeration;
-use App\Exceptions\HotBoxException;
 use App\Form\HotBoxCreateFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,7 +68,7 @@ class HotBoxController extends AbstractController
     }
 
     #[Route('/hotbox/toggleRotation/{hotboxid}/{comicid}', name: 'app_addrotation')]
-    public function toggleRotation(Request $request, EntityManagerInterface $entityManager, int $hotboxid, int $comicid): Response
+    public function toggleRotation(EntityManagerInterface $entityManager, int $hotboxid, int $comicid): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);

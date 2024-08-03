@@ -11,6 +11,7 @@ use App\Entity\SettingsCollection;
 use App\Entity\User;
 use App\Enumerations\RoleEnumeration;
 use App\Exceptions\HotBoxException;
+use App\Form\EditUserType;
 use App\Form\InviteUsersType;
 use App\Form\SettingsType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,7 +88,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/approve/comics', name: 'app_adminapprovecomic')]
+    #[Route('/admin/approve/comics', name: 'app_adminapprovecomic')]
     public function approveComics(EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -99,7 +101,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/approve/images', name: 'app_adminapproveimages')]
+    #[Route('/admin/approve/images', name: 'app_adminapproveimages')]
     public function approveImages(EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -147,7 +149,7 @@ class AdminController extends AbstractController
         return new RedirectResponse("/user");
     }
 
-    #[Route('/admin/image/toggle/{id}', name: 'app_toggleuser')]
+    #[Route('/admin/image/toggle/{id}', name: 'app_toggleimage')]
     public function toggleImage(EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -185,15 +187,19 @@ class AdminController extends AbstractController
         /**
          * @var User $usr
          */
-        $usr = $entityManager->getRepository(User::class)->find($id);
+        $user = $entityManager->getRepository(User::class)->find($id);
 
-        return new RedirectResponse("/user");
+        $form = $this->createForm(EditUserType::class, $user);
+        return $this->render('user/edituser.html.twig', [
+            'userform' => $form->createView()
+        ]);
+
     }
 
 
 
-    #[Route('/settings', name: 'app_settings')]
-    public function getSettings(EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/admin/settings', name: 'app_settings')]
+    public function manageSettings(EntityManagerInterface $entityManager, Request $request): Response
     {
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -244,4 +250,60 @@ class AdminController extends AbstractController
         );
     }
 
+    #[Route('/admin/media', name: 'app_managemedia')]
+    public function manageMedia(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
+
+        $uploadDir = __DIR__ . "/../../storage/_admin";
+        $storageDir = "/storage/_admin";
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir);
+        }
+
+        $files = glob("{$uploadDir}/*");
+
+        $filelist = [];
+
+        foreach ($files as $file) {
+            $base = basename($file);
+            $path = "{$storageDir}/{$base}";
+            $upload = filemtime($file);
+            $filelist[] = [
+                'file' => $base,
+                'path' => $path,
+                'upload' => $upload
+            ];
+        }
+
+        return $this->render(
+            'admin/managemedia.html.twig',
+            [
+                'files' => $filelist
+            ]
+        );
+    }
+
+    #[Route('/admin/media/upload', name: 'app_uploadmedia')]
+    public function uploadMedia(): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
+
+        $uploadDir = __DIR__ . "/../../storage/_admin";
+        $storageDir = "/storage/_admin";
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir);
+        }
+        $files = array_pop($_FILES);
+        if (empty($files)) {
+            throw new FileNotFoundException("No file was uploaded.");
+        }
+
+
+        $path = "{$uploadDir}/{$files['name']}";
+        move_uploaded_file($files['tmp_name'], $path);
+        return new RedirectResponse("/admin/media");
+    }
 }

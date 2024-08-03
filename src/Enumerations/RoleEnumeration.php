@@ -37,4 +37,11 @@ class RoleEnumeration extends \Eloquent\Enumeration\AbstractEnumeration
         };
     }
 
+    public static function getChoices(): array
+    {
+        return [
+            self::NAME_ADMIN => self::ROLE_ADMIN,
+            self::NAME_MODERATOR => self::ROLE_MODERATOR,
+        ];
+    }
 }

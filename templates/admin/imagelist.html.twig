@@ -23,7 +23,7 @@
                            </div>
                            <div class="row mb-1">
                                <div class="col text-center">
-                                   <a href="/admin/image/toggle/{{ image.id }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
+                                   <a href="{{ url('app_toggleimage', { id: image.id}) }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
                                </div>
                            </div>
                        </div>
