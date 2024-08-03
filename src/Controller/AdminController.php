@@ -182,19 +182,46 @@ class AdminController extends AbstractController
 
 
     #[Route('/admin/user/edit/{id}', name: 'app_edituser')]
-    public function editUser(EntityManagerInterface $entityManager, int $id): Response
+    public function editUser(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
         /**
-         * @var User $usr
+         * @var User $user
          */
         $user = $entityManager->getRepository(User::class)->find($id);
+        $current = $this->getUser();
+        $isOwner = $user->getId() === $current->getId() && in_array(RoleEnumeration::ROLE_OWNER, $current->getRoles());
 
         $form = $this->createForm(EditUserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $roles = $form->get('roles')->getData();
+                $roles = array_merge($roles, [RoleEnumeration::ROLE_CREATOR]);
+                if ($isOwner) {
+                    $roles = array_merge($roles, [RoleEnumeration::ROLE_CREATOR]);
+                }
+                    $user->setName($form->get('name')->getData())
+                        ->setEmail($form->get('email')->getData())
+                        ->setRoles($roles);
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+
+            } catch (Exception $e){
+                $err = new FormError($e->getMessage());
+                $this->addFlash('error', "{$e->getMessage()}");
+                $form->addError($err);
+            }
+        }
+
         return $this->render('user/edituser.html.twig', [
             'userform' => $form->createView()
         ]);
+
+
+
 
     }
 

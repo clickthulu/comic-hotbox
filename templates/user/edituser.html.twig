@@ -23,6 +23,12 @@
                     {{ form_label(userform.email) }}
                     <div class="col">{{ form_widget(userform.email) }}</div>
                 </div>
+
+                <div class="row mb-2">
+                    {{ form_label(userform.roles) }}
+                    <div class="col">{{ form_widget(userform.roles) }}</div>
+                </div>
+                {#
                 <div class="row mb-2">
 
                     {{ form_label(userform.roles) }}
@@ -40,7 +46,7 @@
                     {% for choice in userform.roles.vars.choices %}
                         <div class="row ms-0">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="{{ choice.value }}" {{ choice.value in userform.roles.vars.data ? 'checked' : '' }} id="{{ userform.roles.vars.id }}_{{cho}}" name="{{ userform.roles.vars.id }}[{{cho}}]" />
+                                <input class="form-check-input" type="checkbox" value="{{ choice.value }}" {{ choice.value in userform.roles.vars.data ? 'checked' : '' }} id="{{ userform.roles.vars.id }}_{{cho}}" name="{{ userform.roles.vars.id }}[{{choice.value}}]" />
                                 <label class="form-check-label" for="{{ userform.roles.vars.id }}_{{cho}}">{{ choice.label }}</label>
                             </div>
                             {% set cho = cho+1 %}
@@ -54,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-
+                #}
                 {{ form_end(userform) }}
 
             </div>
