@@ -1,11 +1,5 @@
 <div class="col mt-5" >
-    {% if settings.get('brand_header') != '' or settings.get('brand_header') is not null %}
-        {% set brand = settings.get('brand_header').value %}
-    <div class="row">
 
-        <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid">
-    </div>
-    {% endif %}
     <div class="row panel p-3" id="user-sidebar">
         <div class="row">
             <div class="col nav-expanded"><h5>Hello {{ app.user.name }}</h5></div>
