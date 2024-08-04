@@ -10,5 +10,12 @@ $(document).ready(function(){
         alert("Code copied");
     });
 
+    $(".copy-data").on('click', function(event){
+        event.preventDefault();
+        let text = $(this).data('copy');
+        let type = $(this).data('type')
+        navigator.clipboard.writeText(text);
+        alert(type + " copied");
+    });
 
 });
