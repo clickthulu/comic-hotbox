@@ -23,3 +23,27 @@
     cursor: pointer;
 }
 
+
+.pop-list {
+    position: fixed;
+    top: 50px;
+    right: 50px;
+    width: 350px;
+    z-index: 9999;
+}
+
+.pop {
+    position: relative;
+    border: 2px solid var(--white);
+    border-radius: 16px;
+}
+
+.info-pop {
+    background-color: rgba(38,146,0,75%) !important;
+    color: var(--white)FFF !important;
+}
+
+.error-pop {
+    background-color: #ff0000 !important;
+    color: var(--white)FFF !important;
+}
