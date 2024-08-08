@@ -21,6 +21,27 @@ class ImageRepository extends ServiceEntityRepository
         parent::__construct($registry, Image::class);
     }
 
+    public function findImagesForActiveComics(?array $criteria = [])
+    {
+        $query = $this->createQueryBuilder('img')
+            ->join('img.comic', 'com', 'img.comic = com.id and com.approved = true and com.active = true');
+        if (!empty($criteria)) {
+            $c = 0;
+            foreach ($criteria as $key => $value) {
+                $lok = "lok{$c}"; $c++;
+
+                $query->andWhere("{$key} = :{$lok}")
+                    ->setParameter($lok, $value);
+
+            }
+        }
+
+
+        return $query
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Image[] Returns an array of Image objects
 //     */
@@ -45,4 +66,6 @@ class ImageRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
 }

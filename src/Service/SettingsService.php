@@ -34,7 +34,7 @@ class SettingsService
         $comics->setType('int')->setSetting('comics_pending')->setValue(count($unapprovedComics));
         $this->settingsCollection->addItem($comics);
 
-        $unapprovedImages = $entityManager->getRepository(Image::class)->findBy(['approved' => false]);
+        $unapprovedImages = $entityManager->getRepository(Image::class)->findImagesForActiveComics(['com.approved' => true, 'img.approved' => false]);
         $images = new Settings();
         $images->setType('int')->setSetting('images_pending')->setValue(count($unapprovedImages));
         $this->settingsCollection->addItem($images);

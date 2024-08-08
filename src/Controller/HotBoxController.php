@@ -49,7 +49,7 @@ class HotBoxController extends AbstractController
             $entityManager->persist($hotbox);
             $entityManager->flush();
             $this->retimeRotations($entityManager, $hotbox);
-            return new RedirectResponse("/hotbox/edit/{$hotbox->getId()}");
+            return new RedirectResponse($this->generateUrl('app_hotboxedit', ['id' => $hotbox->getId()]));
         }
 
 
@@ -94,7 +94,7 @@ class HotBoxController extends AbstractController
         $entityManager->flush();
         $this->retimeRotations($entityManager, $hotbox);
 
-        return new RedirectResponse("/hotbox/edit/{$hotboxid}");
+        return new RedirectResponse($this->generateUrl('app_hotboxedit', ['id' => $hotboxid]));
     }
 
 

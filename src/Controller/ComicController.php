@@ -51,7 +51,7 @@ class ComicController extends AbstractController
             $entityManager->flush();
             $id = $comic->getId();
 
-            return new RedirectResponse("/comic/edit/{$id}");
+            return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $id]));
         }
 
 
@@ -86,7 +86,7 @@ class ComicController extends AbstractController
         $entityManager->remove($comic);
         $entityManager->flush();
 
-        return new RedirectResponse("/");
+        return new RedirectResponse($this->generateUrl('app_dashboard'));
     }
 
     #[Route('/comic/uploadimage/{comicid}/{imageid?}', name: 'app_uploadimage')]
@@ -144,7 +144,7 @@ class ComicController extends AbstractController
         ;
         $entityManager->persist($image);
         $entityManager->flush();
-        return new RedirectResponse("/comic/edit/{$comicid}");
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 
     #[Route('/comic/image/delete/{comicid}/{imageid}', name: 'app_deleteimage')]
@@ -166,7 +166,7 @@ class ComicController extends AbstractController
         $image = $entityManager->getRepository(Image::class)->find($imageid);
         $entityManager->remove($image);
         $entityManager->flush();
-        return new RedirectResponse("/comic/edit/{$comicid}");
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 
 
@@ -220,6 +220,6 @@ class ComicController extends AbstractController
         $image->setActive($active);
         $entityManager->persist($image);
         $entityManager->flush();
-        return new RedirectResponse("/comic/edit/{$comicid}");
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 }
