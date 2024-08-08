@@ -3,8 +3,10 @@
 {% block title %}HotBox Dashboard{% endblock %}
 
 {% block body %}
-    <div class="col align-items-center justify-content-center pt-5">
-        <div class="col-10" id="hb-createupdate-hotbox">
+<div class="container">
+    <div class="card mt-5 p-3 col offset">
+        <div class="row" id="register-staff-screen">
+            <div class="col  p-3" id="hb-createupdate-hotbox">
             <div class="row mb-3 border-bottom">
                 <h1 class="mb-3">Welcome to {{ settings.get('server_name').value }}</h1>
             </div>
@@ -25,7 +27,7 @@
                         <h4>HotBoxes</h4>
                     </div>
                     <div class="row mb-2">
-                        <div class="col">
+                        <div class="col mb-3">
                             This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are supported:
                         </div>
                     </div>
@@ -35,7 +37,7 @@
                             {% set allowedHotbox = allowedHotbox + 1 %}
                         {% endif %}
                         <div class="row mb-2">
-                            <div class="col-4"><b>{{ hotbox.name }}:</b></div>
+                            <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
                             <div class="col">{{ hotbox.imageWidth }} x {{ hotbox.imageHeight }}</div>
                         </div>
                     {% endfor %}
@@ -57,7 +59,7 @@
                             </div>
                         </div>
                     {% else %}
-                        <div class="row mb-2">
+                        <div class="row mb-3">
                             <div class="col">
                                 Insert this piece of code where you want your HotBox:
                             </div>
@@ -65,7 +67,7 @@
                         {% for hotbox in hotboxes %}
                             {% if hotbox.getUserAllowed(app.user) %}
                                 <div class="row mb-2">
-                                    <div class="col-4"><b>{{ hotbox.name }}</b></div>
+                                    <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
                                     <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hotbox" data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
                                         <button class="btn btn-sm btn-primary copytext-button" data-target="copytext-hb-{{ hotbox.id }}" title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
                                     </div>
@@ -112,10 +114,11 @@
                 </div>
 
 
+    </div>
             </div>
-
         </div>
     </div>
+</div>
 {% endblock %}
 
 

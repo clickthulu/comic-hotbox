@@ -21,19 +21,39 @@ $(document).ready(function(){
     $(".img-cropped").on('click', function(event){
         event.preventDefault();
         let data = this.outerHTML;
-
+        let imgModal = $("#image-modal");
         let approve = $(this).parents('.image-row').first().find('a.approve-button'); //.find('a.approve-button');
-        $("#image-modal").find(".modal-body").html(this.outerHTML);
-        $("#image-modal").find(".modal-body").find('img').removeClass('img-cropped');
-        $("#image-modal").find(".modal-footer").html(approve[0].outerHTML);
+        imgModal.find(".modal-body").html(this.outerHTML);
+        imgModal.find(".modal-body").find('img').removeClass('img-cropped');
+        imgModal.find(".modal-footer").html(approve[0].outerHTML);
 
         let imageApproved = approve.hasClass('btn-primary');
         let title = imageApproved ? 'Remove Approval' : 'Approve Image'
-        $("#image-modal").find(".modal-title").text(title);
-        $("#image-modal").modal('show')
+        imgModal.find(".modal-title").text(title);
+        imgModal.modal('show')
+
+    });
 
 
+    setTimeout(function(){
+        $(".pop").each(function(){
+            closePop($(this));
+        })
+    }, 10000)
 
-    })
+    $(".pop-close").on('click', function(event){
+        event.preventDefault();
+        let target = $(this).parents(".pop").first();
+        closePop(target);
+    });
+
+    function closePop(target)
+    {
+        console.log("Close pop triggered")
+        if(target){
+            target.fadeOut(1000, function(){ console.log("Closing pop"); target.remove(); });
+        }
+    }
+
 
 });
