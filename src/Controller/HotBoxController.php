@@ -31,6 +31,13 @@ class HotBoxController extends AbstractController
         $form = $this->createForm(HotBoxCreateFormType::class, $hotbox);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $checkHB = $entityManager->getRepository(HotBox::class)->findBy(['name' => $form->get('name')->getData()]);
+            if (empty($id) && !empty($checkHB)) {
+                // This hotbox already exists
+                $hotbox = $checkHB;
+            }
+
             $name = $form->get('name')->getData();
             $code = $form->get('code')->getData();
             $active = $form->get('active')->getData();
@@ -49,7 +56,7 @@ class HotBoxController extends AbstractController
             $entityManager->persist($hotbox);
             $entityManager->flush();
             $this->retimeRotations($entityManager, $hotbox);
-            return new RedirectResponse($this->generateUrl('app_hotboxedit', ['id' => $hotbox->getId()]));
+            return new RedirectResponse($this->generateUrl('app_edithotbox', ['id' => $hotbox->getId()]));
         }
 
 
@@ -94,7 +101,7 @@ class HotBoxController extends AbstractController
         $entityManager->flush();
         $this->retimeRotations($entityManager, $hotbox);
 
-        return new RedirectResponse($this->generateUrl('app_hotboxedit', ['id' => $hotboxid]));
+        return new RedirectResponse($this->generateUrl('app_edithotbox', ['id' => $hotboxid]));
     }
 
 
