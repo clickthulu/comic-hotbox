@@ -9,30 +9,36 @@
         <div class="row">
             <h1>Approve Images</h1>
         </div>
-        <div class="row mb-2">
                 {% for image in images %}
-                   <div class="col-3 mb-2">
-                       <div class="col border m-1 p-2 ">
-                           <div class="row mb-1">
-                               <div class="col text-center"><h4>{{ image.comic.name }}</h4></div>
-                           </div>
-                           <div class="row mb-1">
-                               <div class="col text-center">
-                                   <img src="{{ image.path }}" alt="{{ image.alttext }}" class="border border-5 {% if image.approved %}border-success{% endif %} img-fluid">
-                               </div>
-                           </div>
-                           <div class="row mb-1">
-                               <div class="col text-center">
-                                   <a href="{{ url('app_toggleimage', { id: image.id}) }}" class="btn btn-block {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
-                               </div>
-                           </div>
+                   <div class="row mb-2 image-row">
+                       <div class="col-1 ">
+                           <a href="{{ url('app_toggleimage', { id: image.id}) }}" class="btn btn-block approve-button {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i></a>
+                       </div>
+                       <div class="col">
+                           <div class="col text-center"><h4>{{ image.comic.name }}</h4></div>
+                       </div>
+                       <div class="col-2">
+                           <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img-fluid img-cropped img-button">
                        </div>
                    </div>
                 {% endfor %}
-        </div>
-    </div>
 </div>
 
+
+    <div id='image-modal' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h5 class="modal-title"></h5>
+                </div>
+                <div class="modal-body text-center">
+
+                </div>
+                <div class="modal-footer text-center">
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block sidebar %}

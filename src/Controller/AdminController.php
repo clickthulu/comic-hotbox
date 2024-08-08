@@ -109,7 +109,7 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
 
-        $images = $entityManager->getRepository(Image::class)->findBy([], ['approved' => 'ASC']);
+        $images = $entityManager->getRepository(Image::class)->findImagesForActiveComics(['com.approved' => true], ['approved' => 'ASC']);
 
         return $this->render('admin/imagelist.html.twig', [
             'images' => $images
@@ -128,10 +128,19 @@ class AdminController extends AbstractController
          * @var Comic
          */
         $comic = $entityManager->getRepository(Comic::class)->find($id);
-        $comic->setApproved(!$comic->isApproved());
+        $approved = !$comic->isApproved();
+        $comic->setApproved($approved);
+        if (!$approved) {
+            foreach ($comic->getImages() as $image) {
+                $image->setApproved(false);
+                $entityManager->persist($image);
+            }
+        }
+
+
         $entityManager->persist($comic);
         $entityManager->flush();
-        return new RedirectResponse("/approve/comics");
+        return new RedirectResponse($this->generateUrl("app_adminapprovecomic"));
     }
 
 
@@ -148,7 +157,7 @@ class AdminController extends AbstractController
         $usr->setActive(!$usr->isActive());
         $entityManager->persist($usr);
         $entityManager->flush();
-        return new RedirectResponse("/user");
+        return new RedirectResponse($this->generateUrl('app_manageuser'));
     }
 
     #[Route('/admin/image/toggle/{id}', name: 'app_toggleimage')]
@@ -163,7 +172,7 @@ class AdminController extends AbstractController
         $img->setApproved(!$img->isApproved());
         $entityManager->persist($img);
         $entityManager->flush();
-        return new RedirectResponse("/approve/images");
+        return new RedirectResponse($this->generateUrl("app_adminapproveimages"));
     }
 
     #[Route('/admin/user/delete/{id}', name: 'app_deleteuser')]
@@ -177,7 +186,7 @@ class AdminController extends AbstractController
         $usr = $entityManager->getRepository(User::class)->find($id);
         $entityManager->remove($usr);
         $entityManager->flush();
-        return new RedirectResponse("/user");
+        return new RedirectResponse($this->generateUrl('app_manageuser'));
     }
 
 
@@ -333,7 +342,7 @@ class AdminController extends AbstractController
 
         $path = "{$uploadDir}/{$files['name']}";
         move_uploaded_file($files['tmp_name'], $path);
-        return new RedirectResponse("/admin/media");
+        return new RedirectResponse($this->generateUrl('app_managemedia'));
     }
 
     #[Route('/admin/media/delete/{file}', name: 'app_deletemedia')]
@@ -344,6 +353,6 @@ class AdminController extends AbstractController
         if (file_exists("{$uploadDir}/{$file}")) {
             @unlink("{$uploadDir}/{$file}");
         }
-        return new RedirectResponse("/admin/media");
+        return new RedirectResponse($this->generateUrl('app_managemedia'));
     }
 }

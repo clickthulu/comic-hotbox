@@ -14,4 +14,12 @@
     border-radius: 16px;
 }
 
+.img-cropped {
+    border: 3px solid gray;
+    border-radius: 8px;
+    object-fit: cover;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+}
 

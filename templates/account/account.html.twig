@@ -3,9 +3,10 @@
 {% block title %}HotBox Account{% endblock %}
 
 {% block body %}
-    <div class="col align-items-center justify-content-center pt-5">
-        <div class="col" id="register-staff-screen">
-            <div class="col-6 border p-3">
+    <div class="container">
+    <div class="card mt-5">
+        <div class="row" id="register-staff-screen">
+            <div class="col  p-3">
                 <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
 
                 {{ form_start(accountform) }}
@@ -20,11 +21,18 @@
                 </div>
 
                 {{ form_rest(accountform) }}
-                <button class="btn btn-lg btn-primary" type="submit">Update User</button>
+                <div class="row mb-2">
+                <div class="offset-2">
+                    <button class="btn btn-lg btn-primary" type="submit">Update User</button>
+
+                </div>
+                </div>
                 {{ form_end(accountform) }}
             </div>
         </div>
     </div>
+    </div>
+
 {% endblock %}
 
 
