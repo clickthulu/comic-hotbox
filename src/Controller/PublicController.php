@@ -50,5 +50,25 @@ class PublicController extends AbstractController
 
     }
 
+    #[Route('/api/info', name: 'app_hotboxinfo')]
+    public function getInfo(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /**
+         * @var HotBox $hotbox
+         */
+        $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
+        $data = [];
+        /**
+         * @var HotBox $hotbox
+         */
+        foreach ($hotboxes as $hotbox) {
+            $data[] = [
+                'name' => $hotbox->getName(),
+                'size' => "{$hotbox->getImageWidth()} x {$hotbox->getImageHeight()}",
+                'code' => $hotbox->getCode()
+            ];
+        }
+        return new JsonResponse($data);
+    }
 
 }
