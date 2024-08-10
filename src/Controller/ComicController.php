@@ -176,6 +176,7 @@ class ComicController extends AbstractController
     #[Route('/comic/image/activate/{comicid}/{imageid}', name: 'app_activateimage')]
     public function activateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->changeImageActiveFlag($entityManager, $comicid, $imageid, true);
     }
 
@@ -183,6 +184,7 @@ class ComicController extends AbstractController
     #[Route('/comic/image/deactivate/{comicid}/{imageid}', name: 'app_deactivateimage')]
     public function deactivateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $return = $this->changeImageActiveFlag($entityManager, $comicid, $imageid, false);
         /**
          * @var Comic $comic
