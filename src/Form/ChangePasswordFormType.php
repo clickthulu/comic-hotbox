@@ -20,7 +20,10 @@ class ChangePasswordFormType extends AbstractType
                 'options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
+                        'class' => 'form-horizontal form-control'
                     ],
+                    'label_attr' => ['class' => 'col-form-label col-3'],
+                    'row_attr' => ['class' => 'row']
                 ],
                 'first_options' => [
                     'constraints' => [

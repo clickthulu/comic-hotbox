@@ -25,14 +25,16 @@
 <div class="mx-5">
     {% if settings.get('brand_header').value != '' or settings.get('brand_header').value is not null %}
         {% set brand = settings.get('brand_header').value %}
-        <div class="row mt-5">
-            <div class="col-3" id="brand-container">
-                <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid">
-            </div>
-            <div class="col">
+        <div class="col{% if headeroffset is defined and headeroffset is not null %}{{ headeroffset }}{% endif %}">
+            <div class="row mt-5">
+                <div class="col-3" id="brand-container">
+                    <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid">
+                </div>
+                <div class="col">
+                </div>
             </div>
         </div>
-        {% endif %}
+    {% endif %}
     <div class="row">
 
         {% if block("sidebar") is not empty %}
