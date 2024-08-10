@@ -3,7 +3,7 @@
 {% block title %}Reset your password{% endblock %}
 
 {% block body %}
-<div class="col col-8 offset-2 p-3">
+<div class="col {% if app.user is null %}col-8 offset-2{% endif %} p-3">
     <div class="row">
         <h1>Reset your password</h1>
     </div>
