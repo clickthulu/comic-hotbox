@@ -3,7 +3,7 @@
 {% block title %}Password Reset Email Sent{% endblock %}
 
 {% block body %}
-    <div class="col p-3 col-8 offset-2">
+    <div class="col p-3 {% if app.user is null %}col-8 offset-2{% endif %}">
         <div class="row">
             <h1>Your link is on the way!</h1>
         </div>
@@ -21,4 +21,7 @@
 
 
 {% block sidebar %}
+    {% if app.user is not null %}
+        {% include "common/sidebar.html.twig" %}
+    {% endif %}
 {% endblock %}
