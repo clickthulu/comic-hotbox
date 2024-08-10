@@ -3,125 +3,119 @@
 {% block title %}HotBox Dashboard{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="card mt-5 p-3 col offset">
-        <div class="row" id="register-staff-screen">
-            <div class="col  p-3" id="hb-createupdate-hotbox">
-            <div class="row mb-3 border-bottom">
-                <h1 class="mb-3">Welcome to {{ settings.get('server_name').value }}</h1>
-            </div>
-            <div class="row">
-                <div class="col border-right">
+    <div class="col  p-3" id="hb-createupdate-hotbox">
+        <div class="row mb-3 border-bottom">
+            <h1 class="mb-3">Welcome to {{ settings.get('server_name').value }}</h1>
+        </div>
+        <div class="row">
+            <div class="col border-right">
+                <div class="row mb-2">
+                    <h4>Details</h4>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4"><b>Owner:</b></div>
+                    <div class="col">{{ settings.get('server_owner').value }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4"><b>Url:</b></div>
+                    <div class="col">{{ settings.get('server_url').value }}</div>
+                </div>
+                <div class="row pt-3 mb-2 mt-2 border-top">
+                    <h4>HotBoxes</h4>
+                </div>
+                <div class="row mb-2">
+                    <div class="col mb-3">
+                        This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are
+                        supported:
+                    </div>
+                </div>
+                {% set allowedHotbox = 0 %}
+                {% for hotbox in hotboxes %}
+                    {% if hotbox.getUserAllowed(app.user) %}
+                        {% set allowedHotbox = allowedHotbox + 1 %}
+                    {% endif %}
                     <div class="row mb-2">
-                        <h4>Details</h4>
+                        <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
+                        <div class="col">{{ hotbox.imageWidth }} x {{ hotbox.imageHeight }}</div>
                     </div>
+                {% endfor %}
+                <div class="row pt-3 mb-2 mt-2 border-top">
+                    <h4>Installation</h4>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        In your website's code, include the following Javascript line:<br/>
+                        <code id="copytext-script">&lt;script language="Javascript"
+                            src="{{ settings.get('server_url').value }}/hotbox.js" crossorigin="anonymous"&gt;&lt;/script&gt;</code>
+                        <button class="btn btn-sm btn-primary copytext-button" data-target="copytext-script"
+                                title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+                {% if allowedHotbox == 0 %}
                     <div class="row mb-2">
-                        <div class="col-4"><b>Owner:</b></div>
-                        <div class="col">{{ settings.get('server_owner').value }}</div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-4"><b>Url:</b></div>
-                        <div class="col">{{ settings.get('server_url').value }}</div>
-                    </div>
-                    <div class="row pt-3 mb-2 mt-2 border-top">
-                        <h4>HotBoxes</h4>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col mb-3">
-                            This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are supported:
+                        <div class="col">
+                            <h5>Uh oh</h5>
+                            Currently you do not have any comics assigned to a hotbox. Please upload comic images and
+                            contact the server administrator to be added to a rotation.
                         </div>
                     </div>
-                    {% set allowedHotbox = 0 %}
-                    {% for hotbox in hotboxes %}
-                        {% if hotbox.getUserAllowed(app.user) %}
-                            {% set allowedHotbox = allowedHotbox + 1 %}
-                        {% endif %}
-                        <div class="row mb-2">
-                            <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
-                            <div class="col">{{ hotbox.imageWidth }} x {{ hotbox.imageHeight }}</div>
-                        </div>
-                    {% endfor %}
-                    <div class="row pt-3 mb-2 mt-2 border-top">
-                        <h4>Installation</h4>
-                    </div>
+                {% else %}
                     <div class="row mb-3">
                         <div class="col">
-                            In your website's code, include the following Javascript line:<br/>
-                            <code id="copytext-script">&lt;script language="Javascript" src="{{ settings.get('server_url').value }}/hotbox.js" crossorigin="anonymous"&gt;&lt;/script&gt;</code>
-                            <button class="btn btn-sm btn-primary copytext-button" data-target="copytext-script" title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
+                            Insert this piece of code where you want your HotBox:
                         </div>
-                    </div>
-                    {% if allowedHotbox == 0 %}
-                        <div class="row mb-2">
-                            <div class="col">
-                                <h5>Uh oh</h5>
-                                Currently you do not have any comics assigned to a hotbox.  Please upload comic images and contact the server administrator to be added to a rotation.
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="row mb-3">
-                            <div class="col">
-                                Insert this piece of code where you want your HotBox:
-                            </div>
-                        </div>
-                        {% for hotbox in hotboxes %}
-                            {% if hotbox.getUserAllowed(app.user) %}
-                                <div class="row mb-2">
-                                    <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
-                                    <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hotbox" data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
-                                        <button class="btn btn-sm btn-primary copytext-button" data-target="copytext-hb-{{ hotbox.id }}" title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
-                                    </div>
-
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
-                    <div class="row pt-3 mb-2 border-top">
-                        <h4>My Upcoming Displays</h4>
                     </div>
                     {% for hotbox in hotboxes %}
-                        {% if hotbox.getUserRotations(app.user)|length > 0 %}
+                        {% if hotbox.getUserAllowed(app.user) %}
                             <div class="row mb-2">
-                                <div class="col"><h5>{{ hotbox.name }}:</h5></div>
-                            </div>
-                            {% for rotation in hotbox.getUserRotations(app.user) %}
-                                <div class="row mb-2">
-                                    <div class="col-4 offset-1"><b>{{ rotation.comic.Name }}:</b></div>
-                                    <div class="col rotation-schedule">
-                                        {% if hotbox.rotationFrequency == 'Hour' %}
-                                            {% set sDate = rotation.start|date("H:i") %}
-                                            {% set eDate = rotation.expire|date("H:i") %}
-                                        {% elseif hotbox.rotationFrequency == 'Minute' %}
-                                            {% set sDate = rotation.start|date("H:i") %}
-                                            {% set eDate = rotation.expire|date("H:i") %}
-                                        {% elseif hotbox.rotationFrequency == '15 Minutes' %}
-                                            {% set sDate = rotation.start|date("H:i") %}
-                                            {% set eDate = rotation.expire|date("H:i") %}
-                                        {% elseif hotbox.rotationFrequency == 'Month' %}
-                                            {% set sDate = rotation.start|date("Y-m") %}
-                                            {% set eDate = rotation.expire|date("Y-m") %}
-                                        {% else %}
-                                            {% set sDate = rotation.start|date("Y-m-d") %}
-                                            {% set eDate = rotation.expire|date("Y-m-d") %}
-                                        {% endif %}
-                                        {{ sDate }} to {{ eDate }}
-                                    </div>
+                                <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
+                                <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hotbox"
+                                        data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
+                                    <button class="btn btn-sm btn-primary copytext-button"
+                                            data-target="copytext-hb-{{ hotbox.id }}" title="Copy to Clipboard"><i
+                                                class="fas fa-copy"></i></button>
                                 </div>
-                            {% endfor %}
+
+                            </div>
                         {% endif %}
                     {% endfor %}
+                {% endif %}
+
+                <div class="row pt-3 mb-2 border-top">
+                    <h4>My Upcoming Displays</h4>
                 </div>
-
-
-    </div>
+                {% for hotbox in hotboxes %}
+                    {% if hotbox.getUserRotations(app.user)|length > 0 %}
+                        <div class="row mb-2">
+                            <div class="col"><h5>{{ hotbox.name }}:</h5></div>
+                        </div>
+                        {% for rotation in hotbox.getUserRotations(app.user) %}
+                            <div class="row mb-2">
+                                <div class="col-4 offset-1"><b>{{ rotation.comic.Name }}:</b></div>
+                                <div class="col rotation-schedule">
+                                    {% if hotbox.rotationFrequency == 'Hour' %}
+                                        {% set sDate = rotation.start|date("H:i") %}
+                                        {% set eDate = rotation.expire|date("H:i") %}
+                                    {% elseif hotbox.rotationFrequency == 'Minute' %}
+                                        {% set sDate = rotation.start|date("H:i") %}
+                                        {% set eDate = rotation.expire|date("H:i") %}
+                                    {% elseif hotbox.rotationFrequency == '15 Minutes' %}
+                                        {% set sDate = rotation.start|date("H:i") %}
+                                        {% set eDate = rotation.expire|date("H:i") %}
+                                    {% elseif hotbox.rotationFrequency == 'Month' %}
+                                        {% set sDate = rotation.start|date("Y-m") %}
+                                        {% set eDate = rotation.expire|date("Y-m") %}
+                                    {% else %}
+                                        {% set sDate = rotation.start|date("Y-m-d") %}
+                                        {% set eDate = rotation.expire|date("Y-m-d") %}
+                                    {% endif %}
+                                    {{ sDate }} to {{ eDate }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
-
-
-{% block sidebar %}
-    {% include "common/sidebar.html.twig" %}
 {% endblock %}

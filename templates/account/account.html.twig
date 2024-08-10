@@ -3,36 +3,29 @@
 {% block title %}HotBox Account{% endblock %}
 
 {% block body %}
-    <div class="container">
-    <div class="card mt-5">
-        <div class="row" id="register-staff-screen">
-            <div class="col  p-3">
-                <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
+    <div class="col p-3">
+        <h1 class="h3 mb-3 font-weight-normal">Update User Details</h1>
 
-                {{ form_start(accountform) }}
-                <div class="row mb-2">
-                    <div class='col-2 text-end'>Email</div>
-                    <div class="col">{{ app.user.email }}</div>
-                </div>
+        {{ form_start(accountform) }}
+        <div class="row mb-2">
+            <div class='col-2 text-end'>Email</div>
+            <div class="col">{{ app.user.email }}</div>
+        </div>
 
-                <div class="row mb-2">
-                    {{ form_label(accountform.name) }}
-                    <div class="col">{{ form_widget(accountform.name) }}</div>
-                </div>
+        <div class="row mb-2">
+            {{ form_label(accountform.name) }}
+            <div class="col">{{ form_widget(accountform.name) }}</div>
+        </div>
 
-                {{ form_rest(accountform) }}
-                <div class="row mb-2">
-                <div class="offset-2">
-                    <button class="btn btn-lg btn-primary" type="submit">Update User</button>
+        {{ form_rest(accountform) }}
+        <div class="row mb-2">
+            <div class="offset-2">
+                <button class="btn btn-lg btn-primary" type="submit">Update User</button>
 
-                </div>
-                </div>
-                {{ form_end(accountform) }}
             </div>
         </div>
+        {{ form_end(accountform) }}
     </div>
-    </div>
-
 {% endblock %}
 
 

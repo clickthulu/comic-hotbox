@@ -40,6 +40,9 @@ class ComicController extends AbstractController
             $comic = new Comic();
             $comic->setUser($user);
         }
+        $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
+        $comic->setImageHotboxMatch($hotboxes);
+
         $form = $this->createForm(ComicFormType::class, $comic);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

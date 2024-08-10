@@ -32,64 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends AbstractController
 {
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    #[Route('/user/invite', name: 'app_admininviteusers')]
-    public function inviteUsers(MailerInterface $mailer, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, SettingsService $settings, Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-        $invite = new InviteUser();
-
-        $form = $this->createForm(InviteUsersType::class, $invite);
-        $form->handleRequest($request);
-
-        try {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $data = $form->getData();
-
-                $emails = $data->getUserArray();
-
-                foreach ($emails as $email) {
-                    $regcode = new RegistrationCode();
-                    $regcode->setEmail($email)->generate();
-                    $entityManager->persist($regcode);
-
-                    $emailfrom = $parameterBag->get('emailFrom');
-                    if (empty($emailfrom)) {
-                        throw new HotBoxException("Email From address is not configured.");
-                    }
-
-                    $servername = $settings->get('server_name')->getValue() ?? 'HotBox';
-
-                    $message = (new Email())
-                        ->from($emailfrom)
-                        ->to($email)
-                        ->subject("You have been invited to join {$servername}")
-                        ->html($this->render("registration/userinvite_email.html.twig", [ "user" => $user,  "reg" => $regcode ])->getContent());
-                    $mailer->send($message);
-
-                    $this->addFlash('info', "{$email} invited");
-
-                }
-                $entityManager->flush();
-            }
-        } catch (Exception $e){
-            $err = new FormError($e->getMessage());
-            $this->addFlash('error', "{$e->getMessage()}");
-            $form->addError($err);
-        }
-
-        return $this->render('admin/inviteusers.html.twig', [
-            'inviteForm' => $form->createView()
-        ]);
-    }
-
     #[Route('/admin/approve/comics', name: 'app_adminapprovecomic')]
     public function approveComics(EntityManagerInterface $entityManager): Response
     {
@@ -174,66 +116,6 @@ class AdminController extends AbstractController
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl("app_adminapproveimages"));
     }
-
-    #[Route('/admin/user/delete/{id}', name: 'app_deleteuser')]
-    public function deleteUser(EntityManagerInterface $entityManager, int $id): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
-        /**
-         * @var User $usr
-         */
-        $usr = $entityManager->getRepository(User::class)->find($id);
-        $entityManager->remove($usr);
-        $entityManager->flush();
-        return new RedirectResponse($this->generateUrl('app_manageuser'));
-    }
-
-
-    #[Route('/admin/user/edit/{id}', name: 'app_edituser')]
-    public function editUser(Request $request, EntityManagerInterface $entityManager, int $id): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
-        /**
-         * @var User $user
-         */
-        $user = $entityManager->getRepository(User::class)->find($id);
-        $current = $this->getUser();
-        $isOwner = $user->getId() === $current->getId() && in_array(RoleEnumeration::ROLE_OWNER, $current->getRoles());
-
-        $form = $this->createForm(EditUserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $roles = $form->get('roles')->getData();
-                $roles = array_merge($roles, [RoleEnumeration::ROLE_CREATOR]);
-                if ($isOwner) {
-                    $roles = array_merge($roles, [RoleEnumeration::ROLE_CREATOR]);
-                }
-                    $user->setName($form->get('name')->getData())
-                        ->setEmail($form->get('email')->getData())
-                        ->setRoles($roles);
-                    $entityManager->persist($user);
-                    $entityManager->flush();
-
-            } catch (Exception $e){
-                $err = new FormError($e->getMessage());
-                $this->addFlash('error', "{$e->getMessage()}");
-                $form->addError($err);
-            }
-        }
-
-        return $this->render('user/edituser.html.twig', [
-            'userform' => $form->createView()
-        ]);
-
-
-
-
-    }
-
 
 
     #[Route('/admin/settings', name: 'app_settings')]

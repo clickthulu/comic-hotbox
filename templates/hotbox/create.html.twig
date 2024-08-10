@@ -3,15 +3,12 @@
 {% block title %}{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox{% endblock %}
 
 {% block body %}
-<div class="container">
-        <div class="row mb-3">
-                <div class="col align-items-center justify-content-center pt-5">
-                    <div class="col-10" id="hb-createupdate-hotbox">
+                    <div class="col p-3" id="hb-createupdate-hotbox">
                         <div class="row mb-3">
                             <h1 class="h1 mb-3 font-weight-normal">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</h1>
                         </div>
                         <div class="row mb-3">
-                            <div class="col border p-3">
+                            <div class="col p-3">
                                 <div class="row">
                                     <h2>Details</h2>
                                 </div>
@@ -46,6 +43,11 @@
                                     <div class="col offset-3">
                                         <button class="btn btn-lg btn-primary" type="submit">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</button>
                                     </div>
+                                    {% if hotboxform.vars.data.id is not empty %}
+                                    <div class="col text-end">
+                                        <a class="btn btn-lg btn-danger" href="{{ url('app_deletehotbox', { hotboxid: hotboxform.vars.data.id }) }}">Delete HotBox</a>
+                                    </div>
+                                    {% endif %}
                                 </div>
                                 {{ form_end(hotboxform) }}
                             </div>
@@ -54,8 +56,9 @@
                             </div>
                         </div>
                         {% if hotboxform.vars.data.id is not empty and comics|length > 0%}
+                            <div class="row"><hr /></div>
                             <div class="row">
-                                <div class="col border p-3">
+                                <div class="col p-3">
                                     <div class="row mb-2">
                                         <h2>Comic Rotation</h2>
                                     </div>

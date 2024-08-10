@@ -14,6 +14,11 @@
     border-radius: 16px;
 }
 
+#body-container>div.col:first-child {
+    border: 1px solid gray;
+    border-radius: 16px;
+}
+
 .img-cropped {
     border: 3px solid gray;
     border-radius: 8px;
@@ -46,4 +51,17 @@
 .error-pop {
     background-color: #ff0000 !important;
     color: var(--white)FFF !important;
+}
+
+
+.image-box {
+    position: relative;
+    z-index: 4;
+}
+.no-match-icon {
+    position: absolute;
+    top: 1.5em;
+    right: 2em;
+    font-size: .75em;
+    z-index: 1000;
 }

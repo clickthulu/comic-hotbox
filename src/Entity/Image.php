@@ -39,6 +39,8 @@ class Image
     #[ORM\Column]
     private ?bool $active = true;
 
+    private bool $matchesHotboxSize = false;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -144,4 +146,22 @@ class Image
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isMatchesHotboxSize(): bool
+    {
+        return $this->matchesHotboxSize;
+    }
+
+    /**
+     * @param bool $matchesHotboxSize
+     */
+    public function setMatchesHotboxSize(bool $matchesHotboxSize): void
+    {
+        $this->matchesHotboxSize = $matchesHotboxSize;
+    }
+
+
 }
