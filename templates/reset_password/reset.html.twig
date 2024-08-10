@@ -1,12 +1,28 @@
+{% set headeroffset = "-8 offset-2" %}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Reset your password{% endblock %}
 
 {% block body %}
-    <h1>Reset your password</h1>
-
+<div class="card mt-5 p-3 col-8 offset-2"  id="register-staff-screen">
+    <div class="row mb-2">
+        <div class="col">
+            <h1>Reset your password</h1>
+        </div>
+    </div>
     {{ form_start(resetForm) }}
+    <div class="row">
+        <div class="col offset-2 p-3">
+
         {{ form_row(resetForm.plainPassword) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col offset-2 p-3">
         <button class="btn btn-primary">Reset password</button>
+        </div>
+    </div>
     {{ form_end(resetForm) }}
+</div>
 {% endblock %}
