@@ -3,14 +3,13 @@
 {% block title %}Manage Media{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="card col p-3 mt-5 panel" id="c4-comic-admin">
+    <div class="col p-3" id="c4-comic-admin">
         <div class="row mb-3">
             <div class="col">
                 <h1>Manage Media</h1>
             </div>
         </div>
-        <div class="row mb-3  border-bottom">
+        <div class="row mb-3">
             <div class="col mb-3">
                 <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadmedia') }}">
                     <label for="media_image_upload_new" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
@@ -20,7 +19,7 @@
         </div>
 
     {% for file in files %}
-        <div class="row">
+        <div class="row py-3 border-top">
             <div class="col-3"><img src="{{ file.path }}" class="img-fluid" alt="{{ file.file }}"></div>
             <div class="col">{{ file.file }}</div>
             <div class="col-3">{{ file.upload|date('Y-m-d H:i') }}</div>
@@ -33,7 +32,6 @@
         </div>
     {% endfor %}
     </div>
-</div>
 {% endblock %}
 
 

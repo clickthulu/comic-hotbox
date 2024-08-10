@@ -240,7 +240,7 @@ class Comic
         /**
          * @var Image $image
          */
-        foreach ($this->images as $image)
+        foreach ($this->images as &$image)
         {
             if ($image->isApproved() && $image->isActive() && $image->getWidth() === $hotbox->getImageWidth() && $image->getHeight() === $hotbox->getImageHeight()) {
                 $this->hotboxMatch = true;
@@ -250,6 +250,21 @@ class Comic
         }
         $this->hotboxMatch = false;
         return false;
+    }
+
+    public function setImageHotboxMatch(array $hotboxes): self
+    {
+        /**
+         * @var HotBox $hotbox
+         */
+        foreach ($hotboxes as $hotbox) {
+            foreach ($this->images as &$image) {
+                if ($image->getWidth() === $hotbox->getImageWidth() && $image->getHeight() === $hotbox->getImageHeight()) {
+                    $image->setMatchesHotboxSize(true);
+                }
+            }
+        }
+        return $this;
     }
 
     /**

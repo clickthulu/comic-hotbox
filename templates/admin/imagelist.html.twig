@@ -4,33 +4,35 @@
 
 {% block body %}
 
-<div class="container" xmlns="http://www.w3.org/1999/html">
-    <div class="col-10" id="hb-approve-comics">
+    <div class="col p-3">
         <div class="row">
             <h1>Approve Images</h1>
         </div>
-                {% for image in images %}
-                   <div class="row mb-2 pb-2 image-row border-bottom">
-                       <div class="col-2">
-                           <a href="{{ url('app_toggleimage', { id: image.id}) }}" class="btn btn-block approve-button {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i> {% if image.approved %}Approved{% else %}Pending{% endif %}</a>
-                       </div>
-                       <div class="col">
-                           <div class="row">
-                               <div class="col"><h4>{{ image.comic.name }}</h4></div>
-                           </div>
-                           <div class="row">
-                               <div class="col">{{ image.path }}</h4></div>
-                           </div>
-                           <div class="row">
-                               <div class="col">{{ image.alttext }}</h4></div>
-                           </div>
-                       </div>
-                       <div class="col-2">
-                           <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img-fluid img-cropped img-button">
-                       </div>
-                   </div>
-                {% endfor %}
-</div>
+        {% for image in images %}
+            <div class="row mb-2 py-2 image-row border-top">
+                <div class="col-2">
+                    <a href="{{ url('app_toggleimage', { id: image.id}) }}"
+                       class="btn btn-block approve-button {% if image.approved %}btn-primary{% else %}btn-outline-primary{% endif %}"><i
+                                class="{% if image.approved %}fas fa-check{% else %}far fa-square{% endif %}"></i> {% if image.approved %}Approved{% else %}Pending{% endif %}
+                    </a>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col"><h4>{{ image.comic.name }}</h4></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">{{ image.path }}</h4></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">{{ image.alttext }}</h4></div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img-fluid img-cropped img-button">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 
     <div id='image-modal' class="modal" tabindex="-1" role="dialog">

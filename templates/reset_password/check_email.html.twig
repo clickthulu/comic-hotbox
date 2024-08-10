@@ -1,12 +1,14 @@
-{% set headeroffset = "-8 offset-2" %}
 {% extends 'base.html.twig' %}
 
 {% block title %}Password Reset Email Sent{% endblock %}
 
 {% block body %}
-    <div class="card mt-5 p-3 col-8 offset-2">
-        <div class="row" id="register-staff-screen">
-            <div class="col  p-3">
+    <div class="col p-3 col-8 offset-2">
+        <div class="row">
+            <h1>Your link is on the way!</h1>
+        </div>
+        <div class="row">
+            <div class="col">
     <p>
         If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
         This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
@@ -15,4 +17,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+
+{% block sidebar %}
 {% endblock %}

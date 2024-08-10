@@ -28,22 +28,22 @@
         <div class="col{% if headeroffset is defined and headeroffset is not null %}{{ headeroffset }}{% endif %}">
             <div class="row mt-5">
                 <div class="col-3" id="brand-container">
-                    <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid">
+                    <img src="/storage/_admin/{{ brand|split('/')|last }}" class="img-fluid" title="{{ settings.get('server_name').value }}">
                 </div>
                 <div class="col">
                 </div>
             </div>
         </div>
     {% endif %}
-    <div class="row">
+    <div class="row mb-3">
 
-        {% if block("sidebar") is not empty %}
+        {% if app.user is not null %}
             <div class="col-3" id="sidebar-container">
-                {% block sidebar %}{% endblock %}
+                {% block sidebar %}{% include "common/sidebar.html.twig" %}{% endblock %}
             </div>
         {% endif %}
 
-        <div class="col">
+        <div class="col ms-5 mt-5" id="body-container">
             {% block body %}{% endblock %}
         </div>
 

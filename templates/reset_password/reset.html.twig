@@ -1,16 +1,14 @@
-{% set headeroffset = "-8 offset-2" %}
 
 {% extends 'base.html.twig' %}
 
 {% block title %}Reset your password{% endblock %}
 
 {% block body %}
-<div class="card mt-5 p-3 col-8 offset-2"  id="register-staff-screen">
-    <div class="row mb-2">
-        <div class="col">
-            <h1>Reset your password</h1>
-        </div>
+<div class="col col-8 offset-2 p-3">
+    <div class="row">
+        <h1>Reset your password</h1>
     </div>
+
     {{ form_start(resetForm) }}
     <div class="row">
         <div class="col offset-2 p-3">
@@ -25,4 +23,11 @@
     </div>
     {{ form_end(resetForm) }}
 </div>
+    {% endblock %}
+
+
+{% block sidebar %}
+    {% if app.user is not null %}
+        {% include "common/sidebar.html.twig" %}
+    {% endif %}
 {% endblock %}

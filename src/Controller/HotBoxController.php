@@ -222,4 +222,13 @@ class HotBoxController extends AbstractController
         return $out;
     }
 
+    #[Route('/hotbox/delete/{hotboxid}', name: 'app_deletehotbox')]
+    public function deleteHotbox(EntityManagerInterface $entityManager, int $hotboxid): Response
+    {
+        $hotbox = $entityManager->getRepository(HotBox::class)->find($hotboxid);
+        $entityManager->remove($hotbox);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_dashboard'));
+    }
+
 }

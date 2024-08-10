@@ -1,25 +1,19 @@
-{% set headeroffset = "-8 offset-2" %}
 {% extends 'base.html.twig' %}
 
 {% block title %}Reset your password{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="card mt-5 p-3 col-8 offset-2">
-        <div class="row" id="register-staff-screen">
-            <div class="col  p-3">
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Reset your password</h1>
-
+<div class="col col-8 offset-2 p-3">
+    <div class="row">
+        <h1>Reset your password</h1>
+    </div>
     {{ form_start(requestForm) }}
         <div class="row mb-2">
             {{ form_label(requestForm.email) }}
             <div class="col">{{ form_widget(requestForm.email) }}</div>
         </div>
         <div class="row mb-2">
-            <div  class="offset-3 col">
+            <div  class="offset-2 col">
                 <small>
                     Enter your email address, and we will send you a
                     link to reset your password.
@@ -27,12 +21,16 @@
             </div>
         </div>
         <div class="row mb-2">
-            <div  class="offset-3 col">
+            <div  class="offset-2 col">
                 <button class="btn btn-primary">Send password reset email</button>
             </div>
         </div>
     {{ form_end(requestForm) }}
-            </div>
-        </div>
-    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+    {% if app.user is not null %}
+        {% include "common/sidebar.html.twig" %}
+    {% endif %}
 {% endblock %}

@@ -3,14 +3,13 @@
 {% block title %}Create/Edit Comic{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="col align-items-center justify-content-center pt-5">
-        <div class="col-10" id="register-staff-screen">
-            <div class="row">
-                <div class="col border p-3">
+    <div class="col p-3">
+        <div class="col">
+            <div class="row border-bottom">
+                <div class="col p-3">
                     <div class="row mb-3">
                         <div class="col">
-                            <h1 class="h3 mb-3 font-weight-normal">Create/Update Comic</h1>
+                            <h1>Create/Update Comic</h1>
                         </div>
                         {% if comicform.vars.data.id is not empty %}
                             <div class="col-2 text-end"><a href="{{ url('app_deletecomic', { id:comicform.vars.data.id })}}" class="btn btn-danger"><i class="fas fa-trash fa-2x"></i></a> </div>
@@ -31,15 +30,19 @@
                         <div class="col">{{ form_widget(comicform.description) }}</div>
                     </div>
                     {{ form_rest(comicform) }}
-                    <button class="btn btn-lg btn-primary" type="submit">Update Comic</button>
+                    <div class="row mb-2">
+                        <div class="col offset-2">
+                            <button class="btn btn-lg btn-primary" type="submit">Update Comic</button>
+                        </div>
+                    </div>
                     {{ form_end(comicform) }}
                 </div>
             </div>
             {% if comicform.vars.data.id is not empty %}
-                <div class="row mt-5">
-                    <div class="col border p-3">
+                <div class="row mt-3">
+                    <div class="col p-3">
                         <div class="row">
-                            <h1 class="h3 mb-3 font-weight-normal">Comic images</h1>
+                            <h3>Comic images</h3>
                         </div>
                         <div class="row">
                             {% set blankslots = settings.get('image_limit').value - images|length %}
@@ -47,8 +50,26 @@
                                 <div class="col-4">
                                     <div class="col text-center border p-3 m-1">
                                         <div class="row">
-                                            <div class="col text-center  ">
-                                            <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img img-fluid border border-4 {% if image.active %}border-success{% else %}border-secondary{% endif %}">
+                                            <div class="col text-center image-box ">
+                                                {% if not image.matchesHotboxSize %}
+                                                    <div class="no-match-icon" title="Image size does not match any current hotboxes">
+                                                          <span class="fa-stack fa-2x">
+                                                            <i class="fas fa-circle fa-stack-2x text-danger"></i>
+                                                            <i class="fas fa-bolt fa-stack-1x fa-inverse"></i>
+                                                          </span>
+                                                    </div>
+                                                {% endif %}
+                                            <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img img-fluid border border-4
+                                                {% if not image.matchesHotboxSize %}
+                                                    border-danger
+                                                {% elseif image.active %}
+                                                    border-success
+                                                {% else %}
+                                                    border-secondary
+                                                {% endif %}">
+
+
+
                                             </div>
                                         </div>
                                         <div class="row">
@@ -91,7 +112,6 @@
             {% endif %}
         </div>
     </div>
-</div>
 {% endblock %}
 
 
