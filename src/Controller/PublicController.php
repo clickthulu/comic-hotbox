@@ -24,6 +24,7 @@ class PublicController extends AbstractController
 
         $response = new Response();
         $response->headers->set("Content-type", "application/javascript");
+        $response->headers->set("Access-Control-Allow-Origin", "*");
         return $this->render('public/hotbox.js.twig',[], $response);
 
     }
