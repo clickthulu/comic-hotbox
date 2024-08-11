@@ -23,4 +23,11 @@ class DashboardController extends AbstractController
 
         ]);
     }
+
+    #[Route('/credits', name: 'app_credits')]
+    public function credits(): Response
+    {
+        return $this->render('dashboard/credits.html.twig', [
+        ]);
+    }
 }
