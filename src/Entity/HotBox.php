@@ -43,6 +43,10 @@ class HotBox
     #[ORM\Column]
     private ?int $imageHeight = 600;
 
+    private int $availableComics = 0;
+
+    private int $activeComics = 0;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -227,5 +231,54 @@ class HotBox
     {
         $rot = $this->getUserRotations($user);
         return !empty($rot);
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableComics(): int
+    {
+        return $this->availableComics;
+    }
+
+    /**
+     * @param int $availableComics
+     */
+    public function setAvailableComics(int $availableComics): void
+    {
+        $this->availableComics = $availableComics;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActiveComics(): int
+    {
+        return $this->activeComics;
+    }
+
+    /**
+     * @param int $activeComics
+     */
+    public function setActiveComics(int $activeComics): void
+    {
+        $this->activeComics = $activeComics;
+    }
+
+    public function incAvailable():self
+    {
+        $this->availableComics++;
+        return $this;
+    }
+
+    public function incActive(): self
+    {
+        $this->activeComics++;
+        return $this;
+    }
+
+    public function needsAttention(): bool
+    {
+        return $this->availableComics !== $this->activeComics;
     }
 }

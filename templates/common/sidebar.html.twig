@@ -41,7 +41,19 @@
 
             {% for hb in hotboxservice.hotboxes %}
                 <div class="row ps-3 mb-2">
-                    <div class="col-2 ms-2 me-4"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes"><i class="fas fa-box"></i></a></div>
+                    <div class="col-2 ms-2 me-4">
+                        <a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes">
+                            {% if hb.needsAttention %}
+                                <span class="fa-layers fa-fw ">
+                                    <i class="fas fa-box"></i>
+                                    <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
+
+                                </span>
+                            {% else %}
+                                <i class="fas fa-box"></i>
+                            {% endif %}
+                        </a>
+                    </div>
                     <div class="col nav-expanded"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link">{{ hb.name }}</a></div>
                 </div>
             {% endfor %}
