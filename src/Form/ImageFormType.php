@@ -23,16 +23,16 @@ class ImageFormType extends AbstractType
                 ],
                 'label_attr' => ['class' => 'col-form-label col-2 text-end'],
                 'label' => 'Image Alt Text',
+                'required' => false
 
             ])
             ->add('url', TextType::class, [
-                'required' => true,
                 'attr' => [
                     'class' => 'form-horizontal form-control',
                     'placeholder' => $options['url_placeholder']
                 ],
                 'label_attr' => ['class' => 'col-form-label col-2 text-end'],
-
+                'required' => false
             ])
         ;
     }
