@@ -67,10 +67,23 @@ class HotBoxController extends AbstractController
          */
         foreach ($comics as $comic) {
             $comic->imageSizeMatch($hotbox);
+            if ($comic->isHotboxMatch()) {
+                $hotbox->incAvailable();
+            }
+
+            foreach ($comic->getRotations() as $rotation ) {
+                if ($rotation->getHotbox()->getId() === $hotbox->getId()) {
+                    $hotbox->incActive();
+                }
+            }
+
         }
+
+
         return $this->render('hotbox/create.html.twig', [
             'hotboxform' => $form->createView(),
-            'comics' => $comics
+            'comics' => $comics,
+            'hotbox' => $hotbox
         ]);
     }
 

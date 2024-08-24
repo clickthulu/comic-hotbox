@@ -58,16 +58,7 @@
                         {% if hotboxform.vars.data.id is not empty and comics|length > 0%}
                             {% set availableComics = 0 %}
                             {% set activeComics = 0 %}
-                            {% for comic in comics %}
-                                {% if comic.hotboxMatch %}
-                                    {% set availableComics = availableComics+1 %}
-                                {% endif %}
-                                {% for rot in comic.rotations %}
-                                    {% if rot.hotbox.id == hotboxform.vars.data.id %}
-                                        {% set activeComics = activeComics + 1 %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endfor %}
+
 
                             <div class="row"><hr /></div>
                             <div class="row">
@@ -77,24 +68,24 @@
                                     </div>
 
                                     <div class="row mb-2">
-                                    {% if availableComics == 0 %}
+                                    {% if hotbox.availableComics == 0 %}
                                         <div class="col">
                                             There are no comics with images the correct size that can be added to this HotBox.
                                         </div>
-                                    {% elseif activeComics == 0 %}
+                                    {% elseif hotbox.activeComics == 0 %}
                                         <div class="col-1">
                                             <i class="fas fa-arrow-down fa-bounce fa-2x"></i>
                                         </div>
                                         <div class="col">
                                             The HotBox needs to be filled before images will start to appear in rotation.  Please click the <i class="fas fa-plus text-primary"></i> icon to add comics.
                                         </div>
-                                    {% elseif activeComics == availableComics %}
+                                    {% elseif hotbox.activeComics == hotbox.availableComics %}
                                         <div class="col">
                                             This HotBox currently has all available comics in rotation.
                                         </div>
                                     {% else %}
                                         <div class="col">
-                                            This HotBox currently has <b>{{ activeComics }}</b> in rotation out of <b>{{ availableComics }}</b> images.  Click the <i class="fas fa-plus text-primary"></i> or <i class="fas fa-minus text-primary"></i>
+                                            This HotBox currently has <b>{{ hotbox.activeComics }}</b> comics in rotation out of a possible <b>{{ hotbox.availableComics }}</b>.  Click the <i class="fas fa-plus text-primary"></i> or <i class="fas fa-minus text-primary"></i>
                                             buttons to add or remove comics from rotation.
                                         </div>
                                     {% endif %}
