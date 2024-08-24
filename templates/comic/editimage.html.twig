@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create/Edit Comic{% endblock %}
+
+{% block body %}
+<div class="col p-3">
+    <div class="col">
+        <div class="row">
+            <div class="col p-3">
+                <div class="row mb-3">
+                    <div class="col">
+                        <h1>Update Image Details</h1>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        In the event that you want to customize either your alt-text or the URL that this specific image directs people to, you can do that here.  If these fields are left blank, they will default to the comic's description (for alt-text) and the comic url.
+                    </div>
+                </div>
+                {{ form_start(imageform) }}
+                <div class="row mb-2">
+                    {{ form_label(imageform.alttext) }}
+                    <div class="col">
+                        <div class="input-group">
+                            {{ form_widget(imageform.alttext) }}
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary clear-field" type="button"><i class="fas fa-broom"></i></button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    {{ form_label(imageform.url) }}
+                    <div class="col">
+                        <div class="input-group">
+                            {{ form_widget(imageform.url) }}
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary clear-field" type="button"><i class="fas fa-broom"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_rest(imageform) }}
+                <div class="row mb-2">
+                    <div class="col offset-2">
+                        <button class="btn btn-lg btn-primary" type="submit">Update Image Data</button>
+                    </div>
+                </div>
+                {{ form_end(imageform) }}
+            </div>
+            <div class="col-3">
+                <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img img-fluid border border-4">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

@@ -40,11 +40,15 @@ class PublicController extends AbstractController
 
         $data = [];
         if (!empty($rotation)) {
+            $image = $rotation->getComic()->getRandomImage($hotbox);
+            $imageAlt = $image->getAlttext() ?? $rotation->getComic()->getDescription();
+            $imageURL = $image->getUrl() ?? $rotation->getComic()->getUrl();
+
             $data = [
                 'title' => $rotation->getComic()->getName(),
-                'image' => $rotation->getComic()->getRandomImage($hotbox)->getPath(),
-                'description' => $rotation->getComic()->getDescription(),
-                'url' => $rotation->getComic()->getUrl()
+                'image' => $image->getPath(),
+                'description' => $imageAlt,
+                'url' => $imageURL
             ];
         }
         return new JsonResponse($data);

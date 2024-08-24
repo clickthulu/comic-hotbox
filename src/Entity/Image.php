@@ -41,6 +41,9 @@ class Image
 
     private bool $matchesHotboxSize = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -161,6 +164,18 @@ class Image
     public function setMatchesHotboxSize(bool $matchesHotboxSize): void
     {
         $this->matchesHotboxSize = $matchesHotboxSize;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
 

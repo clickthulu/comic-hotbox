@@ -34,6 +34,12 @@ $(document).ready(function(){
 
     });
 
+    $(".clear-field").on('click', function(event){
+        event.preventDefault();
+        var rent = $(this).parents('.input-group').first();
+        var inp = $(rent).find('input, textarea').first();
+        $(inp).val('');
+    });
 
     setTimeout(function(){
         $(".pop").each(function(){
