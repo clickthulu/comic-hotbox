@@ -58,7 +58,7 @@
     position: relative;
     z-index: 4;
 }
-.no-match-icon {
+.image-box-icons {
     position: absolute;
     top: 1.5em;
     right: 2em;

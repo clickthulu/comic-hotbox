@@ -8,6 +8,7 @@ use App\Entity\Image;
 use App\Entity\User;
 use App\Exceptions\HotBoxException;
 use App\Form\ComicFormType;
+use App\Form\ImageFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -136,15 +137,14 @@ class ComicController extends AbstractController
         $path = "{$uploadDir}/{$files['name']}";
         move_uploaded_file($files['tmp_name'], $path);
 
-        list($imageWidth, $imageHeight,,) = getimagesize($path);
+        list($imageWidth, $imageHeight, ,) = getimagesize($path);
         $image = new Image();
         $image
             ->setComic($comic)
             ->setActive(true)
             ->setPath("{$storageDir}/{$files['name']}")
             ->setWidth($imageWidth)
-            ->setHeight($imageHeight)
-        ;
+            ->setHeight($imageHeight);
         $entityManager->persist($image);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
@@ -172,6 +172,56 @@ class ComicController extends AbstractController
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 
+
+    #[Route('/comic/image/edit/{comicid}/{imageid}', name: 'app_editimage')]
+    public function editImage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        /**
+         * @var Comic $comic
+         */
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Image $image
+         */
+        $image = $entityManager->getRepository(Image::class)->find($imageid);
+        if ($user->getId() !== $image->getComic()->getUser()->getId()) {
+            throw new HotBoxException("This image does not belong to the logged in user");
+        }
+
+
+        $form = $this->createForm(ImageFormType::class, $image,
+        [
+            'url_placeholder' => $comic->getUrl(),
+            'alttext_placeholder' => $comic->getDescription()
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $alttext = $form->get('alttext')->getData();
+            $url = $form->get('url')->getData();
+
+            $image->setAlttext($alttext)->setUrl($url);
+            $entityManager->persist($image);
+            $entityManager->flush();
+            $this->addFlash('info', 'Your image information has been updated');
+
+            return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+        }
+
+        return $this->render('comic/editimage.html.twig', [
+            'imageform' => $form->createView(),
+            'image' => $image,
+            'comic' => $comic
+        ]);
+    }
 
     #[Route('/comic/image/activate/{comicid}/{imageid}', name: 'app_activateimage')]
     public function activateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response

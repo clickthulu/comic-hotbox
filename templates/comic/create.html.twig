@@ -47,19 +47,41 @@
                         <div class="row">
                             {% set blankslots = settings.get('image_limit').value - images|length %}
                             {% for image in images %}
+                                {% set alttext = image.comic.description %}
+                                {% if image.alttext is not empty %}
+                                    {% set alttext = image.alttext %}
+                                {% endif %}
                                 <div class="col-4">
                                     <div class="col text-center border p-3 m-1">
                                         <div class="row">
                                             <div class="col text-center image-box ">
-                                                {% if not image.matchesHotboxSize %}
-                                                    <div class="no-match-icon" title="Image size does not match any current hotboxes">
-                                                          <span class="fa-stack fa-2x">
-                                                            <i class="fas fa-circle fa-stack-2x text-danger"></i>
-                                                            <i class="fas fa-bolt fa-stack-1x fa-inverse"></i>
-                                                          </span>
-                                                    </div>
-                                                {% endif %}
-                                            <img src="{{ image.path }}" alt="{{ image.alttext }}" class="img img-fluid border border-4
+                                                <div class="image-box-icons">
+                                                    {% if not image.matchesHotboxSize %}
+                                                        <div class="mb-2 icon" title="Image size does not match any current hotboxes">
+                                                              <span class="fa-stack fa-2x">
+                                                                <i class="fas fa-circle fa-stack-2x text-danger"></i>
+                                                                <i class="fas fa-bolt fa-stack-1x fa-inverse"></i>
+                                                              </span>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if image.alttext is not empty %}
+                                                        <div class="mb-2 icon" title="Image has custom alt text">
+                                                              <span class="fa-stack fa-2x">
+                                                                <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                                                                <i class="fas fa-comment fa-stack-1x fa-inverse"></i>
+                                                              </span>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if image.url is not empty %}
+                                                        <div class="mb-2 icon" title="Image has a unique url">
+                                                              <span class="fa-stack fa-2x">
+                                                                <i class="fas fa-circle fa-stack-2x text-success"></i>
+                                                                <i class="fas fa-link fa-stack-1x fa-inverse"></i>
+                                                              </span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            <img src="{{ image.path }}" alt="{{ alttext }}" title="{{ alttext }}" class="img img-fluid border border-4
                                                 {% if not image.matchesHotboxSize %}
                                                     border-danger
                                                 {% elseif image.active %}
@@ -88,6 +110,8 @@
                                                         {% else %}
                                                             <a class="btn btn-outline-secondary" href="{{ url('app_activateimage', { comicid: comicform.vars.data.id, imageid: image.id }) }}" title="Image is currently inactive"><i class="fas fa-lightbulb"></i></a>
                                                         {% endif %}
+                                                        <a class="btn btn-success" href="{{ url('app_editimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Edit Image Details"><i class="fas fa-edit"></i></a>
+
                                                         <a class="btn btn-danger" href="{{ url('app_deleteimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Delete this image"><i class="fas fa-trash"></i></a>
                                                     </div>
                                                 </div>
