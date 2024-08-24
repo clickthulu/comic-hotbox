@@ -66,7 +66,6 @@
                         </div>
                     </div>
                     {% for hotbox in hotboxes %}
-                        {% if hotbox.getUserAllowed(app.user) %}
                             <div class="row mb-2">
                                 <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
                                 <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hotbox"
@@ -77,7 +76,6 @@
                                 </div>
 
                             </div>
-                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
