@@ -35,32 +35,58 @@
 
 
         {% if is_granted('ROLE_ADMIN') %}
+            {% set carouselActive = settings.get('enable_carousel').value is not empty %}
+            {% set hotboxActive = settings.get('enable_hotbox').value is not empty %}
+            {% set webringActive = settings.get('enable_webring').value is not empty %}
             <div class="row border-top mt-3 pt-3 "></div>
             <div class="row nav-expanded"><h5>Administration</h5></div>
-            <div class="row nav-expanded"><h6>HotBox</h6></div>
-
-            {% for hb in hotboxservice.hotboxes %}
-                <div class="row ps-3 mb-2">
-                    <div class="col-2 ms-2 me-4">
-                        <a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes">
-                            {% if hb.needsAttention %}
-                                <span class="fa-layers fa-fw ">
-                                    <i class="fas fa-box"></i>
-                                    <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
-
-                                </span>
-                            {% else %}
-                                <i class="fas fa-box"></i>
-                            {% endif %}
-                        </a>
+            {% if  carouselActive  %}
+                <div class="row nav-expanded"><h6>Carousels</h6></div>
+                {% for cr in carouselservice.carousels %}
+                    <div class="row ps-3 mb-2">
+                        <div class="col-2 ms-2 me-4">
+                            <a href="{{ url('app_editcarousel', { id: cr.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Carousel">
+                                <i class="fas fa-horse-head"></i>
+                            </a>
+                        </div>
+                        <div class="col nav-expanded"><a href="{{ url('app_editcarousel', { id: cr.id}) }}" class="nav-link">{{ cr.name }}</a></div>
                     </div>
-                    <div class="col nav-expanded"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link">{{ hb.name }}</a></div>
+                {% endfor %}
+                <div class="row ps-3 mb-4">
+                    <div class="col-2 ms-2 me-4"><a href="{{ url('app_createcarousel') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New Carousel"><i class="fas fa-horse"></i></a></div>
+                    <div class="col nav-expanded"><a href="{{ url('app_createcarousel') }}" class="nav-link">New Carousel</a></div>
                 </div>
-            {% endfor %}
-            <div class="row ps-3 mb-4">
-                <div class="col-2 ms-2 me-4"><a href="{{ url('app_createhotbox') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New HotBox"><i class="fas fa-box-open"></i></a></div>
-                <div class="col nav-expanded"><a href="{{ url('app_createhotbox') }}" class="nav-link">New HotBox</a></div>
-            </div>
+
+            {% endif %}
+            {% if hotboxActive  %}
+                <div class="row nav-expanded"><h6>HotBoxes</h6></div>
+
+                {% for hb in hotboxservice.hotboxes %}
+                    <div class="row ps-3 mb-2">
+                        <div class="col-2 ms-2 me-4">
+                            <a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Boxes">
+                                {% if hb.needsAttention %}
+                                    <span class="fa-layers fa-fw ">
+                                        <i class="fas fa-box"></i>
+                                        <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
+
+                                    </span>
+                                {% else %}
+                                    <i class="fas fa-box"></i>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col nav-expanded"><a href="{{ url('app_edithotbox', { id: hb.id}) }}" class="nav-link">{{ hb.name }}</a></div>
+                    </div>
+                {% endfor %}
+                <div class="row ps-3 mb-4">
+                    <div class="col-2 ms-2 me-4"><a href="{{ url('app_createhotbox') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New HotBox"><i class="fas fa-box-open"></i></a></div>
+                    <div class="col nav-expanded"><a href="{{ url('app_createhotbox') }}" class="nav-link">New HotBox</a></div>
+                </div>
+            {% endif %}
+            {% if true == false and webringActive %}
+                <div class="row nav-expanded"><h6>WebRings</h6></div>
+            {% endif %}
             <div class="row nav-expanded"><h6>Users</h6></div>
             <div class="row ps-3 mb-2">
                 <div class="col-2 ms-2 me-4"><a href="{{ url('app_manageuser') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Invite Users"><i class="fas fa-users"></i></a></div>
@@ -79,12 +105,14 @@
             <div class="row ps-3 mb-2">
                 <div class="col-2 ms-2 me-4">
                     <a href="{{ url('app_adminapprovecomic') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Comics">
-                        <div class="{% if comicCount > 0 %}fa-2x fa-bounce sidebar-alert {% endif %}">
-                            <span class="fa-layers fa-fw">
-                                <i class="fas fa-certificate" {% if comicCount > 0 %} style="color: red;" {% endif %}></i>
-                                <span class="fa-layers-text fa-inverse sidebar-alert-text" data-fa-transform="shrink-8">{% if comicCount > 0 %}{{ comicCount }}{% endif %}</span>
+                        {% if  comicCount > 0 %}
+                            <span class="fa-layers fa-fw ">
+                                <i class="fas fa-certificate"></i>
+                                <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
                             </span>
-                        </div>
+                        {% else %}
+                            <i class="fas fa-certificate"></i>
+                        {% endif %}
                     </a>
                 </div>
                 <div class="col nav-expanded"><a href="{{ url('app_adminapprovecomic') }}" class="nav-link">Approve Comics</a></div>
@@ -92,12 +120,15 @@
             <div class="row ps-3 mb-2">
                 <div class="col-2 ms-2 me-4">
                     <a href="{{ url('app_adminapproveimages') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Images">
-                        <div class="{% if imageCount > 0 %}fa-2x fa-bounce sidebar-alert {% endif %}">
-                            <span class="fa-layers fa-fw">
-                                <i class="fas fa-file" {% if imageCount > 0 %} style="color: red;" {% endif %}></i>
-                                <span class="fa-layers-text fa-inverse sidebar-alert-text" data-fa-transform="shrink-8">{% if imageCount > 0 %}{{ imageCount }}{% endif %}</span>
+                        {% if  imageCount > 0 %}
+                            <span class="fa-layers fa-fw ">
+                                <i class="fas fa-file"></i>
+                                <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
                             </span>
-                        </div>
+                        {% else %}
+                            <i class="fas fa-file"></i>
+                        {% endif %}
+
                     </a>
                 </div>
                 <div class="col nav-expanded"><a href="{{ url('app_adminapproveimages') }}" class="nav-link">Approve Images</a></div>
@@ -106,7 +137,18 @@
             <div class="row nav-expanded"><h6>Settings</h6></div>
 
             <div class="row ps-3 mb-2">
-                <div class="col-2 ms-2 me-4"><a href="{{ url('app_settings') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Site Settings"><i class="fas fa-gears"></i></a></div>
+                <div class="col-2 ms-2 me-4"><a href="{{ url('app_settings') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Site Settings">
+                        {% if not carouselActive and not hotboxActive and not webringActive %}
+                            <span class="fa-layers fa-fw ">
+                                <i class="fas fa-gears"></i>
+                                <i class="fa-solid fa-circle-exclamation fa-bounce text-danger" data-fa-transform="shrink-4 right-8"></i>
+                            </span>
+                        {% else %}
+                            <i class="fas fa-gears"></i>
+                        {% endif %}
+
+
+                    </a></div>
                 <div class="col nav-expanded"><a href="{{ url('app_settings') }}" class="nav-link">Manage Settings</a></div>
             </div>
             <div class="row ps-3 mb-2">

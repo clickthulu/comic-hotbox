@@ -3,143 +3,139 @@
 {% block title %}{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox{% endblock %}
 
 {% block body %}
-                    <div class="col p-3" id="hb-createupdate-hotbox">
-                        <div class="row mb-3">
-                            <h1 class="h1 mb-3 font-weight-normal">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</h1>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col p-3">
-                                <div class="row">
-                                    <h2>Details</h2>
-                                </div>
-                                {{ form_start(hotboxform) }}
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.name) }}
-                                    <div class="col">{{ form_widget(hotboxform.name) }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.code) }}
-                                    <div class="col">{{ form_widget(hotboxform.code) }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.rotationFrequency) }}
-                                    <div class="col">{{ form_widget(hotboxform.rotationFrequency) }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.imageWidth) }}
-                                    <div class="col">{{ form_widget(hotboxform.imageWidth) }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.imageHeight) }}
-                                    <div class="col">{{ form_widget(hotboxform.imageHeight) }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    {{ form_label(hotboxform.active) }}
-                                    <div class="col">{{ form_widget(hotboxform.active) }}</div>
-                                </div>
+<div class="col p-3" id="hb-createupdate-hotbox">
+    <div class="row mb-3">
+        <h1 class="h1 mb-3 font-weight-normal">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</h1>
+    </div>
+    <div class="row mb-3">
+        <div class="col p-3">
+            <div class="row">
+                <h2>Details</h2>
+            </div>
+            {{ form_start(hotboxform) }}
+            <div class="row mb-2">
+                {{ form_label(hotboxform.name) }}
+                <div class="col">{{ form_widget(hotboxform.name) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(hotboxform.code) }}
+                <div class="col">{{ form_widget(hotboxform.code) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(hotboxform.rotationFrequency) }}
+                <div class="col">{{ form_widget(hotboxform.rotationFrequency) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(hotboxform.imageWidth) }}
+                <div class="col">{{ form_widget(hotboxform.imageWidth) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(hotboxform.imageHeight) }}
+                <div class="col">{{ form_widget(hotboxform.imageHeight) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(hotboxform.active) }}
+                <div class="col">{{ form_widget(hotboxform.active) }}</div>
+            </div>
 
-                                {{ form_rest(hotboxform) }}
-                                <div class="row mb-2">
-                                    <div class="col offset-3">
-                                        <button class="btn btn-lg btn-primary" type="submit">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</button>
-                                    </div>
-                                    {% if hotboxform.vars.data.id is not empty %}
-                                    <div class="col text-end">
-                                        <a class="btn btn-lg btn-danger" href="{{ url('app_deletehotbox', { hotboxid: hotboxform.vars.data.id }) }}">Delete HotBox</a>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                {{ form_end(hotboxform) }}
-                            </div>
-                            <div class="col-2">
-
-                            </div>
-                        </div>
-                        {% if hotboxform.vars.data.id is not empty and comics|length > 0%}
-                            {% set availableComics = 0 %}
-                            {% set activeComics = 0 %}
-
-
-                            <div class="row"><hr /></div>
-                            <div class="row">
-                                <div class="col p-3">
-                                    <div class="row mb-2">
-                                        <h2>Comic Rotation</h2>
-                                    </div>
-
-                                    <div class="row mb-2">
-                                    {% if hotbox.availableComics == 0 %}
-                                        <div class="col">
-                                            There are no comics with images the correct size that can be added to this HotBox.
-                                        </div>
-                                    {% elseif hotbox.activeComics == 0 %}
-                                        <div class="col-1">
-                                            <i class="fas fa-arrow-down fa-bounce fa-2x"></i>
-                                        </div>
-                                        <div class="col">
-                                            The HotBox needs to be filled before images will start to appear in rotation.  Please click the <i class="fas fa-plus text-primary"></i> icon to add comics.
-                                        </div>
-                                    {% elseif hotbox.activeComics == hotbox.availableComics %}
-                                        <div class="col">
-                                            This HotBox currently has all available comics in rotation.
-                                        </div>
-                                    {% else %}
-                                        <div class="col">
-                                            This HotBox currently has <b>{{ hotbox.activeComics }}</b> comics in rotation out of a possible <b>{{ hotbox.availableComics }}</b>.  Click the <i class="fas fa-plus text-primary"></i> or <i class="fas fa-minus text-primary"></i>
-                                            buttons to add or remove comics from rotation.
-                                        </div>
-                                    {% endif %}
-                                        </div>
-                                    </div>
-
-                                    {% for comic in comics %}
-                                        {% set hasRotation = false %}
-                                        {% set sDate = "" %}
-                                        {% set eDate = "" %}
-                                        {% set dConn = "" %}
-                                        {% set buttonTitle = "Add Comic to HotBox" %}
-                                        {% if not comic.hotboxMatch %}
-                                            {% set buttonTitle = "Comic has no images that fit HotBox size constraints" %}
-                                        {% endif %}
-                                        {% for rot in comic.rotations %}
-                                            {% if rot.hotbox.id == hotboxform.vars.data.id %}
-                                                {% set dConn = " to " %}
-                                                {% set hasRotation = true %}
-                                                {% set buttonTitle = "Remove comic from HotBox" %}
-                                                {% if hotboxform.vars.data.rotationFrequency == 'Hour' %}
-                                                    {% set sDate = rot.start|date("H:i") %}
-                                                    {% set eDate = rot.expire|date("H:i") %}
-                                                {% elseif hotboxform.vars.data.rotationFrequency == 'Minute' %}
-                                                    {% set sDate = rot.start|date("H:i") %}
-                                                    {% set eDate = rot.expire|date("H:i") %}
-                                                {% elseif hotboxform.vars.data.rotationFrequency == '15 Minutes' %}
-                                                    {% set sDate = rot.start|date("H:i") %}
-                                                    {% set eDate = rot.expire|date("H:i") %}
-                                                {% elseif hotboxform.vars.data.rotationFrequency == 'Month' %}
-                                                    {% set sDate = rot.start|date("Y-m") %}
-                                                    {% set eDate = rot.expire|date("Y-m") %}
-                                                {% else %}
-                                                    {% set sDate = rot.start|date("Y-m-d") %}
-                                                    {% set eDate = rot.expire|date("Y-m-d") %}
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endfor %}
-
-                                        <div class="row mb-2">
-                                            <div class="col-1"><a href="{{ url('app_addrotation', { hotboxid:hotboxform.vars.data.id, comicid: comic.id })}}" title="{{ buttonTitle }}" class="btn {% if not comic.hotboxMatch %}disabled{% elseif hasRotation %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if hasRotation %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
-                                            <div class="col-1"><i title="{% if comic.hotboxMatch %}Comic has ad ready for HotBox{% elseif comic.images|length > 0%}Comic has ads but non of the correct size{% else %}Comic has no ads{% endif %}" class="fas {% if comic.hotboxMatch %}fa-check text-success{% elseif comic.images|length > 0%}fa-image text-warning{% else %}fa-close text-danger{% endif %}"></i></div>
-                                            <div class="col"><strong>{{ comic.Name }}</strong> by {% if comic.user.name is not empty %}{{ comic.user.name }}{% else %}{{ comic.user.email }}{% endif %}</div>
-                                            <div class="col-4">{{ sDate }}{{dConn}}{{ eDate }}</div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
+            {{ form_rest(hotboxform) }}
+            <div class="row mb-2">
+                <div class="col offset-3">
+                    <button class="btn btn-lg btn-primary" type="submit">{% if hotboxform.vars.data.id is not empty %}Update{% else %}Create{% endif %} HotBox</button>
+                </div>
+                {% if hotboxform.vars.data.id is not empty %}
+                <div class="col text-end">
+                    <a class="btn btn-lg btn-danger" href="{{ url('app_deletehotbox', { hotboxid: hotboxform.vars.data.id }) }}">Delete HotBox</a>
+                </div>
+                {% endif %}
+            </div>
+            {{ form_end(hotboxform) }}
+        </div>
+        <div class="col-2">
 
         </div>
     </div>
+    {% if hotboxform.vars.data.id is not empty and comics|length > 0%}
+        {% set availableComics = 0 %}
+        {% set activeComics = 0 %}
+
+
+        <div class="row"><hr /></div>
+        <div class="row">
+            <div class="col p-3">
+                <div class="row mb-2">
+                    <h2>Comic Rotation</h2>
+                </div>
+
+                <div class="row mb-2">
+                {% if hotbox.availableComics == 0 %}
+                    <div class="col">
+                        There are no comics with images the correct size that can be added to this HotBox.
+                    </div>
+                {% elseif hotbox.activeComics == 0 %}
+                    <div class="col-1">
+                        <i class="fas fa-arrow-down fa-bounce fa-2x"></i>
+                    </div>
+                    <div class="col">
+                        The HotBox needs to be filled before images will start to appear in rotation.  Please click the <i class="fas fa-plus text-primary"></i> icon to add comics.
+                    </div>
+                {% elseif hotbox.activeComics == hotbox.availableComics %}
+                    <div class="col">
+                        This HotBox currently has all available comics in rotation.
+                    </div>
+                {% else %}
+                    <div class="col">
+                        This HotBox currently has <b>{{ hotbox.activeComics }}</b> comics in rotation out of a possible <b>{{ hotbox.availableComics }}</b>.  Click the <i class="fas fa-plus text-primary"></i> or <i class="fas fa-minus text-primary"></i>
+                        buttons to add or remove comics from rotation.
+                    </div>
+                {% endif %}
+                    </div>
+                </div>
+
+                {% for comic in comics %}
+                    {% set hasRotation = false %}
+                    {% set sDate = "" %}
+                    {% set eDate = "" %}
+                    {% set dConn = "" %}
+                    {% set buttonTitle = "Add Comic to HotBox" %}
+                    {% if not comic.hotboxMatch %}
+                        {% set buttonTitle = "Comic has no images that fit HotBox size constraints" %}
+                    {% endif %}
+                    {% for rot in comic.rotations %}
+                        {% if rot.hotbox.id == hotboxform.vars.data.id %}
+                            {% set dConn = " to " %}
+                            {% set hasRotation = true %}
+                            {% set buttonTitle = "Remove comic from HotBox" %}
+                            {% if hotboxform.vars.data.rotationFrequency == 'Hour' %}
+                                {% set sDate = rot.start|date("H:i") %}
+                                {% set eDate = rot.expire|date("H:i") %}
+                            {% elseif hotboxform.vars.data.rotationFrequency == 'Minute' %}
+                                {% set sDate = rot.start|date("H:i") %}
+                                {% set eDate = rot.expire|date("H:i") %}
+                            {% elseif hotboxform.vars.data.rotationFrequency == '15 Minutes' %}
+                                {% set sDate = rot.start|date("H:i") %}
+                                {% set eDate = rot.expire|date("H:i") %}
+                            {% elseif hotboxform.vars.data.rotationFrequency == 'Month' %}
+                                {% set sDate = rot.start|date("Y-m") %}
+                                {% set eDate = rot.expire|date("Y-m") %}
+                            {% else %}
+                                {% set sDate = rot.start|date("Y-m-d") %}
+                                {% set eDate = rot.expire|date("Y-m-d") %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="row mb-2">
+                        <div class="col-1"><a href="{{ url('app_addrotation', { hotboxid:hotboxform.vars.data.id, comicid: comic.id })}}" title="{{ buttonTitle }}" class="btn {% if not comic.hotboxMatch %}disabled{% elseif hasRotation %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if hasRotation %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
+                        <div class="col-1"><i title="{% if comic.hotboxMatch %}Comic has ad ready for HotBox{% elseif comic.images|length > 0%}Comic has ads but non of the correct size{% else %}Comic has no ads{% endif %}" class="fas {% if comic.hotboxMatch %}fa-check text-success{% elseif comic.images|length > 0%}fa-image text-warning{% else %}fa-close text-danger{% endif %}"></i></div>
+                        <div class="col"><strong>{{ comic.Name }}</strong> by {% if comic.user.name is not empty %}{{ comic.user.name }}{% else %}{{ comic.user.email }}{% endif %}</div>
+                        <div class="col-4">{{ sDate }}{{dConn}}{{ eDate }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+    {% endif %}
 </div>
+
 {% endblock %}
 
 

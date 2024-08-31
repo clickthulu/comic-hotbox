@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if carouselform.vars.data.id is not empty %}Update{% else %}Create{% endif %} Carousel{% endblock %}
+
+{% block body %}                    <div class="col p-3" id="hb-createupdate-hotbox">
+    <div class="row mb-3">
+        <h1 class="h1 mb-3 font-weight-normal">{% if carouselform.vars.data.id is not empty %}Update{% else %}Create{% endif %} Carousel</h1>
+    </div>
+    <div class="row mb-3">
+        <div class="col p-3">
+            <div class="row">
+                <h2>Details</h2>
+            </div>
+            {{ form_start(carouselform) }}
+            <div class="row mb-2">
+                {{ form_label(carouselform.name) }}
+                <div class="col">{{ form_widget(carouselform.name) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.code) }}
+                <div class="col">{{ form_widget(carouselform.code) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.width) }}
+                <div class="col">{{ form_widget(carouselform.width) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.height) }}
+                <div class="col">{{ form_widget(carouselform.height) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.displayType) }}
+                <div class="col">{{ form_widget(carouselform.displayType) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.delay) }}
+                <div class="col">{{ form_widget(carouselform.delay) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(carouselform.active) }}
+                <div class="col">{{ form_widget(carouselform.active) }}</div>
+            </div>
+            
+            {{ form_rest(carouselform) }}
+            <div class="row mb-2">
+                <div class="col offset-3">
+                    <button class="btn btn-lg btn-primary" type="submit">{% if carouselform.vars.data.id is not empty %}Update{% else %}Create{% endif %} Carousel</button>
+                </div>
+                {% if carouselform.vars.data.id is not empty %}
+                    <div class="col text-end">
+                        <a class="btn btn-lg btn-danger" href="{{ url('app_deletecarousel', { id: carouselform.vars.data.id }) }}">Delete Carousel</a>
+                    </div>
+                {% endif %}
+            </div>
+            {{ form_end(carouselform) }}
+        </div>
+    </div>
+    {% if carouselform.vars.data.id is not empty %}
+        <div class="row mb-3">
+            <div class="col">
+                {% for cimage in carousel.getCarouselImages %}
+                    <div class="row mb-3">
+                        <div class="col-1"><i class="fas fa-grip-vertical"></i></div>
+                        <div class="col">{{ cimage.comic.name }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-3">
+                <div class="hb-carousel" data-carousel="{{ carousel.code }}">
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+
+{% block sidebar %}
+    {% include "common/sidebar.html.twig" %}
+{% endblock %}

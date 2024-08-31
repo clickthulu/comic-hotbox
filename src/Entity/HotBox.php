@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enumerations\RotationFrequencyEnumeration;
 use App\Repository\HotBoxRepository;
+use App\Traits\CodeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: HotBoxRepository::class)]
 class HotBox
 {
-    const CODELENGTH = 16;
+    use CodeTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -109,21 +110,6 @@ class HotBox
         return $this;
     }
 
-
-    private function generateCode(): string
-    {
-        if (function_exists("random_bytes")) {
-            $bytes = random_bytes(ceil(self::CODELENGTH / 2));
-        } elseif (function_exists("openssl_random_pseudo_bytes")) {
-            $bytes = openssl_random_pseudo_bytes(ceil(self::CODELENGTH / 2));
-        } else {
-            return "";
-        }
-        return substr(bin2hex($bytes), 0, self::CODELENGTH);
-
-
-
-    }
 
     /**
      * @return Collection<int, Rotation>

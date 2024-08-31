@@ -3,8 +3,9 @@
 namespace App\Enumerations;
 
 use App\Exceptions\RoleNotFoundException;
+use Eloquent\Enumeration\AbstractEnumeration;
 
-class RoleEnumeration extends \Eloquent\Enumeration\AbstractEnumeration
+class RoleEnumeration extends AbstractEnumeration
 {
     const ROLE_OWNER = "ROLE_OWNER";
     const ROLE_ADMIN = "ROLE_ADMIN";

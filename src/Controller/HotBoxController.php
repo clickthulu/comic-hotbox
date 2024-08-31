@@ -25,8 +25,10 @@ class HotBoxController extends AbstractController
         $this->denyAccessUnlessGranted(RoleEnumeration::ROLE_ADMIN);
 
         $hotbox = new HotBox();
+        $update = false;
         if (!empty($id)) {
             $hotbox = $entityManager->getRepository(HotBox::class)->find($id);
+            $update = true;
         }
         $form = $this->createForm(HotBoxCreateFormType::class, $hotbox);
         $form->handleRequest($request);
@@ -56,6 +58,7 @@ class HotBoxController extends AbstractController
             $entityManager->persist($hotbox);
             $entityManager->flush();
             $this->retimeRotations($entityManager, $hotbox);
+            $this->addFlash('info', "Hotbox " . ($update ? 'updated' : 'created'));
             return new RedirectResponse($this->generateUrl('app_edithotbox', ['id' => $hotbox->getId()]));
         }
 

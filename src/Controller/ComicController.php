@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Carousel;
+use App\Entity\CarouselImage;
 use App\Entity\Comic;
 use App\Entity\HotBox;
 use App\Entity\Image;
@@ -150,6 +152,66 @@ class ComicController extends AbstractController
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 
+
+    #[Route('/carousel/uploadimage/{comicid}/{carouselid?}', name: 'app_uploadcarouselimage')]
+    public function uploadcarouselimage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $carouselid = null): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        /**
+         * @var Comic $comic
+         */
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Carousel $carousel
+         */
+        $carousel = $entityManager->getRepository(Carousel::class)->find($carouselid);
+        /**
+         * @var CarouselImage $origImage
+         */
+        $origImage = $carousel->findCarouselImage($comic->getId());
+
+        if (!empty($origImage)) {
+            $entityManager->remove($origImage);
+            $entityManager->flush();
+            // Delete the current image
+        }
+
+        $uploadDir = __DIR__ . "/../../storage/{$user->getEmail()}";
+        $storageDir = "/storage/{$user->getEmail()}";
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir);
+        }
+
+        $files = array_pop($_FILES);
+        if (empty($files)) {
+            throw new FileNotFoundException("No file was uploaded.");
+        }
+
+
+        $path = "{$uploadDir}/{$files['name']}";
+        move_uploaded_file($files['tmp_name'], $path);
+
+        list($imageWidth, $imageHeight, ,) = getimagesize($path);
+        $image = new CarouselImage();
+        $image
+            ->setComic($comic)
+            ->setCarousel($carousel)
+            ->setPath("{$storageDir}/{$files['name']}")
+            ->setWidth($imageWidth)
+            ->setHeight($imageHeight);
+        $entityManager->persist($image);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+    }
+
     #[Route('/comic/image/delete/{comicid}/{imageid}', name: 'app_deleteimage')]
     public function deleteImage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
     {
@@ -167,6 +229,29 @@ class ComicController extends AbstractController
          * @var Image $image
          */
         $image = $entityManager->getRepository(Image::class)->find($imageid);
+        $entityManager->remove($image);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+    }
+
+
+    #[Route('/carousel/image/delete/{comicid}/{imageid}', name: 'app_deletecarouselimage')]
+    public function deleteCarouselImage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Image $image
+         */
+        $image = $entityManager->getRepository(CarouselImage::class)->find($imageid);
         $entityManager->remove($image);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
