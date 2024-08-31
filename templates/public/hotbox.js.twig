@@ -1,6 +1,5 @@
 function HotBox() {
     this.SERVERURL = "{{ settings.get('server_url').value|raw }}";
-
     this.init = function() {
         const collection = document.getElementsByClassName("hotbox");
         for ( let i = 0; i < collection.length; i++) {
@@ -24,8 +23,205 @@ function HotBox() {
     this.init();
 }
 
+function Carousel() {
+    this.SERVERURL = "{{ settings.get('server_url').value|raw }}";
+    this.slideIndex = 0;
+    this.delay = 0;
+
+    this.init = function() {
+        const collection = document.getElementsByClassName('hb-carousel');
+        for (let i = 0; i < collection.length; i++) {
+            let code = collection[i].getAttribute('data-carousel');
+            this.call(code, collection[i]);
+        }
+    }
+    this.call = function(code, target){
+        let dataurl = this.SERVERURL + "/api/carousel/" + code;
+        fetch(dataurl)
+            .then((response) => response.json())
+            .then((data) => this.build(data, target))
+            .catch((error) => console.log(error));
+    }
+
+    this.injectstylesheets = function(data){
+        const addStyle = function(styleString) {
+            let style = document.getElementById('carousel-style');
+            if (!style) {
+                style = document.createElement('style');
+                style.setAttribute('id', 'carousel-style');
+                document.head.append(style);
+            }
+            style.append(styleString);
+        };
+        let overflow = "overflow: hidden;"
+        let border = "";
+//        let overflow = "";
+//        let border = "border: 1px solid red;"
+        let code = data.code;
+        addStyle(".slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; text-align: center; " + overflow + " }");
+        addStyle(".slides { position: relative; display: flex; "  + overflow +  "}");
+        addStyle(".slider > div.slide-" + code + ".slide {\
+    width: " + data.width + "px; \
+    height: " + data.height + "px; \
+    }");
+
+        addStyle(".slide-fade  div.slide {\
+    position: absolute;\
+    top: 0;\
+    left: 0;\
+    }");
+
+        addStyle("@keyframes slidefadeinanim { \
+    0% { opacity: 0%; }\
+    100% { opacity: 100%; }\
+    }");
+
+        addStyle("@keyframes slideshiftleftanim {\
+    0% { transform: translateX(0%); }\
+    100% { transform: translateX(-100%); }\
+    }");
+
+        addStyle("@keyframes slidefadeoutanim { \
+    0% { opacity: 100%; }\
+    100% { opacity: 0%; }\
+    }");
+
+        addStyle(".slider-" + code + " .slidefadein { \
+    animation: slidefadeinanim 3s forwards;\
+    }");
+
+        addStyle(".slider-" + code + " .slidefadeout { \
+    animation: slidefadeoutanim 3s forwards;\
+    }");
+
+        addStyle(".slider-" + code + " .slideshiftleft {\
+    animation: slideshiftleftanim 3s forwards;\
+    }");
+
+        addStyle(".slider-" + code + " .slidecrawlleft {\
+    animation: slideshiftleftanim " + data.delay + "s;\
+    }");
+    }
+
+    this.build = function(data, target) {
+        this.delay = data['delay'];
+        this.injectstylesheets(data);
+        let code = data['code'];
+        let transitionFunction = null;
+        switch (data.transition) {
+            case "Fade":
+                data['items'].unshift(data['items'].pop());
+                data['items'].reverse();
+                transitionFunction = this.showFade.bind(this);
+                break;
+            case "Slide":
+                transitionFunction = this.showSlide.bind(this);
+                break;
+            case "Crawl":
+                transitionFunction = this.showCrawl.bind(this, data['delay']);
+                break;
+            default:
+                transitionFunction = this.showFlip.bind(this);
+                break;
+        }
+        let output = "<div class='hb-carousel-slider slider-" + code + " slide-" + data.transition.toLowerCase() + "'><div class='slides'>"
+        for(const d of data['items']) {
+            output += "<div class='slide slide-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + d.image + "' alt='" + d.name + "'></a></div>";
+        }
+        output += "</div></div>";
+        target.innerHTML = output;
+
+        this.start(data.delay, transitionFunction)
+
+    }
+
+    this.start = function(delay, slider) {
+        slider();
+        setInterval(function() {
+            slider();
+        }, delay * 1000);
+    }
+
+    this.doNothing = function()
+    {
+
+    }
+
+    this.showCrawl = function(delay)
+    {
+        console.log(delay);
+        let slides = document.getElementsByClassName('slide');
+        for (let i = 0; i < slides.length-1; i++) {
+            slides[i].classList.add('slidecrawlleft');
+        }
+        setTimeout(function(){
+            console.log("Timeout hit");
+            for (let j = 0; j < slides.length-1; j++){
+                slides[j].classList.remove('slidecrawlleft');
+            }
+            let currentSlide = slides[0].parentNode.removeChild(slides[0]);
+            slides[0].parentNode.appendChild(currentSlide);
+        }, (delay * 1000))
+    }
+
+    this.showSlide = function()
+    {
+        let slides = document.getElementsByClassName('slide');
+        for (let i = 0; i < slides.length-1; i++) {
+            slides[i].classList.add('slideshiftleft');
+        }
+        setTimeout(function(){
+            for (let j = 0; j < slides.length-1; j++){
+                slides[j].classList.remove('slideshiftleft');
+            }
+            let currentSlide = slides[0].parentNode.removeChild(slides[0]);
+            slides[0].parentNode.appendChild(currentSlide);
+        }, 3000)
+
+    }
+
+    this.showFade = function()
+    {
+        let slides = document.getElementsByClassName('slide');
+        for (let i = 0; i < slides.length-1; i++) {
+            slides[i].classList.remove('slidefadeout');
+        }
+
+        let currentSlide = slides[0].parentNode.removeChild(slides[slides.length-1]);
+        slides[0].parentNode.insertBefore(currentSlide, slides[0]);
+
+        slides[slides.length-1].classList.add('slidefadeout');
+
+    }
+
+    this.showFlip = function()
+    {
+        let slides = document.getElementsByClassName('slide');
+        if (this.slideIndex > slides.length-1) {
+            this.slideIndex = 0;
+        }
+        if (this.slideIndex < 0) {
+            this.slideIndex = slides.length;
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[this.slideIndex].style.display = "block";
+        this.slideIndex++;
+    }
+
+
+    this.slide = function(width, target)
+    {
+        constSlideWidth = width;
+
+    }
+
+    this.init();
+}
 
 
 window.addEventListener('DOMContentLoaded', () => {
     let hotbox = new HotBox();
+    let carousel = new Carousel();
 });

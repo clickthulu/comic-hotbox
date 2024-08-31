@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Carousel;
+use App\Entity\CarouselImage;
 use App\Entity\HotBox;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,6 +53,42 @@ class PublicController extends AbstractController
                 'url' => $imageURL
             ];
         }
+        return new JsonResponse($data);
+
+    }
+
+
+    #[Route('/api/carousel/{code}', name: 'app_hotboxcode')]
+    public function getCarousel(EntityManagerInterface $entityManager, string $code): JsonResponse
+    {
+        /**
+         * @var Carousel $carousel
+         */
+        $carousel = $entityManager->getRepository(Carousel::class)->findOneBy(['code' => $code]);
+
+        $data = [
+            'name' => $carousel->getName(),
+            'width' => $carousel->getWidth(),
+            'height' => $carousel->getHeight(),
+            'transition' => $carousel->getDisplayType(),
+            'delay' => $carousel->getDelay(),
+            'code' => $code,
+            'items' => []
+        ];
+
+        $cimages = $carousel->getCarouselImages();
+        /**
+         * @var CarouselImage $carouselImage
+         */
+        foreach ($cimages as $carouselImage) {
+            $data['items'][] = [
+                'url' => $carouselImage->getComic()->getUrl(),
+                'image' => $carouselImage->getPath(),
+                'name' => $carouselImage->getComic()->getName(),
+
+            ];
+        }
+
         return new JsonResponse($data);
 
     }

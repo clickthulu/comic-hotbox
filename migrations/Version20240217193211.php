@@ -17,6 +17,9 @@ final class Version20240217193211 extends AbstractMigration
         return '';
     }
 
+    /** @noinspection SqlResolve
+     * @noinspection SqlNoDataSourceInspection
+     */
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
@@ -27,6 +30,9 @@ final class Version20240217193211 extends AbstractMigration
         $this->addSql('ALTER TABLE image ADD CONSTRAINT FK_C53D045FD663094A FOREIGN KEY (comic_id) REFERENCES comic (id)');
     }
 
+    /** @noinspection SqlResolve
+     * @noinspection SqlNoDataSourceInspection
+     */
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs

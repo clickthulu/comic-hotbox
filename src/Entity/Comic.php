@@ -46,11 +46,15 @@ class Comic
 
     private bool $hotboxMatch = false;
 
+    #[ORM\OneToMany(mappedBy: 'comic', targetEntity: CarouselImage::class, orphanRemoval: true)]
+    private Collection $carouselImages;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->rotations = new ArrayCollection();
         $this->createdon = new \DateTime();
+        $this->carouselImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +285,36 @@ class Comic
     public function setHotboxMatch(bool $hotboxMatch): void
     {
         $this->hotboxMatch = $hotboxMatch;
+    }
+
+    /**
+     * @return Collection<int, CarouselImage>
+     */
+    public function getCarouselImages(): Collection
+    {
+        return $this->carouselImages;
+    }
+
+    public function addCarouselImage(CarouselImage $carouselImage): static
+    {
+        if (!$this->carouselImages->contains($carouselImage)) {
+            $this->carouselImages->add($carouselImage);
+            $carouselImage->setComic($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarouselImage(CarouselImage $carouselImage): static
+    {
+        if ($this->carouselImages->removeElement($carouselImage)) {
+            // set the owning side to null (unless already changed)
+            if ($carouselImage->getComic() === $this) {
+                $carouselImage->setComic(null);
+            }
+        }
+
+        return $this;
     }
 
 

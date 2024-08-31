@@ -39,100 +39,167 @@
                 </div>
             </div>
             {% if comicform.vars.data.id is not empty %}
-                <div class="row mt-3">
-                    <div class="col p-3">
-                        <div class="row">
-                            <h3>Comic images</h3>
-                        </div>
-                        <div class="row">
-                            {% set blankslots = settings.get('image_limit').value - images|length %}
-                            {% for image in images %}
-                                {% set alttext = image.comic.description %}
-                                {% if image.alttext is not empty %}
-                                    {% set alttext = image.alttext %}
-                                {% endif %}
-                                <div class="col-4">
+                {% if settings.get('enable_carousel').value is not empty %}
+                    <div class="row mt-3">
+                        <div class="col p-3">
+                            <div class="row">
+                                <h3>Carousel Images</h3>
+                            </div>
+                            <div class="row">
+                                {% for carousel in carouselservice.getCarousels %}
+                                    <div class="col-4">
                                     <div class="col text-center border p-3 m-1">
                                         <div class="row">
-                                            <div class="col text-center image-box ">
-                                                <div class="image-box-icons">
-                                                    {% if not image.matchesHotboxSize %}
-                                                        <div class="mb-2 icon" title="Image size does not match any current hotboxes">
-                                                              <span class="fa-stack fa-2x">
-                                                                <i class="fas fa-circle fa-stack-2x text-danger"></i>
-                                                                <i class="fas fa-bolt fa-stack-1x fa-inverse"></i>
-                                                              </span>
-                                                        </div>
-                                                    {% endif %}
-                                                    {% if image.alttext is not empty %}
-                                                        <div class="mb-2 icon" title="Image has custom alt text">
-                                                              <span class="fa-stack fa-2x">
-                                                                <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                                                                <i class="fas fa-comment fa-stack-1x fa-inverse"></i>
-                                                              </span>
-                                                        </div>
-                                                    {% endif %}
-                                                    {% if image.url is not empty %}
-                                                        <div class="mb-2 icon" title="Image has a unique url">
-                                                              <span class="fa-stack fa-2x">
-                                                                <i class="fas fa-circle fa-stack-2x text-success"></i>
-                                                                <i class="fas fa-link fa-stack-1x fa-inverse"></i>
-                                                              </span>
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                            <img src="{{ image.path }}" alt="{{ alttext }}" title="{{ alttext }}" class="img img-fluid border border-4
-                                                {% if not image.matchesHotboxSize %}
-                                                    border-danger
-                                                {% elseif image.active %}
-                                                    border-success
-                                                {% else %}
-                                                    border-secondary
-                                                {% endif %}">
-
-
-
-                                            </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col text-center">
-                                            {{ image.width }} x {{ image.height }}
+                                                <h4>{{ carousel.name }}</h4>
+                                                <h5>{{ carousel.width }} x {{ carousel.height }}</h5>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadimage', {comicid:comicform.vars.data.id, imageid: image.id  }) }}">
-                                                <input type="file" name="imagefile" class="hidden-file-input" id="comic_image_upload_current_{{ image.id }}" onchange="form.submit()" value="Upload File" />
-                                                <div class="row mt-3">
-                                                    <div class="btn-group" role="group">
-                                                        <label for="comic_image_upload_current_{{ image.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
-                                                        {% if image.active %}
-                                                            <a class="btn btn-secondary" href="{{ url('app_deactivateimage', { comicid: comicform.vars.data.id, imageid: image.id }) }}" title="Image is currently active"><i class="far fa-lightbulb"></i></a>
-                                                        {% else %}
-                                                            <a class="btn btn-outline-secondary" href="{{ url('app_activateimage', { comicid: comicform.vars.data.id, imageid: image.id }) }}" title="Image is currently inactive"><i class="fas fa-lightbulb"></i></a>
-                                                        {% endif %}
-                                                        <a class="btn btn-success" href="{{ url('app_editimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Edit Image Details"><i class="fas fa-edit"></i></a>
 
-                                                        <a class="btn btn-danger" href="{{ url('app_deleteimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Delete this image"><i class="fas fa-trash"></i></a>
-                                                    </div>
+                                        {% if carousel.findCarouselImage(comicform.vars.data.id) is not empty %}
+                                            {% set cimg = carousel.findCarouselImage(comicform.vars.data.id)  %}
+                                            {% set alttext = cimg.comic.description %}
+                                            <div class="row">
+                                                <div class="col text-center image-box ">
+                                                    <img src="{{ cimg.path }}" alt="{{ alttext }}" title="{{ alttext }}" class="img img-fluid border border-4 border-success">
                                                 </div>
+                                            </div>
+                                            <div class="row">
+
+                                            </div>
+                                            <div class="row">
+                                                <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadcarouselimage', {comicid:comicform.vars.data.id, imageid: cimg.id  }) }}">
+                                                    <input type="file" name="imagefile" class="hidden-file-input" id="comic_image_upload_current_{{ cimg.id }}" onchange="form.submit()" value="Upload File" />
+                                                    <div class="row mt-3">
+                                                        <div class="btn-group" role="group">
+                                                            <label for="comic_image_upload_current_{{ cimg.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
+                                                            <a class="btn btn-danger" href="{{ url('app_deletecarouselimage', { comicid:comicform.vars.data.id, imageid: cimg.id }) }}" title="Delete this image"><i class="fas fa-trash"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        {% else %}
+                                            <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadcarouselimage', {comicid:comicform.vars.data.id, carouselid:carousel.id }) }}">
+                                                <label for="comic_image_upload_new_{{ carousel.id }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
+                                                <input id="comic_image_upload_new_{{ carousel.id }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if settings.get('enable_webring').value is not empty %}
+                    <div class="row mt-3">
+                        <div class="col p-3">
+                            <div class="row">
+                                <h3>Webring Images</h3>
+                            </div>
+                            <div class="row">
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if settings.get('enable_hotbox').value is not empty %}
+                    <div class="row mt-3">
+                        <div class="col p-3">
+                            <div class="row">
+                                <h3>Hotbox Images</h3>
+                            </div>
+                            <div class="row">
+                                {% set blankslots = settings.get('image_limit').value - images|length %}
+                                {% for image in images %}
+                                    {% set alttext = image.comic.description %}
+                                    {% if image.alttext is not empty %}
+                                        {% set alttext = image.alttext %}
+                                    {% endif %}
+                                    <div class="col-4">
+                                        <div class="col text-center border p-3 m-1">
+                                            <div class="row">
+                                                <div class="col text-center image-box ">
+                                                    <div class="image-box-icons">
+                                                        {% if not image.matchesHotboxSize %}
+                                                            <div class="mb-2 icon" title="Image size does not match any current hotboxes">
+                                                                  <span class="fa-stack fa-2x">
+                                                                    <i class="fas fa-circle fa-stack-2x text-danger"></i>
+                                                                    <i class="fas fa-bolt fa-stack-1x fa-inverse"></i>
+                                                                  </span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if image.alttext is not empty %}
+                                                            <div class="mb-2 icon" title="Image has custom alt text">
+                                                                  <span class="fa-stack fa-2x">
+                                                                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                                                                    <i class="fas fa-comment fa-stack-1x fa-inverse"></i>
+                                                                  </span>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if image.url is not empty %}
+                                                            <div class="mb-2 icon" title="Image has a unique url">
+                                                                  <span class="fa-stack fa-2x">
+                                                                    <i class="fas fa-circle fa-stack-2x text-success"></i>
+                                                                    <i class="fas fa-link fa-stack-1x fa-inverse"></i>
+                                                                  </span>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                <img src="{{ image.path }}" alt="{{ alttext }}" title="{{ alttext }}" class="img img-fluid border border-4
+                                                    {% if not image.matchesHotboxSize %}
+                                                        border-danger
+                                                    {% elseif image.active %}
+                                                        border-success
+                                                    {% else %}
+                                                        border-secondary
+                                                    {% endif %}">
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-center">
+                                                {{ image.width }} x {{ image.height }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadimage', {comicid:comicform.vars.data.id, imageid: image.id  }) }}">
+                                                    <input type="file" name="imagefile" class="hidden-file-input" id="comic_image_upload_current_{{ image.id }}" onchange="form.submit()" value="Upload File" />
+                                                    <div class="row mt-3">
+                                                        <div class="btn-group" role="group">
+                                                            <label for="comic_image_upload_current_{{ image.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
+                                                            {% if image.active %}
+                                                                <a class="btn btn-secondary" href="{{ url('app_deactivateimage', { comicid: comicform.vars.data.id, imageid: image.id }) }}" title="Image is currently active"><i class="far fa-lightbulb"></i></a>
+                                                            {% else %}
+                                                                <a class="btn btn-outline-secondary" href="{{ url('app_activateimage', { comicid: comicform.vars.data.id, imageid: image.id }) }}" title="Image is currently inactive"><i class="fas fa-lightbulb"></i></a>
+                                                            {% endif %}
+                                                            <a class="btn btn-success" href="{{ url('app_editimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Edit Image Details"><i class="fas fa-edit"></i></a>
+
+                                                            <a class="btn btn-danger" href="{{ url('app_deleteimage', { comicid:comicform.vars.data.id, imageid: image.id }) }}" title="Delete this image"><i class="fas fa-trash"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% for i in 1..blankslots %}
+                                    <div class="col-4">
+                                        <div class="col text-center border p-3 m-1">
+                                            <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadimage', {comicid:comicform.vars.data.id }) }}">
+                                                <label for="comic_image_upload_new_{{ i }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
+                                                <input id="comic_image_upload_new_{{ i }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
                                             </form>
                                         </div>
                                     </div>
-                                </div>
-                            {% endfor %}
-                            {% for i in 1..blankslots %}
-                                <div class="col-4">
-                                    <div class="col text-center border p-3 m-1">
-                                        <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadimage', {comicid:comicform.vars.data.id }) }}">
-                                            <label for="comic_image_upload_new_{{ i }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
-                                            <input id="comic_image_upload_new_{{ i }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
-                                        </form>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>
