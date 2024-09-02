@@ -14,6 +14,7 @@ use App\Form\ImageFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -178,11 +179,6 @@ class ComicController extends AbstractController
          */
         $origImage = $carousel->findCarouselImage($comic->getId());
 
-        if (!empty($origImage)) {
-            $entityManager->remove($origImage);
-            $entityManager->flush();
-            // Delete the current image
-        }
 
         $uploadDir = __DIR__ . "/../../storage/{$user->getEmail()}";
         $storageDir = "/storage/{$user->getEmail()}";
@@ -195,6 +191,22 @@ class ComicController extends AbstractController
             throw new FileNotFoundException("No file was uploaded.");
         }
 
+        $carouselWidth = $carousel->getWidth();
+        $carouselHeight = $carousel->getHeight();
+
+        list($imageWidth, $imageHeight, ,) = getimagesize($files['tmp_name']);
+
+        if ((int)$carouselWidth !== (int)$imageWidth || (int)$carouselHeight !== (int)$imageHeight){
+            $this->addFlash("error", "Image dimensions ({$imageWidth}x{$imageHeight} do not match carousel dimensions ($carouselWidth}x{$carouselHeight}. Rejecting upload.");
+            return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+        }
+
+
+        if (!empty($origImage)) {
+            $entityManager->remove($origImage);
+            $entityManager->flush();
+            // Delete the current image
+        }
 
         $path = "{$uploadDir}/{$files['name']}";
         move_uploaded_file($files['tmp_name'], $path);
