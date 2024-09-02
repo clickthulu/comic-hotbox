@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Carousel;
+use App\Entity\CarouselImage;
 use App\Enumerations\RoleEnumeration;
 use App\Form\CarouselFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,6 +76,23 @@ class CarouselController extends AbstractController
         $entityManager->remove($carousel);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_dashboard'));
+    }
+
+    #[Route('/carousel/order/{id}', name: 'app_updateordercarousel')]
+    public function updateOrder(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    {
+        $sortableItems = $request->request->all('items');
+        foreach ($sortableItems as $ordinal => $cimageid) {
+            /**
+             * @var CarouselImage $cimage
+             */
+            $cimage = $entityManager->getRepository(CarouselImage::class)->find((int)$cimageid);
+            $cimage->setOrdinal($ordinal);
+            $entityManager->persist($cimage);
+        }
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'success']);
     }
 
 }

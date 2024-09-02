@@ -200,13 +200,19 @@ class ComicController extends AbstractController
         move_uploaded_file($files['tmp_name'], $path);
 
         list($imageWidth, $imageHeight, ,) = getimagesize($path);
+
+        $lastImage = $carousel->getLastCarouselImage();
+        $ordinal = !empty($lastImage) ? $lastImage->getOrdinal() + 1 : 0;
+
         $image = new CarouselImage();
         $image
             ->setComic($comic)
             ->setCarousel($carousel)
             ->setPath("{$storageDir}/{$files['name']}")
             ->setWidth($imageWidth)
-            ->setHeight($imageHeight);
+            ->setHeight($imageHeight)
+            ->setOrdinal($ordinal);
+        ;
         $entityManager->persist($image);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));

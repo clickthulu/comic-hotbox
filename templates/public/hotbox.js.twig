@@ -58,8 +58,10 @@ function Carousel() {
 //        let overflow = "";
 //        let border = "border: 1px solid red;"
         let code = data.code;
-        addStyle(".slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; text-align: center; " + overflow + " }");
+        addStyle(".slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
+        addStyle(".slide-fade { overflow: visible !important; }")
         addStyle(".slides { position: relative; display: flex; "  + overflow +  "}");
+        addStyle(".slide-fade > .slides { overflow: visible !important; }");
         addStyle(".slider > div.slide-" + code + ".slide {\
     width: " + data.width + "px; \
     height: " + data.height + "px; \
@@ -110,9 +112,9 @@ function Carousel() {
         let transitionFunction = null;
         switch (data.transition) {
             case "Fade":
-                data['items'].unshift(data['items'].pop());
+//                data['items'].unshift(data['items'].pop());
                 data['items'].reverse();
-                transitionFunction = this.showFade.bind(this);
+                transitionFunction = this.showFade.bind(this, data['delay']);
                 break;
             case "Slide":
                 transitionFunction = this.showSlide.bind(this);
@@ -131,14 +133,19 @@ function Carousel() {
         output += "</div></div>";
         target.innerHTML = output;
 
-        this.start(data.delay, transitionFunction)
+        this.start(data.delay, transitionFunction);
 
     }
 
     this.start = function(delay, slider) {
-        slider();
-        setInterval(function() {
-            slider();
+        setTimeout(function(){
+            let slides = document.getElementsByClassName('slide');
+            if (slides.length > 1) {
+                slider();
+                setInterval(function() {
+                    slider();
+                }, delay * 1000);
+            }
         }, delay * 1000);
     }
 
@@ -149,29 +156,28 @@ function Carousel() {
 
     this.showCrawl = function(delay)
     {
-        console.log(delay);
         let slides = document.getElementsByClassName('slide');
-        for (let i = 0; i < slides.length-1; i++) {
+        for (let i = 0; i < slides.length; i++) {
             slides[i].classList.add('slidecrawlleft');
         }
         setTimeout(function(){
             console.log("Timeout hit");
-            for (let j = 0; j < slides.length-1; j++){
+            for (let j = 0; j < slides.length; j++){
                 slides[j].classList.remove('slidecrawlleft');
             }
             let currentSlide = slides[0].parentNode.removeChild(slides[0]);
             slides[0].parentNode.appendChild(currentSlide);
-        }, (delay * 1000))
+        }, (delay * 1000)+10)
     }
 
     this.showSlide = function()
     {
         let slides = document.getElementsByClassName('slide');
-        for (let i = 0; i < slides.length-1; i++) {
+        for (let i = 0; i < slides.length; i++) {
             slides[i].classList.add('slideshiftleft');
         }
         setTimeout(function(){
-            for (let j = 0; j < slides.length-1; j++){
+            for (let j = 0; j < slides.length; j++){
                 slides[j].classList.remove('slideshiftleft');
             }
             let currentSlide = slides[0].parentNode.removeChild(slides[0]);
@@ -180,17 +186,23 @@ function Carousel() {
 
     }
 
-    this.showFade = function()
+    this.showFade = function(delay)
     {
         let slides = document.getElementsByClassName('slide');
+
+
+
         for (let i = 0; i < slides.length-1; i++) {
             slides[i].classList.remove('slidefadeout');
         }
 
-        let currentSlide = slides[0].parentNode.removeChild(slides[slides.length-1]);
-        slides[0].parentNode.insertBefore(currentSlide, slides[0]);
-
         slides[slides.length-1].classList.add('slidefadeout');
+
+        setTimeout(function (){
+            let currentSlide = slides[0].parentNode.removeChild(slides[slides.length-1]);
+            slides[0].parentNode.insertBefore(currentSlide, slides[0]);
+        }, 3001);
+
 
     }
 

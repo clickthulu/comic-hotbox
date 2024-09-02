@@ -55,24 +55,27 @@
             {{ form_end(carouselform) }}
         </div>
     </div>
-    {% if carouselform.vars.data.id is not empty %}
-        <div class="row mb-3">
-            <div class="col">
-                {% for cimage in carousel.getCarouselImages %}
-                    <div class="row mb-3">
-                        <div class="col-1"><i class="fas fa-grip-vertical"></i></div>
-                        <div class="col">{{ cimage.comic.name }}</div>
-                    </div>
-                {% endfor %}
+        {% if carouselform.vars.data.id is not empty %}
+            <div class="row mb-3">
+                <div class="carousel-sortable col" data-carousel="{{ carousel.id }}">
+                    {% for cimage in carousel.getCarouselImages %}
+                        <div class="row mb-3 sortable-item" data-comic="{{ cimage.id }}">
+                            <div class="col-1 sortable-handle"><i class="fas fa-grip-vertical"></i></div>
+                            <div class="col"><strong>{{ cimage.comic.name }}</strong> by <i>{{ cimage.comic.user.name }}</i></div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-3">
+                    <div class="hb-carousel" data-carousel="{{ carousel.code }}">
+                </div>
             </div>
-            <div class="col-3">
-                <div class="hb-carousel" data-carousel="{{ carousel.code }}">
-            </div>
-        </div>
-    {% endif %}
+        {% endif %}
 {% endblock %}
 
+{% block scripts %}
 
+{% endblock %}
 
 {% block sidebar %}
     {% include "common/sidebar.html.twig" %}
