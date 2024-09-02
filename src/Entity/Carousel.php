@@ -33,6 +33,7 @@ class Carousel
     private ?bool $active = true;
 
     #[ORM\OneToMany(mappedBy: 'carousel', targetEntity: CarouselImage::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['ordinal' => 'asc'])]
     private Collection $carouselImages;
 
     #[ORM\Column]
@@ -101,6 +102,23 @@ class Carousel
     public function getCarouselImages(): Collection
     {
         return $this->carouselImages;
+    }
+
+    public function getLastCarouselImage(): ?CarouselImage
+    {
+        /**
+         * @var ?CarouselImage $cimage;
+         */
+        $cimage = null;
+        /**
+         * @var CarouselImage $carouselImage
+         */
+        foreach ($this->carouselImages as $carouselImage) {
+            if (empty($cimage) || $cimage->getOrdinal() <= $carouselImage->getOrdinal()) {
+                $cimage = $carouselImage;
+            }
+        }
+        return $cimage;
     }
 
     public function addCarouselImage(CarouselImage $carouselImage): static

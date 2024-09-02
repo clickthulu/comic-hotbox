@@ -53,13 +53,41 @@ $(document).ready(function(){
         closePop(target);
     });
 
+    $(".carousel-sortable").sortable({
+        cursor: "grab",
+        classes: {
+            ".sortable-item": "highlight"
+        },
+        handle: ".sortable-handle",
+        update: function (event, ui) {
+            let mySortable = $(".carousel-sortable");
+            let items = mySortable.children('.sortable-item');
+            let count = 0;
+            let carousel = mySortable.data('carousel');
+            let data = {};
+            for( let item of items) {
+                data[count] = $(item).data('comic');
+                count++;
+            }
+
+            $.post(
+                "/carousel/order/" + carousel,
+                { items: data }
+            ).done(function() {
+                document.location.reload();
+            });
+
+            console.log(data);
+        }
+    });
+
     function closePop(target)
     {
-        console.log("Close pop triggered")
         if(target){
             target.fadeOut(1000, function(){ console.log("Closing pop"); target.remove(); });
         }
     }
+
 
 
 });
