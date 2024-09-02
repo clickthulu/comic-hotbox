@@ -1,7 +1,7 @@
 function HotBox() {
     this.SERVERURL = "{{ settings.get('server_url').value|raw }}";
     this.init = function() {
-        const collection = document.getElementsByClassName("hotbox");
+        const collection = document.getElementsByClassName("hb-hotbox");
         for ( let i = 0; i < collection.length; i++) {
             let code = collection[i].getAttribute('data-hotbox');
             this.call(code, collection[i]);

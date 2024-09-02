@@ -21,24 +21,40 @@
                     <div class="col">{{ settings.get('server_url').value }}</div>
                 </div>
                 <div class="row pt-3 mb-2 mt-2 border-top">
-                    <h4>HotBoxes</h4>
-                </div>
-                <div class="row mb-2">
-                    <div class="col mb-3">
-                        This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are
-                        supported:
-                    </div>
+                    <h3>Services</h3>
                 </div>
                 {% set allowedHotbox = 0 %}
-                {% for hotbox in hotboxes %}
-                    {% if hotbox.getUserAllowed(app.user) %}
-                        {% set allowedHotbox = allowedHotbox + 1 %}
-                    {% endif %}
+                {% if settings.get('enable_carousel').value %}
                     <div class="row mb-2">
-                        <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
-                        <div class="col">{{ hotbox.imageWidth }} x {{ hotbox.imageHeight }}</div>
+                        <div class="col mb-3">
+                            This server has {{ carousels|length }} active carousels, the following ad resolutions are
+                            supported:
+                        </div>
+                        {% for carousel in carousels %}
+                            <div class="row mb-2">
+                                <div class="col-3 text-end"><b>{{ carousel.name }}:</b></div>
+                                <div class="col">{{ carousel.width }} x {{ carousel.height }}</div>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                {% endif %}
+                {% if settings.get('enable_hotbox').value %}
+                        <div class="row mb-2">
+                            <div class="col mb-3">
+                                This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are
+                                supported:
+                            </div>
+                        </div>
+                    {% for hotbox in hotboxes %}
+                        {% if hotbox.getUserAllowed(app.user) %}
+                            {% set allowedHotbox = allowedHotbox + 1 %}
+                        {% endif %}
+                        <div class="row mb-2">
+                            <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
+                            <div class="col">{{ hotbox.imageWidth }} x {{ hotbox.imageHeight }}</div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 <div class="row pt-3 mb-2 mt-2 border-top">
                     <h4>Installation</h4>
                 </div>
@@ -51,34 +67,59 @@
                                 title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
                     </div>
                 </div>
-                {% if allowedHotbox == 0 %}
-                    <div class="row mb-2">
-                        <div class="col">
-                            <h5>Uh oh</h5>
-                            Currently you do not have any comics assigned to a hotbox. Please upload comic images and
-                            contact the server administrator to be added to a rotation.
+                {% if settings.get('enable_carousel').value %}
+                    <h4>Carousels</h4>
+                    {% if carousels|length == 0 %}
+                    {% else %}
+                        <div class="row mb-3">
+                            <div class="col">
+                                Insert this piece of code where you want your Carousel:
+                            </div>
                         </div>
-                    </div>
-                {% else %}
-                    <div class="row mb-3">
-                        <div class="col">
-                            Insert this piece of code where you want your HotBox:
-                        </div>
-                    </div>
-                    {% for hotbox in hotboxes %}
+                        {% for carousel in carousels %}
                             <div class="row mb-2">
-                                <div class="col-3 text-end"><b>{{ hotbox.name }}:</b></div>
-                                <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hotbox"
-                                        data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
+                                <div class="col-4 text-end"><b>{{ carousel.name }}:</b></div>
+                                <div class="col"><code id="copytext-car-{{ carousel.id }}">&lt;div class="hb-carousel"
+                                        data-carousel="{{ carousel.code }}"&gt;&lt;/div&gt;</code>
                                     <button class="btn btn-sm btn-primary copytext-button"
-                                            data-target="copytext-hb-{{ hotbox.id }}" title="Copy to Clipboard"><i
+                                            data-target="copytext-car-{{ carousel.id }}" title="Copy to Clipboard"><i
                                                 class="fas fa-copy"></i></button>
                                 </div>
-
                             </div>
-                    {% endfor %}
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
+                {% endif %}
+                {% if settings.get('enable_hotbox').value %}
+                    <h4>Hot Boxes</h4>
+                    {% if hotboxes|length == 0 %}
+                        <div class="row mb-2">
+                            <div class="col">
+                                <h5>Uh oh</h5>
+                                Currently you do not have any comics assigned to a hotbox. Please upload comic images and
+                                contact the server administrator to be added to a rotation.
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row mb-3">
+                            <div class="col">
+                                Insert this piece of code where you want your HotBox:
+                            </div>
+                        </div>
+                        {% for hotbox in hotboxes %}
+                                <div class="row mb-2">
+                                    <div class="col-4 text-end"><b>{{ hotbox.name }}:</b></div>
+                                    <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hb-hotbox"
+                                            data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
+                                        <button class="btn btn-sm btn-primary copytext-button"
+                                                data-target="copytext-hb-{{ hotbox.id }}" title="Copy to Clipboard"><i
+                                                    class="fas fa-copy"></i></button>
+                                    </div>
+
+                                </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
                 <div class="row pt-3 mb-2 border-top">
                     <h4>My Upcoming Displays</h4>
                 </div>

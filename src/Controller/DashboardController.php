@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Carousel;
 use App\Entity\HotBox;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,11 +17,11 @@ class DashboardController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
-
+        $carousels = $entityManager->getRepository(Carousel::class)->findAll();
 
         return $this->render('dashboard/index.html.twig', [
             'hotboxes' => $hotboxes,
-
+            'carousels' => $carousels,
         ]);
     }
 
