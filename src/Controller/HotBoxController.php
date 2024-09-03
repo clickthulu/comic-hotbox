@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CarouselImage;
 use App\Entity\Comic;
 use App\Entity\HotBox;
 use App\Entity\Rotation;
@@ -65,22 +66,22 @@ class HotBoxController extends AbstractController
 
         $comics = $entityManager->getRepository(Comic::class)->findBy(['active' => true, 'approved' => true]);
         $comics = $this->orderByRotation($entityManager, $comics, $hotbox);
-        /**
-         * @var Comic $comic
-         */
-        foreach ($comics as $comic) {
-            $comic->imageSizeMatch($hotbox);
-            if ($comic->isHotboxMatch()) {
-                $hotbox->incAvailable();
-            }
-
-            foreach ($comic->getRotations() as $rotation ) {
-                if ($rotation->getHotbox()->getId() === $hotbox->getId()) {
-                    $hotbox->incActive();
-                }
-            }
-
-        }
+//        /**
+//         * @var Comic $comic
+//         */
+//        foreach ($comics as $comic) {
+//            $comic->imageSizeMatch($hotbox);
+//            if ($comic->isActive() && $comic->isApproved() && $comic->isHotboxMatch()) {
+//                $hotbox->incAvailable();
+//
+//                foreach ($comic->getRotations() as $rotation ) {
+//                    if ($rotation->getHotbox()->getId() === $hotbox->getId()) {
+//                        $hotbox->incActive();
+//                    }
+//                }
+//            }
+//
+//        }
 
 
         return $this->render('hotbox/create.html.twig', [
@@ -120,7 +121,23 @@ class HotBoxController extends AbstractController
         return new RedirectResponse($this->generateUrl('app_edithotbox', ['id' => $hotboxid]));
     }
 
+    #[Route('/hotbox/order/{hotboxid}', name: 'app_rotationorder')]
+    public function updateOrder(Request $request, EntityManagerInterface $entityManager, int $hotboxid): Response
+    {
+        $hotbox = $entityManager->getRepository(HotBox::class)->find($hotboxid);
+        $sortableItems = $request->request->all('items');
+        foreach ($sortableItems as $ordinal => $rotid) {
 
+            $rotation = $entityManager->getRepository(Rotation::class)->find((int)$rotid);
+            $rotation->setOrdinal($ordinal);
+            $entityManager->persist($rotation);
+        }
+        $entityManager->flush();
+
+
+        $this->retimeRotations($entityManager, $hotbox);
+        return new RedirectResponse($this->generateUrl('app_edithotbox', ['id' => $hotboxid]));
+    }
 
     protected function retimeRotations(EntityManagerInterface $entityManager, HotBox $hotbox): static
     {
@@ -131,24 +148,44 @@ class HotBoxController extends AbstractController
         // First sort rotations by date
         $rotations = $hotbox->getRotations()->toArray();
         usort($rotations, function(Rotation $a, Rotation $b){
+            if ($a->getOrdinal() !== $b->getOrdinal()) {
+                return ($a->getOrdinal() < $b->getOrdinal()) ? -1 : 1;
+            }
+
             if ($a->getStart() === $b->getStart()) {
                 return 0;
             }
             return ($a->getStart() < $b->getStart()) ? -1 : 1;
         });
         $now = new \DateTime();
+
+
+
+
+
         /**
          * @var Rotation $rotation
          */
-        foreach ($rotations as &$rotation) {
-            // Move any expired rotations to the back of the line
-            if ($now >= $rotation->getExpire()) {
+        foreach ($rotations as $key => &$rotation) {
+            $imgMatch = $rotation->getComic()->imageSizeMatch($hotbox);
+            $comicName = $rotation->getComic()->getName();
+            if (!$imgMatch) {
+                $entityManager->remove($rotation);
+                unset($rotations[$key]);
+            } elseif ($now >= $rotation->getExpire()) {
+                // Move any expired rotations to the back of the line
                 $rotation->calculateNextStart()->calculateExpire();
                 $entityManager->persist($rotation);
             }
         }
+
+
+
         // Resort rotations by date
         usort($rotations, function(Rotation $a, Rotation $b){
+            if ($a->getOrdinal() !== $b->getOrdinal()) {
+                return $a->getOrdinal() < $b->getOrdinal() ? -1 : 1;
+            }
             if ($a->getStart() === $b->getStart()) {
                 return 0;
             }

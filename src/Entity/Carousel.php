@@ -33,7 +33,7 @@ class Carousel
     private ?bool $active = true;
 
     #[ORM\OneToMany(mappedBy: 'carousel', targetEntity: CarouselImage::class, orphanRemoval: true)]
-    #[ORM\OrderBy(['ordinal' => 'asc'])]
+    #[ORM\OrderBy(['active' => 'desc', 'ordinal' => 'asc'])]
     private Collection $carouselImages;
 
     #[ORM\Column]
