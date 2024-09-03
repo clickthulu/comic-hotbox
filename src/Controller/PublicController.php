@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PublicController extends AbstractController
 {
     #[Route('/hotbox.js', name: 'app_hotboxjavascript')]
-    public function getJavascript()
+    public function getJavascript(): Response
     {
 
         $customPath = file_exists(__DIR__ . "/../../custom/public/hotbox-widget.js.twig") ? "custom" : "templates";
@@ -58,7 +58,7 @@ class PublicController extends AbstractController
     }
 
 
-    #[Route('/api/carousel/{code}', name: 'app_hotboxcode')]
+    #[Route('/api/carousel/{code}', name: 'app_carouselcode')]
     public function getCarousel(EntityManagerInterface $entityManager, string $code): JsonResponse
     {
         /**
@@ -81,6 +81,9 @@ class PublicController extends AbstractController
          * @var CarouselImage $carouselImage
          */
         foreach ($cimages as $carouselImage) {
+            if (!$carouselImage->isActive()) {
+                continue;
+            }
             $data['items'][] = [
                 'url' => $carouselImage->getComic()->getUrl(),
                 'image' => $carouselImage->getPath(),

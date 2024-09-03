@@ -41,6 +41,9 @@ class CarouselImage
     #[ORM\Column]
     private ?int $ordinal = 0;
 
+    #[ORM\Column]
+    private ?bool $active = null;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -144,6 +147,18 @@ class CarouselImage
     public function setOrdinal(int $ordinal): static
     {
         $this->ordinal = $ordinal;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

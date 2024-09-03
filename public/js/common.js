@@ -81,6 +81,36 @@ $(document).ready(function(){
         }
     });
 
+
+    $(".hotbox-sortable").sortable({
+        cursor: "grab",
+        classes: {
+            ".sortable-item": "highlight"
+        },
+        handle: ".sortable-handle",
+        update: function (event, ui) {
+            let mySortable = $(".hotbox-sortable");
+            let items = mySortable.children('.sortable-item');
+            let count = 0;
+            let hotbox = mySortable.data('hotbox');
+            let data = {};
+            for( let item of items) {
+                data[count] = $(item).data('rotation');
+                count++;
+            }
+
+            $.post(
+                "/hotbox/order/" + hotbox,
+                { items: data }
+            ).done(function() {
+                document.location.reload();
+            });
+
+            console.log(data);
+        }
+    });
+
+
     function closePop(target)
     {
         if(target){

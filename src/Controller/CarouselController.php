@@ -95,4 +95,17 @@ class CarouselController extends AbstractController
         return new JsonResponse(['status' => 'success']);
     }
 
+    #[Route('/carousel/activate/{id}/{cid}', name: 'app_togglecarouselimage')]
+    public function toggleImage(EntityManagerInterface $entityManager, int $id, int $cid): RedirectResponse
+    {
+        /**
+         * @var CarouselImage $carouselImage
+         */
+        $carouselImage = $entityManager->getRepository(CarouselImage::class)->find($cid);
+        $carouselImage->setActive(!$carouselImage->isActive());
+        $entityManager->persist($carouselImage);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_editcarousel', ['id' => $id]));
+    }
+
 }

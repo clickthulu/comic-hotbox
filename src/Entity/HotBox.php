@@ -33,6 +33,7 @@ class HotBox
     private ?bool $active = true;
 
     #[ORM\OneToMany(mappedBy: 'hotbox', targetEntity: Rotation::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['ordinal' => 'asc', 'start' => 'asc'])]
     private Collection $rotations;
 
     #[ORM\Column]

@@ -22,15 +22,17 @@ class HotBoxService
             /**
              * @var HotBox $hotbox
              */
-            foreach ($hotboxes as $hotbox) {
-                $comic->imageSizeMatch($hotbox);
-                if ($comic->isHotboxMatch()) {
-                    $hotbox->incAvailable();
-                }
+            if ($comic->isActive() && $comic->isApproved()) {
+                foreach ($hotboxes as $hotbox) {
+                    $comic->imageSizeMatch($hotbox);
+                    if ($comic->isHotboxMatch()) {
+                        $hotbox->incAvailable();
+                    }
 
-                foreach ($comic->getRotations() as $rotation ) {
-                    if ($rotation->getHotbox()->getId() === $hotbox->getId()) {
-                        $hotbox->incActive();
+                    foreach ($comic->getRotations() as $rotation) {
+                        if ($rotation->getHotbox()->getId() === $hotbox->getId()) {
+                            $hotbox->incActive();
+                        }
                     }
                 }
             }

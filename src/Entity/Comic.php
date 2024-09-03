@@ -241,6 +241,10 @@ class Comic
 
     public function imageSizeMatch(Hotbox $hotbox): bool
     {
+        if (!$this->isApproved() || !$this->isActive()) {
+            $this->hotboxMatch = false;
+            return false;
+        }
         /**
          * @var Image $image
          */

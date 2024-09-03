@@ -29,6 +29,9 @@ class Rotation
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $expire = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    private ?int $ordinal = 0;
+
     public function __construct()
     {
 
@@ -112,6 +115,18 @@ class Rotation
     public function setExpire(\DateTimeInterface $expire): static
     {
         $this->expire = $expire;
+
+        return $this;
+    }
+
+    public function getOrdinal(): ?int
+    {
+        return $this->ordinal;
+    }
+
+    public function setOrdinal(?int $ordinal): static
+    {
+        $this->ordinal = $ordinal;
 
         return $this;
     }

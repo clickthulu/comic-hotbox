@@ -14,7 +14,6 @@ use App\Form\ImageFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +22,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class ComicController extends AbstractController
 {
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/create', name: 'app_newcomic')]
     #[Route('/comic/edit/{id}', name: 'app_editcomic')]
     public function create(Request $request, EntityManagerInterface $entityManager, ?int $id = null): Response
@@ -71,8 +73,11 @@ class ComicController extends AbstractController
     }
 
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/delete/{id}', name: 'app_deletecomic')]
-    public function delete(Request $request, EntityManagerInterface $entityManager, ?int $id = null): Response
+    public function delete(EntityManagerInterface $entityManager, ?int $id = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
@@ -96,8 +101,11 @@ class ComicController extends AbstractController
         return new RedirectResponse($this->generateUrl('app_dashboard'));
     }
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/uploadimage/{comicid}/{imageid?}', name: 'app_uploadimage')]
-    public function uploadimage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    public function uploadimage(EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
@@ -154,8 +162,11 @@ class ComicController extends AbstractController
     }
 
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/carousel/uploadimage/{comicid}/{carouselid?}', name: 'app_uploadcarouselimage')]
-    public function uploadcarouselimage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $carouselid = null): Response
+    public function uploadcarouselimage(EntityManagerInterface $entityManager, int $comicid, ?int $carouselid = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
@@ -223,15 +234,18 @@ class ComicController extends AbstractController
             ->setPath("{$storageDir}/{$files['name']}")
             ->setWidth($imageWidth)
             ->setHeight($imageHeight)
-            ->setOrdinal($ordinal);
+            ->setOrdinal($ordinal)
         ;
         $entityManager->persist($image);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/image/delete/{comicid}/{imageid}', name: 'app_deleteimage')]
-    public function deleteImage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    public function deleteImage(EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
@@ -253,8 +267,11 @@ class ComicController extends AbstractController
     }
 
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/carousel/image/delete/{comicid}/{imageid}', name: 'app_deletecarouselimage')]
-    public function deleteCarouselImage(Request $request, EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    public function deleteCarouselImage(EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
@@ -276,6 +293,9 @@ class ComicController extends AbstractController
     }
 
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/image/edit/{comicid}/{imageid}', name: 'app_editimage')]
     public function editImage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
     {
@@ -326,16 +346,23 @@ class ComicController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/image/activate/{comicid}/{imageid}', name: 'app_activateimage')]
-    public function activateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
+    public function activateimage(EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         return $this->changeImageActiveFlag($entityManager, $comicid, $imageid, true);
     }
 
 
+    /**
+     * @throws HotBoxException
+     */
     #[Route('/comic/image/deactivate/{comicid}/{imageid}', name: 'app_deactivateimage')]
-    public function deactivateimage(Request $request, EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
+    public function deactivateimage(EntityManagerInterface $entityManager, int $comicid, int $imageid): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $return = $this->changeImageActiveFlag($entityManager, $comicid, $imageid, false);
@@ -359,7 +386,10 @@ class ComicController extends AbstractController
     }
 
 
-    protected function changeImageActiveFlag(EntityManagerInterface $entityManager, int $comicid, int $imageid, bool $active = true)
+    /**
+     * @throws HotBoxException
+     */
+    protected function changeImageActiveFlag(EntityManagerInterface $entityManager, int $comicid, int $imageid, bool $active = true): RedirectResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
