@@ -49,12 +49,16 @@ class Comic
     #[ORM\OneToMany(mappedBy: 'comic', targetEntity: CarouselImage::class, orphanRemoval: true)]
     private Collection $carouselImages;
 
+    #[ORM\OneToMany(mappedBy: 'comic', targetEntity: WebringImage::class, orphanRemoval: true)]
+    private Collection $webringImages;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->rotations = new ArrayCollection();
         $this->createdon = new \DateTime();
         $this->carouselImages = new ArrayCollection();
+        $this->webringImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -315,6 +319,36 @@ class Comic
             // set the owning side to null (unless already changed)
             if ($carouselImage->getComic() === $this) {
                 $carouselImage->setComic(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WebringImage>
+     */
+    public function getWebringImages(): Collection
+    {
+        return $this->webringImages;
+    }
+
+    public function addWebringImage(WebringImage $webringImage): static
+    {
+        if (!$this->webringImages->contains($webringImage)) {
+            $this->webringImages->add($webringImage);
+            $webringImage->setComic($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWebringImage(WebringImage $webringImage): static
+    {
+        if ($this->webringImages->removeElement($webringImage)) {
+            // set the owning side to null (unless already changed)
+            if ($webringImage->getComic() === $this) {
+                $webringImage->setComic(null);
             }
         }
 

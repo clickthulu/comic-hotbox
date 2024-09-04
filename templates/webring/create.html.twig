@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring{% endblock %}
+
+{% block body %}
+<div class="col p-3" id="hb-createupdate-webring">
+    <div class="row mb-3">
+        <h1 class="h1 mb-3 font-weight-normal">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring</h1>
+    </div>
+    <div class="row mb-3">
+        <div class="col p-3">
+            <div class="row">
+                <h2>Details</h2>
+            </div>
+            {{ form_start(webringform) }}
+            <div class="row mb-2">
+                {{ form_label(webringform.name) }}
+                <div class="col">{{ form_widget(webringform.name) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.code) }}
+                <div class="col">{{ form_widget(webringform.code) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.ringWidth) }}
+                <div class="col">{{ form_widget(webringform.ringWidth) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.ringHeight) }}
+                <div class="col">{{ form_widget(webringform.ringHeight) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.navigationWidth) }}
+                <div class="col">{{ form_widget(webringform.navigationWidth) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.numberImages) }}
+                <div class="col">{{ form_widget(webringform.numberImages) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.active) }}
+                <div class="col">{{ form_widget(webringform.active) }}</div>
+            </div>
+            {{ form_rest(webringform) }}
+            <div class="row mb-2">
+                <div class="col offset-3">
+                    <button class="btn btn-lg btn-primary" type="submit">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring</button>
+                </div>
+                {% if webringform.vars.data.id is not empty %}
+                    <div class="col text-end">
+                        <a class="btn btn-lg btn-danger" href="{{ url('app_deletewebring', { id: webringform.vars.data.id }) }}">Delete webring</a>
+                    </div>
+                {% endif %}
+            </div>
+            {{ form_end(webringform) }}
+        </div>
+    </div>
+    {% if webringform.vars.data.id is not empty %}
+    <div class="row">
+        <div class="webring-sortable col" data-webring="{{ webring.id }}">
+            {% for wimage in webring.getwebringImages %}
+                <div class="row mb-3 {% if wimage.active %}sortable-item{% endif %}" {% if wimage.active %}data-comic="{{ wimage.id }}"{% endif %}>
+                    <div class="col-1"><a href="{{ url('app_togglewebringimage', { webringid:webringform.vars.data.id, id: webring.id, wid: wimage.id })}}" title="{% if wimage.active %}Deactivate{% else %}Activate{% endif %}" class="btn {% if wimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if wimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
+                    <div class="col-1 {% if wimage.active %}sortable-handle{% endif %}">{% if wimage.active %}<i class="fas fa-grip-vertical"></i>{% endif %}</div>
+                    <div class="col"><strong>{{ wimage.comic.name }}</strong> by <i>{{ wimage.comic.user.name }}</i></div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-3">
+            <div class="hb-webring" data-webring="{{ webring.code }}">
+            </div>
+        </div>
+        {% endif %}
+        {% endblock %}
+
+        {% block scripts %}
+
+        {% endblock %}
+
+        {% block sidebar %}
+        {% include "common/sidebar.html.twig" %}
+{% endblock %}

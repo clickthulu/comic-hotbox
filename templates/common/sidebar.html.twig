@@ -42,7 +42,7 @@
             <div class="row nav-expanded"><h5>Administration</h5></div>
             {% if  carouselActive  %}
                 <div class="row nav-expanded"><h6>Carousels</h6></div>
-                {% for cr in carouselservice.carousels %}
+                {% for cr in hotboxservice.carousels %}
                     <div class="row ps-3 mb-2">
                         <div class="col-2 ms-2 me-4">
                             <a href="{{ url('app_editcarousel', { id: cr.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Carousel">
@@ -84,8 +84,22 @@
                     <div class="col nav-expanded"><a href="{{ url('app_createhotbox') }}" class="nav-link">New HotBox</a></div>
                 </div>
             {% endif %}
-            {% if true == false and webringActive %}
+            {% if webringActive %}
                 <div class="row nav-expanded"><h6>WebRings</h6></div>
+                {% for wr in hotboxservice.webrings %}
+                    <div class="row ps-3 mb-2">
+                        <div class="col-2 ms-2 me-4">
+                            <a href="{{ url('app_editwebring', { id: wr.id}) }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Webrings">
+                                    <i class="far fa-circle-right"></i>
+                            </a>
+                        </div>
+                        <div class="col nav-expanded"><a href="{{ url('app_editwebring', { id: wr.id}) }}" class="nav-link">{{ wr.name }}</a></div>
+                    </div>
+                {% endfor %}
+                <div class="row ps-3 mb-4">
+                    <div class="col-2 ms-2 me-4"><a href="{{ url('app_createwebring') }}" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="top" title="New webring"><i class="fas fa-ring"></i></a></div>
+                    <div class="col nav-expanded"><a href="{{ url('app_createwebring') }}" class="nav-link">New Webring</a></div>
+                </div>
             {% endif %}
             <div class="row nav-expanded"><h6>Users</h6></div>
             <div class="row ps-3 mb-2">
