@@ -47,6 +47,12 @@ class Webring
     #[ORM\OrderBy(['active' => 'desc', 'ordinal' => 'asc'])]
     private Collection $webringImages;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $navigationLeft = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $navigationRight = null;
+
     public function __construct()
     {
         $this->createdon = new \DateTime();
@@ -257,6 +263,30 @@ class Webring
             }
         }
         return false;
+    }
+
+    public function getNavigationLeft(): ?string
+    {
+        return $this->navigationLeft;
+    }
+
+    public function setNavigationLeft(?string $navigationLeft): static
+    {
+        $this->navigationLeft = $navigationLeft;
+
+        return $this;
+    }
+
+    public function getNavigationRight(): ?string
+    {
+        return $this->navigationRight;
+    }
+
+    public function setNavigationRight(?string $navigationRight): static
+    {
+        $this->navigationRight = $navigationRight;
+
+        return $this;
     }
 
 }

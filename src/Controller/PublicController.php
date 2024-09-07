@@ -166,6 +166,8 @@ class PublicController extends AbstractController
             'width' => $webring->getRingWidth(),
             'height' => $webring->getRingHeight(),
             'nav' => $webring->getNavigationWidth(),
+            'navprev' => $this->getWebringNavImage($webring, 'Previous'),
+            'navnext' => $this->getWebringNavImage($webring, 'Next'),
             'code' => $code,
             'previous' => null,
             'next' => null,
@@ -247,6 +249,42 @@ class PublicController extends AbstractController
             ];
         }
         return new JsonResponse($data);
+    }
+
+    protected function getWebringNavImage(Webring $webring, string $dir = 'Previous'): string
+    {
+        $image = match($dir) {
+            'Previous' => $webring->getNavigationLeft(),
+            'Next' => $webring->getNavigationRight()
+        };
+
+        if (!empty($image)) {
+            return "<img src='{$image}' alt='{$dir}'/>";
+        }
+
+
+        $w = (float)$webring->getNavigationWidth();
+        $h = (float)$webring->getRingHeight();
+
+        // Previous : Default
+        $w0 = 2;
+        $w1 = $w-5;
+        $w2 = $w;
+        $h0 = $h/2;
+        $h1 = 0;
+        $h2 = $h;
+
+        if ($dir === 'Next') {
+            $w0 = $w - 2;
+            $w1 = 5;
+            $w2 = 0;
+        }
+
+        $out = "<svg width='{$w}' height='{$h}' xmlns='http://www.w3.org/2000/svg'>";
+        $out .= "<polygon points='{$w0},{$h0} {$w1},{$h1} {$w2},{$h1} {$w2},{$h2} {$w1},{$h2} {$w0},{$h0}' style='stroke:white;stroke-width:3;fill:#333333;' />";
+        $out .= "</svg>";
+
+        return $out;
     }
 
 }

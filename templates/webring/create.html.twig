@@ -33,6 +33,16 @@
                 {{ form_label(webringform.navigationWidth) }}
                 <div class="col">{{ form_widget(webringform.navigationWidth) }}</div>
             </div>
+
+            <div class="row mb-2">
+                {{ form_label(webringform.navigationLeft) }}
+                <div class="col">{{ form_widget(webringform.navigationLeft) }}</div>
+            </div>
+            <div class="row mb-2">
+                {{ form_label(webringform.navigationRight) }}
+                <div class="col">{{ form_widget(webringform.navigationRight) }}</div>
+            </div>
+
             <div class="row mb-2">
                 {{ form_label(webringform.numberImages) }}
                 <div class="col">{{ form_widget(webringform.numberImages) }}</div>
@@ -61,7 +71,7 @@
     </div>
     {% if webringform.vars.data.id is not empty %}
         <div class="row border-top mb-2">
-            <div class="col">
+            <div class="col text-center">
                 <div class="hb-webring" data-webring="{{ webring.code }}" data-comic=""></div>
             </div>
         </div>
