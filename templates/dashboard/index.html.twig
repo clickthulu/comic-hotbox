@@ -55,6 +55,20 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+                {% if settings.get('enable_webring').value %}
+                    <div class="row mb-2">
+                        <div class="col mb-3">
+                            This server has {{ webrings|length }} active webrings, the following ad resolutions are
+                            supported:
+                        </div>
+                        {% for webring in webrings %}
+                            <div class="row mb-2">
+                                <div class="col-3 text-end"><b>{{ webring.name }}:</b></div>
+                                <div class="col">{{ webring.ringWidth }} x {{ webring.ringHeight }} [ Image Size: {{ ((webring.ringWidth - (2*webring.navigationWidth))/webring.numberImages) }} x {{ webring.ringHeight }} ]</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="row pt-3 mb-2 mt-2 border-top">
                     <h4>Installation</h4>
                 </div>
@@ -78,7 +92,7 @@
                         </div>
                         {% for carousel in carousels %}
                             <div class="row mb-2">
-                                <div class="col-4 text-end"><b>{{ carousel.name }}:</b></div>
+                                <div class="col-3 offset-1"><b>{{ carousel.name }}:</b></div>
                                 <div class="col"><code id="copytext-car-{{ carousel.id }}">&lt;div class="hb-carousel"
                                         data-carousel="{{ carousel.code }}"&gt;&lt;/div&gt;</code>
                                     <button class="btn btn-sm btn-primary copytext-button"
@@ -108,7 +122,7 @@
                         </div>
                         {% for hotbox in hotboxes %}
                                 <div class="row mb-2">
-                                    <div class="col-4 text-end"><b>{{ hotbox.name }}:</b></div>
+                                    <div class="col-3 offset-1"><b>{{ hotbox.name }}:</b></div>
                                     <div class="col"><code id="copytext-hb-{{ hotbox.id }}">&lt;div class="hb-hotbox"
                                             data-hotbox="{{ hotbox.code }}"&gt;&lt;/div&gt;</code>
                                         <button class="btn btn-sm btn-primary copytext-button"
@@ -120,6 +134,36 @@
                         {% endfor %}
                     {% endif %}
                 {% endif %}
+                {% if settings.get('enable_webring').value %}
+                    <h4>Webrings</h4>
+                    {% if webrings|length == 0 %}
+                    {% else %}
+                        <div class="row mb-3">
+                            <div class="col">
+                                Insert this piece of code where you want your Carousel:
+                            </div>
+                        </div>
+                        {% for webring in webrings %}
+                            <div class="col"><h5>{{ webring.name }}:</h5></div>
+                            {% for comic in comics %}
+                                {% if webring.comicMatch(comic) %}
+                                    <div class="row mb-2">
+                                        <div class="col-3 offset-1"><b>{{ comic.name }}:</b></div>
+                                        <div class="col"><code id="copytext-wr-{{ webring.id }}-{{ comic.id }}">&lt;div class="hb-webring"
+                                                data-webring="{{ webring.code }}" data-comic="{{ comic.code }}"&gt;&lt;/div&gt;</code>
+                                            <button class="btn btn-sm btn-primary copytext-button"
+                                                    data-target="copytext-wr-{{ webring.id }}-{{ comic.id }}" title="Copy to Clipboard"><i
+                                                        class="fas fa-copy"></i></button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+
+                {% endif %}
+
+
                 <div class="row pt-3 mb-2 border-top">
                     <h4>My Upcoming Displays</h4>
                 </div>

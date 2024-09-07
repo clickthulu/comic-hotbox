@@ -249,5 +249,14 @@ class Webring
         return $wimage;
     }
 
+    public function comicMatch(Comic $comic): bool
+    {
+        foreach ($this->getWebringImages() as $webringImage) {
+            if ($webringImage->getComic() === $comic) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
