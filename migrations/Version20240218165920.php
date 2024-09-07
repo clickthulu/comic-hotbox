@@ -24,7 +24,7 @@ final class Version20240218165920 extends AbstractMigration
         $this->addSql('ALTER TABLE hot_box_comic DROP FOREIGN KEY FK_C3FB2D903632BE2F');
         $this->addSql('DROP TABLE hot_box_comic');
         $this->addSql('ALTER TABLE hot_box ADD rotation_frequency INT NOT NULL');
-        $this->addSql('ALTER TABLE rotation ADD start DATETIME NOT NULL, DROP ordinal');
+        $this->addSql('ALTER TABLE rotation ADD start DATETIME NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -34,6 +34,6 @@ final class Version20240218165920 extends AbstractMigration
         $this->addSql('ALTER TABLE hot_box_comic ADD CONSTRAINT FK_C3FB2D90D663094A FOREIGN KEY (comic_id) REFERENCES comic (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE hot_box_comic ADD CONSTRAINT FK_C3FB2D903632BE2F FOREIGN KEY (hot_box_id) REFERENCES hot_box (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE hot_box DROP rotation_frequency');
-        $this->addSql('ALTER TABLE rotation ADD ordinal INT NOT NULL, DROP start');
+        $this->addSql('ALTER TABLE rotation DROP start');
     }
 }

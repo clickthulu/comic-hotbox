@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ComicRepository;
+use App\Traits\CodeTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ComicRepository::class)]
 class Comic
 {
+    use CodeTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -49,12 +52,20 @@ class Comic
     #[ORM\OneToMany(mappedBy: 'comic', targetEntity: CarouselImage::class, orphanRemoval: true)]
     private Collection $carouselImages;
 
+    #[ORM\OneToMany(mappedBy: 'comic', targetEntity: WebringImage::class, orphanRemoval: true)]
+    private Collection $webringImages;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $code = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->rotations = new ArrayCollection();
         $this->createdon = new \DateTime();
         $this->carouselImages = new ArrayCollection();
+        $this->webringImages = new ArrayCollection();
+        $this->code = $this->generateCode();
     }
 
     public function getId(): ?int
@@ -317,6 +328,48 @@ class Comic
                 $carouselImage->setComic(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WebringImage>
+     */
+    public function getWebringImages(): Collection
+    {
+        return $this->webringImages;
+    }
+
+    public function addWebringImage(WebringImage $webringImage): static
+    {
+        if (!$this->webringImages->contains($webringImage)) {
+            $this->webringImages->add($webringImage);
+            $webringImage->setComic($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWebringImage(WebringImage $webringImage): static
+    {
+        if ($this->webringImages->removeElement($webringImage)) {
+            // set the owning side to null (unless already changed)
+            if ($webringImage->getComic() === $this) {
+                $webringImage->setComic(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): static
+    {
+        $this->code = $code;
 
         return $this;
     }

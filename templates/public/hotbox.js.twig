@@ -233,7 +233,77 @@ function Carousel() {
 }
 
 
+
+function Webring() {
+    this.SERVERURL = "{{ settings.get('server_url').value|raw }}";
+
+    this.init = function() {
+        const collection = document.getElementsByClassName('hb-webring');
+        for (let i = 0; i < collection.length; i++) {
+            let code = collection[i].getAttribute('data-webring');
+            let comic = collection[i].getAttribute('data-comic');
+            this.call(code, comic, collection[i]);
+        }
+    }
+    this.call = function(code, comic, target){
+        let dataurl = this.SERVERURL + "/api/webring/" + code + "/" + comic;
+        fetch(dataurl)
+            .then((response) => response.json())
+            .then((data) => this.build(data, target))
+            .catch((error) => console.log(error));
+    }
+
+    this.injectstylesheets = function(data){
+        const addStyle = function(styleString) {
+            let style = document.getElementById('carousel-style');
+            if (!style) {
+                style = document.createElement('style');
+                style.setAttribute('id', 'carousel-style');
+                document.head.append(style);
+            }
+            style.append(styleString);
+        };
+//        let overflow = "overflow: hidden;"
+        let border = "";
+        let overflow = "";
+//        let border = "border: 1px solid red;"
+        let code = data.code;
+        addStyle(".webring-" + code + " { " + border + " text-align:center; max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
+        addStyle(".webring-" + code + " .nav-box { " + border + " position:relative; float: left; vertical-align: middle; max-width: " + data.nav + "px; width: " + data.nav + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; }");
+        addStyle(".webring-" + code + " .ring-item { " + border + " position: relative; float: left; }");
+        addStyle(".webring-" + code + " .nav-box a { color: black; }");
+
+    }
+
+    this.build = function(data, target) {
+        this.delay = data['delay'];
+        this.injectstylesheets(data);
+        let code = data['code'];
+
+        let output = "<div class='hb-webring-webring webring-" + code + "'><div class='webring'>"
+        // Previous icon
+        output += "<div class='nav-box'><a href='" + data['previous'] + "' target='_blank'><i class='fas fa-backward-step'></i></a></div>";
+        console.log(data['previous']);
+        for(const d of data['items']) {
+            console.log(d.url);
+            output += "<div class='ring-item ring-item-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + d.image + "' alt='" + d.name + "'></a></div>";
+        }
+
+        // Next icon
+        output += "<div class='nav-box'><a href='" + data['next'] + "' target='_blank'><i class='fas fa-forward-step'></i></a></div>";
+        console.log(data['next']);
+
+        output += "</div></div>";
+        target.innerHTML = output;
+    }
+
+
+    this.init();
+}
+
+
 window.addEventListener('DOMContentLoaded', () => {
     let hotbox = new HotBox();
     let carousel = new Carousel();
+    let webring = new Webring();
 });

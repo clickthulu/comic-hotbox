@@ -111,6 +111,35 @@ $(document).ready(function(){
     });
 
 
+    $(".webring-sortable").sortable({
+        cursor: "grab",
+        classes: {
+            ".sortable-item": "highlight"
+        },
+        handle: ".sortable-handle",
+        update: function (event, ui) {
+            let mySortable = $(".webring-sortable");
+            let items = mySortable.children('.sortable-item');
+            let count = 0;
+            let webring = mySortable.data('webring');
+            let data = {};
+            for( let item of items) {
+                data[count] = $(item).data('comic');
+                count++;
+            }
+
+            $.post(
+                "/webring/order/" + webring,
+                { items: data }
+            ).done(function() {
+                document.location.reload();
+            });
+
+            console.log(data);
+        }
+    });
+
+
     function closePop(target)
     {
         if(target){

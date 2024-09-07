@@ -46,7 +46,7 @@ class Carousel
     private ?string $displayType = CarouselDisplayTypeEnumeration::TYPE_FADE;
 
     #[ORM\Column]
-    private ?int $delay = null;
+    private ?int $delay = 30;
 
     public function __construct()
     {

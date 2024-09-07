@@ -2,41 +2,31 @@
 
 namespace App\Entity;
 
-use App\Repository\CarouselImageRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\WebringImageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CarouselImageRepository::class)]
-class CarouselImage
+#[ORM\Entity(repositoryClass: WebringImageRepository::class)]
+class WebringImage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'carouselImages')]
+    #[ORM\ManyToOne(inversedBy: 'webringImages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Comic $comic = null;
 
-    #[ORM\ManyToOne(inversedBy: 'carouselImages')]
+    #[ORM\ManyToOne(inversedBy: 'webringImages')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Carousel $carousel = null;
+    private ?Webring $webring = null;
 
     #[ORM\Column(length: 255)]
     private ?string $path = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $createdon = null;
-
-    #[ORM\Column]
-    private ?bool $approved = false;
-
-    #[ORM\Column]
-    private ?int $width = 0;
-
-    #[ORM\Column]
-    private ?int $height = 0;
 
     #[ORM\Column]
     private ?int $ordinal = 0;
@@ -48,7 +38,6 @@ class CarouselImage
     {
         $this->createdon = new \DateTime();
     }
-
 
     public function getId(): ?int
     {
@@ -67,14 +56,14 @@ class CarouselImage
         return $this;
     }
 
-    public function getCarousel(): ?Carousel
+    public function getWebring(): ?Webring
     {
-        return $this->carousel;
+        return $this->webring;
     }
 
-    public function setCarousel(?Carousel $carousel): static
+    public function setWebring(?Webring $webring): static
     {
-        $this->carousel = $carousel;
+        $this->webring = $webring;
 
         return $this;
     }
@@ -99,42 +88,6 @@ class CarouselImage
     public function setCreatedon(\DateTimeInterface $createdon): static
     {
         $this->createdon = $createdon;
-
-        return $this;
-    }
-
-    public function isApproved(): ?bool
-    {
-        return $this->approved;
-    }
-
-    public function setApproved(bool $approved): static
-    {
-        $this->approved = $approved;
-
-        return $this;
-    }
-
-    public function getWidth(): ?int
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int $width): static
-    {
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): ?int
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int $height): static
-    {
-        $this->height = $height;
 
         return $this;
     }

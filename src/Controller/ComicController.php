@@ -8,6 +8,8 @@ use App\Entity\Comic;
 use App\Entity\HotBox;
 use App\Entity\Image;
 use App\Entity\User;
+use App\Entity\Webring;
+use App\Entity\WebringImage;
 use App\Exceptions\HotBoxException;
 use App\Form\ComicFormType;
 use App\Form\ImageFormType;
@@ -222,8 +224,6 @@ class ComicController extends AbstractController
         $path = "{$uploadDir}/{$files['name']}";
         move_uploaded_file($files['tmp_name'], $path);
 
-        list($imageWidth, $imageHeight, ,) = getimagesize($path);
-
         $lastImage = $carousel->getLastCarouselImage();
         $ordinal = !empty($lastImage) ? $lastImage->getOrdinal() + 1 : 0;
 
@@ -240,6 +240,85 @@ class ComicController extends AbstractController
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
     }
+
+
+
+    /**
+     * @throws HotBoxException
+     */
+    #[Route('/webring/uploadimage/{comicid}/{webringid?}', name: 'app_uploadwebringimage')]
+    public function uploadwebringimage(EntityManagerInterface $entityManager, int $comicid, ?int $webringid = null): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        /**
+         * @var Comic $comic
+         */
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Webring $webring
+         */
+        $webring = $entityManager->getRepository(Webring::class)->find($webringid);
+        /**
+         * @var WebringImage $origImage
+         */
+        $origImage = $webring->findWebringImage($comic->getId());
+
+
+        $uploadDir = __DIR__ . "/../../storage/{$user->getEmail()}";
+        $storageDir = "/storage/{$user->getEmail()}";
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir);
+        }
+
+        $files = array_pop($_FILES);
+        if (empty($files)) {
+            throw new FileNotFoundException("No file was uploaded.");
+        }
+
+        $webringWidth = $webring->calculateImageWidth();
+        $webringHeight = $webring->calculateImageHeight();
+
+        list($imageWidth, $imageHeight, ,) = getimagesize($files['tmp_name']);
+
+        if ((int)$webringWidth !== (int)$imageWidth || (int)$webringHeight !== (int)$imageHeight){
+            $this->addFlash("error", "Image dimensions ({$imageWidth}x{$imageHeight} do not match webring dimensions ($webringWidth}x{$webringHeight}. Rejecting upload.");
+            return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+        }
+
+
+        if (!empty($origImage)) {
+            $entityManager->remove($origImage);
+            $entityManager->flush();
+            // Delete the current image
+        }
+
+        $path = "{$uploadDir}/{$files['name']}";
+        move_uploaded_file($files['tmp_name'], $path);
+
+        $lastImage = $webring->getLastWebringImage();
+        $ordinal = !empty($lastImage) ? $lastImage->getOrdinal() + 1 : 0;
+
+        $image = new WebringImage();
+        $image
+            ->setComic($comic)
+            ->setWebring($webring)
+            ->setPath("{$storageDir}/{$files['name']}")
+            ->setOrdinal($ordinal)
+        ;
+        $entityManager->persist($image);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+    }
+
+
 
     /**
      * @throws HotBoxException
@@ -287,6 +366,32 @@ class ComicController extends AbstractController
          * @var Image $image
          */
         $image = $entityManager->getRepository(CarouselImage::class)->find($imageid);
+        $entityManager->remove($image);
+        $entityManager->flush();
+        return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
+    }
+
+
+    /**
+     * @throws HotBoxException
+     */
+    #[Route('/webring/image/delete/{comicid}/{imageid}', name: 'app_deletewebringimage')]
+    public function deleteWebringImage(EntityManagerInterface $entityManager, int $comicid, ?int $imageid = null): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $comic = $entityManager->getRepository(Comic::class)->find($comicid);
+        if ($user->getId() !== $comic->getUser()->getId()) {
+            throw new HotBoxException("This comic does not belong to the logged in user");
+        }
+
+        /**
+         * @var Image $image
+         */
+        $image = $entityManager->getRepository(WebringImage::class)->find($imageid);
         $entityManager->remove($image);
         $entityManager->flush();
         return new RedirectResponse($this->generateUrl('app_editcomic', ['id' => $comicid]));
