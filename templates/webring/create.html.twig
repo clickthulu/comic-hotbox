@@ -3,9 +3,9 @@
 {% block title %}{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring{% endblock %}
 
 {% block body %}
-<div class="col p-3" id="hb-createupdate-webring">
+    <div class="col p-3" id="hb-createupdate-webring">
     <div class="row mb-3">
-        <h1 class="h1 mb-3 font-weight-normal">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring</h1>
+        <h1 class="h1 mb-3 font-weight-normal">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} Webring</h1>
     </div>
     <div class="row mb-3">
         <div class="col p-3">
@@ -44,11 +44,15 @@
             {{ form_rest(webringform) }}
             <div class="row mb-2">
                 <div class="col offset-3">
-                    <button class="btn btn-lg btn-primary" type="submit">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %} webring</button>
+                    <button class="btn btn-lg btn-primary"
+                            type="submit">{% if webringform.vars.data.id is not empty %}Update{% else %}Create{% endif %}
+                        webring
+                    </button>
                 </div>
                 {% if webringform.vars.data.id is not empty %}
                     <div class="col text-end">
-                        <a class="btn btn-lg btn-danger" href="{{ url('app_deletewebring', { id: webringform.vars.data.id }) }}">Delete webring</a>
+                        <a class="btn btn-lg btn-danger"
+                           href="{{ url('app_deletewebring', { id: webringform.vars.data.id }) }}">Delete webring</a>
                     </div>
                 {% endif %}
             </div>
@@ -56,27 +60,38 @@
         </div>
     </div>
     {% if webringform.vars.data.id is not empty %}
-    <div class="row">
-        <div class="webring-sortable col" data-webring="{{ webring.id }}">
-            {% for wimage in webring.getwebringImages %}
-                <div class="row mb-3 {% if wimage.active %}sortable-item{% endif %}" {% if wimage.active %}data-comic="{{ wimage.id }}"{% endif %}>
-                    <div class="col-1"><a href="{{ url('app_togglewebringimage', { webringid:webringform.vars.data.id, id: webring.id, wid: wimage.id })}}" title="{% if wimage.active %}Deactivate{% else %}Activate{% endif %}" class="btn {% if wimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if wimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
-                    <div class="col-1 {% if wimage.active %}sortable-handle{% endif %}">{% if wimage.active %}<i class="fas fa-grip-vertical"></i>{% endif %}</div>
-                    <div class="col"><strong>{{ wimage.comic.name }}</strong> by <i>{{ wimage.comic.user.name }}</i></div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="col-3">
-            <div class="hb-webring" data-webring="{{ webring.code }}">
+        <div class="row border-top mb-2">
+            <div class="col">
+                <div class="hb-webring" data-webring="{{ webring.code }}" data-comic="{{ comicCode }}"></div>
             </div>
         </div>
-        {% endif %}
-        {% endblock %}
+        <div class="row border-top mb- pt-2">
+            <div class="webring-sortable col" data-webring="{{ webring.id }}">
+                {% for wimage in webring.getwebringImages %}
+                    <div class="row mb-3 {% if wimage.active %}sortable-item{% endif %}"
+                         {% if wimage.active %}data-comic="{{ wimage.id }}"{% endif %}>
+                        <div class="col-1"><a
+                                    href="{{ url('app_togglewebringimage', { webringid:webringform.vars.data.id, id: webring.id, wid: wimage.id }) }}"
+                                    title="{% if wimage.active %}Deactivate{% else %}Activate{% endif %}"
+                                    class="btn {% if wimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i
+                                        class="fas {% if wimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a>
+                        </div>
+                        <div class="col-1 {% if wimage.active %}sortable-handle{% endif %}">{% if wimage.active %}<i
+                                    class="fas fa-grip-vertical"></i>{% endif %}</div>
+                        <div class="col"><strong>{{ wimage.comic.name }}</strong> by <i>{{ wimage.comic.user.name }}</i>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
         {% block scripts %}
 
         {% endblock %}
 
         {% block sidebar %}
-        {% include "common/sidebar.html.twig" %}
-{% endblock %}
+            {% include "common/sidebar.html.twig" %}
+        {% endblock %}

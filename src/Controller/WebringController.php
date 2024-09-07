@@ -61,9 +61,18 @@ class WebringController extends AbstractController
 
 
         }
+
+        $images = $webring->getWebringImages();
+        /**
+         * @var WebringImage $image
+         */
+        $image = $images[0];
+        $comicCode = $image->getComic()->getCode();
+
         return $this->render('webring/create.html.twig', [
             'webringform' => $form->createView(),
-            'webring' => $webring
+            'webring' => $webring,
+            'comicCode' => $comicCode
         ]);
     }
 

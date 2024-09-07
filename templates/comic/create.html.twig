@@ -80,8 +80,8 @@
                                             </div>
                                         {% else %}
                                             <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadcarouselimage', {comicid:comicform.vars.data.id, carouselid:carousel.id }) }}">
-                                                <label for="comic_image_upload_new_{{ carousel.id }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
-                                                <input id="comic_image_upload_new_{{ carousel.id }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
+                                                <label for="carousel_image_upload_new_{{ carousel.id }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
+                                                <input id="carousel_image_upload_new_{{ carousel.id }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
                                             </form>
                                         {% endif %}
                                     </div>
@@ -126,7 +126,7 @@
                                                         <input type="file" name="imagefile" class="hidden-file-input" id="comic_image_upload_current_{{ wimg.id }}" onchange="form.submit()" value="Upload File" />
                                                         <div class="row mt-3">
                                                             <div class="btn-group" role="group">
-                                                                <label for="comic_image_upload_current_{{ wimg.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
+                                                                <label for=webring_image_upload_current_{{ wimg.id }}" class="btn btn-primary"><i class="fas fa-upload"></i></label>
                                                                 <a class="btn btn-danger" href="{{ url('app_deletewebringimage', { comicid:comicform.vars.data.id, imageid: wimg.id }) }}" title="Delete this image"><i class="fas fa-trash"></i></a>
                                                             </div>
                                                         </div>
@@ -134,8 +134,8 @@
                                                 </div>
                                             {% else %}
                                                 <form method="POST" enctype="multipart/form-data" action="{{ url('app_uploadwebringimage', {comicid:comicform.vars.data.id, webringid:webring.id }) }}">
-                                                    <label for="comic_image_upload_new_{{ webring.id }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
-                                                    <input id="comic_image_upload_new_{{ webring.id }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
+                                                    <label for="webring_image_upload_new_{{ webring.id }}" class="btn btn-primary"><i class="fas fa-upload"></i> New Image</label>
+                                                    <input id="webring_image_upload_new_{{ webring.id }}" class="hidden-file-input"  type="file" name="imagefile" onchange="form.submit()" value="Upload File" />
                                                 </form>
                                             {% endif %}
                                         </div>
