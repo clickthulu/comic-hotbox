@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Carousel;
+use App\Entity\Comic;
 use App\Entity\HotBox;
+use App\Entity\Webring;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +20,13 @@ class DashboardController extends AbstractController
 
         $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
         $carousels = $entityManager->getRepository(Carousel::class)->findAll();
-
+        $webrings = $entityManager->getRepository(Webring::class)->findAll();
+        $comics = $entityManager->getRepository(Comic::class)->findBy(['user' => $this->getUser()]);
         return $this->render('dashboard/index.html.twig', [
             'hotboxes' => $hotboxes,
             'carousels' => $carousels,
+            'webrings' => $webrings,
+            'comics' => $comics
         ]);
     }
 
