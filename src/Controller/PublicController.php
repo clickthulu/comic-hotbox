@@ -98,14 +98,27 @@ class PublicController extends AbstractController
 
     }
 
-    #[Route('/api/webring/{code}/{comiccode}', name: 'app_webringcode')]
-    public function getWebring(EntityManagerInterface $entityManager, string $code, string $comiccode): JsonResponse
+    #[Route('/api/webring/{code}/{comiccode?}', name: 'app_webringcode')]
+    public function getWebring(EntityManagerInterface $entityManager, string $code, ?string $comiccode = null): JsonResponse
     {
         /**
          * @var Webring $webring
          */
         $webring = $entityManager->getRepository(Webring::class)->findOneBy(['code' => $code]);
         $images = $webring->getWebringImages()->toArray();
+        $tempImages = array_merge($images, []);
+        shuffle($tempImages);
+        /**
+         * @var WebringImage $tempImage
+         */
+        foreach ($tempImages as $tempImage) {
+            if ($tempImage->isActive()) {
+                $latest = $tempImage;
+                break;
+            }
+        }
+        $comiccode = $comiccode ?? $latest->getComic()->getCode(); // Random code if code not provided
+
         $numImages = $webring->getNumberImages();
         $rightSide = floor($numImages/2);
 
@@ -188,22 +201,49 @@ class PublicController extends AbstractController
 
     }
 
-    #[Route('/api/info', name: 'app_hotboxinfo')]
-    public function getInfo(EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/api/info/{comiccode?}', name: 'app_hotboxinfo')]
+    public function getInfo(EntityManagerInterface $entityManager, ?string $comiccode): JsonResponse
     {
-        /**
-         * @var HotBox $hotbox
-         */
         $hotboxes = $entityManager->getRepository(HotBox::class)->findAll();
-        $data = [];
+        $carousels = $entityManager->getRepository(Carousel::class)->findAll();
+        $webrings = $entityManager->getRepository(Webring::class)->findAll();
+
+        $data = [
+            'hotbox' => [],
+            'carousel' => [],
+            'webring' => []
+        ];
         /**
          * @var HotBox $hotbox
          */
         foreach ($hotboxes as $hotbox) {
-            $data[] = [
+            $data['hotbox'][] = [
                 'name' => $hotbox->getName(),
                 'size' => "{$hotbox->getImageWidth()} x {$hotbox->getImageHeight()}",
                 'code' => $hotbox->getCode()
+            ];
+        }
+        /**
+         * @var Carousel $carousel
+         */
+        foreach ($carousels as $carousel) {
+            $data['carousel'][] = [
+                'name' => $carousel->getName(),
+                'size' => "{$carousel->getImageWidth()} x {$carousel->getImageHeight()}",
+                'code' => $carousel->getCode()
+            ];
+        }
+
+
+        /**
+         * @var Webring $webring
+         */
+        foreach ($webrings as $webring) {
+            $data['webring'][] = [
+                'name' => $webring->getName(),
+                'size' => "{$webring->getRingWidth()} x {$webring->getRingHeight()}",
+                'code' => $webring->getCode(),
+                'comiccode' => $comiccode
             ];
         }
         return new JsonResponse($data);
