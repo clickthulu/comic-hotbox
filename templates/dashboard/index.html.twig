@@ -27,8 +27,8 @@
                 {% if settings.get('enable_carousel').value %}
                     <div class="row mb-2">
                         <div class="col mb-3">
-                            This server has {{ carousels|length }} active carousels, the following ad resolutions are
-                            supported:
+                            This server has {{ carousels|length }} active carousels{% if carousels|length > 0 %}, the following ad resolutions are
+                            supported:{% endif %}
                         </div>
                         {% for carousel in carousels %}
                             <div class="row mb-2">
@@ -41,8 +41,8 @@
                 {% if settings.get('enable_hotbox').value %}
                         <div class="row mb-2">
                             <div class="col mb-3">
-                                This server has {{ hotboxes|length }} active hotboxes, the following ad resolutions are
-                                supported:
+                                This server has {{ hotboxes|length }} active hotboxes{% if hotboxes|length > 0 %}, the following ad resolutions are
+                                supported:{% endif %}
                             </div>
                         </div>
                     {% for hotbox in hotboxes %}
@@ -58,8 +58,8 @@
                 {% if settings.get('enable_webring').value %}
                     <div class="row mb-2">
                         <div class="col mb-3">
-                            This server has {{ webrings|length }} active webrings, the following ad resolutions are
-                            supported:
+                            This server has {{ webrings|length }} active webrings{% if webrings|length > 0 %}, the following ad resolutions are
+                            supported:{% endif %}
                         </div>
                         {% for webring in webrings %}
                             <div class="row mb-2">
@@ -140,7 +140,7 @@
                     {% else %}
                         <div class="row mb-3">
                             <div class="col">
-                                Insert this piece of code where you want your Carousel:
+                                Insert this piece of code where you want your Webring:
                             </div>
                         </div>
                         {% for webring in webrings %}
