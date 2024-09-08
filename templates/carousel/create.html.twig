@@ -61,8 +61,8 @@
                 <div class="carousel-sortable col" data-carousel="{{ carousel.id }}">
                     {% for cimage in carousel.getCarouselImages %}
                         <div class="row mb-3 {% if cimage.active %}sortable-item{% endif %}" {% if cimage.active %}data-comic="{{ cimage.id }}"{% endif %}>
-                            <div class="col-1"><a href="{{ url('app_togglecarouselimage', { carouselid:carouselform.vars.data.id, id: carousel.id, cid: cimage.id })}}" title="{% if cimage.active %}Deactivate{% else %}Activate{% endif %}" class="btn {% if cimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if cimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
                             <div class="col-1 {% if cimage.active %}sortable-handle{% endif %}">{% if cimage.active %}<i class="fas fa-grip-vertical"></i>{% endif %}</div>
+                            <div class="col-1"><a href="{{ url('app_togglecarouselimage', { carouselid:carouselform.vars.data.id, id: carousel.id, cid: cimage.id })}}" title="{% if cimage.active %}Deactivate{% else %}Activate{% endif %}" class="btn {% if cimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i class="fas {% if cimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a></div>
                             <div class="col"><strong>{{ cimage.comic.name }}</strong> by <i>{{ cimage.comic.user.name }}</i></div>
                         </div>
                     {% endfor %}

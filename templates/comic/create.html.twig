@@ -22,6 +22,15 @@
                         <div class="col">{{ form_widget(comicform.Name) }}</div>
                     </div>
                     <div class="row mb-2">
+                        {{ form_label(comicform.code) }}
+                        <div class="col input-group">{{ form_widget(comicform.code) }}
+                            <div class="input-group-append">
+                                <button class="btn btn-sm btn-primary copyinput-button" data-target="comic_form_code"
+                                        title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
                         {{ form_label(comicform.url) }}
                         <div class="col">{{ form_widget(comicform.url) }}</div>
                     </div>
