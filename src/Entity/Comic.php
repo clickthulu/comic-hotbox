@@ -139,7 +139,7 @@ class Comic
         return $this;
     }
 
-    public function getRandomImage(HotBox $hotBox): Image
+    public function getRandomImage(HotBox $hotBox): ?Image
     {
         $allowed = [];
         /**
