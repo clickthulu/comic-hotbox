@@ -2,27 +2,24 @@
 
 namespace App\Command;
 
-use App\Entity\User;
-use App\Enumerations\RoleEnumeration;
-use App\Exceptions\HotBoxException;
-use App\Exceptions\RoleNotFoundException;
+use Symfony\Component\Console\Command\Command;
+
+use App\Entity\Settings;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use function Symfony\Component\String\u;
 
 #[AsCommand(
-    name: 'hotbox:promote-user',
-    description: 'Promotes a user to an administrator'
+    name: 'hotbox:set-config',
+    description: 'Updates the hostname setting in the database'
 )]
-class AddAdminRolesCommand extends Command
+class SetConfigCommand extends Command
 {
+
     private SymfonyStyle $io;
 
     public function __construct(
@@ -36,7 +33,8 @@ class AddAdminRolesCommand extends Command
         $this
             // commands can optionally define arguments and/or options (mandatory and optional)
             // see https://symfony.com/doc/current/components/console/console_arguments.html
-            ->addArgument('email', InputArgument::OPTIONAL, 'The email of the new admin')
+            ->addArgument('setting', InputArgument::OPTIONAL, 'Setting tag')
+            ->addArgument('value', InputArgument::OPTIONAL, 'Setting value')
         ;
     }
 
@@ -59,17 +57,29 @@ class AddAdminRolesCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $this->io->title('Add admin roles to a User');
-
-
-        // Ask for the email if it's not defined
-        $email = $input->getArgument('email');
-        if (null !== $email) {
-            $this->io->text(' > <info>Email</info>: '.$email);
-        } else {
-            $email = $this->io->ask('Email');
-            $input->setArgument('email', $email);
+        if (null !== $input->getArgument('setting') && null !== $input->getArgument('value')) {
+            return;
         }
+
+        $this->io->title('Change Settings');
+
+        
+        $setting = $input->getArgument('setting');
+        if (null !== $setting) {
+            $this->io->text(' > <info>Setting Tag</info>: ' . $setting);
+        } else {
+            $setting = $this->io->ask('Setting Tag');
+            $input->setArgument('setting', $setting);
+        }
+
+        $value = $input->getArgument('value');
+        if (null !== $value) {
+            $this->io->text(' > <info>Setting Value</info>: ' . $value);
+        } else {
+            $value = $this->io->ask('Setting Value');
+            $input->setArgument('value', $value);
+        }
+
 
     }
 
@@ -78,36 +88,37 @@ class AddAdminRolesCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
-     * @throws RoleNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $stopwatch = new Stopwatch();
-        $stopwatch->start('add-roles-command');
+        $stopwatch->start('set-config-command');
 
-        /** @var string $email */
-        $email = $input->getArgument('email');
+        /** @var string $setting */
+        $setting = $input->getArgument('setting');
+        $value = $input->getArgument('value');
 
-        $roleList = [RoleEnumeration::ROLE_ADMIN, RoleEnumeration::ROLE_CREATOR];
-
-
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-
-        if (empty($user)) {
-            throw new HotBoxException("User does not exist");
+        /**
+         * @var Settings $dbsetting
+         */
+        $dbsetting = $this->entityManager->getRepository(Settings::class)->findOneBy(['setting' => $setting]);
+        if (empty($dbsetting)) {
+            $this->io->error("Setting {$setting} not available");
+            return Command::FAILURE;
         }
-        // create the user and hash its password
-        $user->setRoles($roleList);
-        $this->entityManager->persist($user);
+        $dbsetting->setValue($value);
+
+        $this->entityManager->persist($dbsetting);
         $this->entityManager->flush();
 
-        $this->io->success(sprintf('Roles were successfully created: %s', $user->getEmail()));
+        $this->io->success(sprintf('Config for %s has been updated to: %s', $setting, $value));
 
-        $event = $stopwatch->stop('add-role-command');
+        $event = $stopwatch->stop('set-config-command');
         if ($output->isVerbose()) {
-            $this->io->comment(sprintf('New user database id: %d / Elapsed time: %.2f ms / Consumed memory: %.2f MB', $user->getId(), $event->getDuration(), $event->getMemory() / (1024 ** 2)));
+            $this->io->comment(sprintf('Elapsed time: %.2f ms / Consumed memory: %.2f MB', $event->getDuration(), $event->getMemory() / (1024 ** 2)));
         }
 
         return Command::SUCCESS;
     }
+
 }
