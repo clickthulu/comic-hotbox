@@ -7,6 +7,7 @@ use App\Entity\CarouselImage;
 use App\Entity\HotBox;
 use App\Entity\Webring;
 use App\Entity\WebringImage;
+use App\Exceptions\HotBoxException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -105,61 +106,55 @@ class PublicController extends AbstractController
          * @var Webring $webring
          */
         $webring = $entityManager->getRepository(Webring::class)->findOneBy(['code' => $code]);
-        $images = $webring->getWebringImages()->toArray();
-        $tempImages = array_merge($images, []);
-        shuffle($tempImages);
-        /**
-         * @var WebringImage $tempImage
-         */
-        foreach ($tempImages as $tempImage) {
-            if ($tempImage->isActive()) {
-                $latest = $tempImage;
-                break;
-            }
-        }
-        $comiccode = $comiccode ?? $latest->getComic()->getCode(); // Random code if code not provided
-
-        $numImages = $webring->getNumberImages();
-        $rightSide = floor($numImages/2);
-
-        $webringParts = [];
-
-        $seenCount = 0;
-        $maxSeen = count($images);
-        $rightFound = false;
-        $rightCount = 0;
-
-        while($rightSide+1 > count($webringParts)) {
-            /**
-             * @var WebringImage $image
-             */
-            $image = array_shift($images);
-            $seenCount++;
-            if (!$image->isActive()) {
-                continue;
-            } elseif ($seenCount >= $maxSeen) {
-                break;
-            } elseif ($image->getComic()->getCode() === $comiccode) {
-                $webringParts[] = $image;
-                $rightFound = true;
-            } elseif ($rightFound === true && $rightCount < $rightSide) {
-                $webringParts[] = $image;
-                $rightCount++;
-            } else {
+        $startimages = $webring->getWebringImages()->toArray();
+        $images = [];
+        $newOrd = 0;
+        foreach ($startimages as $image) {
+            if ($image->isActive()) {
+                $image->setOrdinal($newOrd);
+                $newOrd++;
                 $images[] = $image;
             }
         }
-        $images = array_reverse($images);
-        while($numImages > count($webringParts)) {
-            $image = array_shift($images);
-            if (!$image->isActive()) {
-                continue;
-            }
-            array_unshift($webringParts, $image);
-            if (empty($images)) {
-                break;
+
+
+        if (empty($comiccode)) {
+            $tempImages = array_merge($images, []);
+            shuffle($tempImages);
+            foreach ($tempImages as $tempImage) {
+                if ($tempImage->isActive()) {
+                    $comiccode = $tempImage->getComic()->getCode();
+                    break;
+                }
             }
         }
+
+        $numImages = $webring->getNumberImages();
+        $rightSide = floor($numImages/2);
+        $leftSide = $numImages - $rightSide - 1;
+        // Find the mid-point
+        $visibleImages = [];
+        $midPointOrdinal = null;
+        /**
+         * @var WebringImage $image
+         */
+        foreach ($images as $image) {
+            if ($image->getComic()->getCode() === $comiccode) {
+                $visibleImages[] = $image;
+                $midPointOrdinal = $image->getOrdinal();
+            }
+        }
+
+        for ($ord = $midPointOrdinal+1; $ord <= $midPointOrdinal + $rightSide; $ord++) {
+            $visibleImages[] = $this->getImageFromOrdinalDelta($images, $ord);
+        }
+
+
+        for ($ord = $midPointOrdinal-1; $ord >= $midPointOrdinal - $leftSide; $ord--) {
+            array_unshift($visibleImages, $this->getImageFromOrdinalDelta($images, $ord));
+        }
+
+
 
         $data = [
             'name' => $webring->getName(),
@@ -169,35 +164,21 @@ class PublicController extends AbstractController
             'navprev' => $this->getWebringNavImage($webring, 'Previous'),
             'navnext' => $this->getWebringNavImage($webring, 'Next'),
             'code' => $code,
-            'previous' => null,
-            'next' => null,
+            'previous' => $this->getImageFromOrdinalDelta($images, $midPointOrdinal-1)->getComic()->getUrl(),
+            'next' => $this->getImageFromOrdinalDelta($images, $midPointOrdinal+1)->getComic()->getUrl(),
             'items' => []
         ];
-        $previous = null;
-        $currentSeen = false;
+
         /**
          * @var WebringImage $image
          */
-        foreach ($webringParts as $image) {
-            $current = $image->getComic()->getCode() === $comiccode;
-            if ($currentSeen) {
-                $data['next'] = $image->getComic()->getUrl();
-                $currentSeen = false;
-            }
+        foreach ($visibleImages as $image) {
             $data['items'][] = [
                 'url' => $image->getComic()->getUrl(),
                 'image' => $image->getPath(),
                 'name' => $image->getComic()->getName(),
-                'current' => $current
             ];
-            if ($current) {
-                $data['previous'] = $previous->getComic()->getUrl();
-                $currentSeen = true;
-            }
-            $previous = $image;
         }
-
-        $foo = 'bar';
 
         return new JsonResponse($data);
 
@@ -285,6 +266,33 @@ class PublicController extends AbstractController
         $out .= "</svg>";
 
         return $out;
+    }
+
+    protected function getImageFromOrdinalDelta(array $images, $ordinal) {
+        $maxOrdinal = 0;
+
+        /**
+         * @var WebringImage $image
+         */
+        foreach ($images as $image) {
+            if ($image->getOrdinal() > $maxOrdinal) {
+                $maxOrdinal = $image->getOrdinal();
+            }
+        }
+
+        if ($ordinal > $maxOrdinal) {
+            $ordinal -= ($maxOrdinal+1);
+        }
+        if ($ordinal < 0) {
+            $ordinal += $maxOrdinal+1;
+        }
+
+        foreach ($images as $image) {
+            if ($image->getOrdinal() === $ordinal) {
+                return $image;
+            }
+        }
+        throw new HotBoxException("Could not find image with ordinal {$ordinal}");
     }
 
 }

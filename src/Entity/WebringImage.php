@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WebringImageRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,7 +28,7 @@ class WebringImage
     private ?string $path = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
-    private ?\DateTimeInterface $createdon = null;
+    private ?DateTimeInterface $createdon = null;
 
     #[ORM\Column]
     private ?int $ordinal = 0;
@@ -34,9 +36,11 @@ class WebringImage
     #[ORM\Column]
     private ?bool $active = true;
 
+    private bool $visibleInRing = false;
+
     public function __construct()
     {
-        $this->createdon = new \DateTime();
+        $this->createdon = new DateTime();
     }
 
     public function getId(): ?int
@@ -80,12 +84,12 @@ class WebringImage
         return $this;
     }
 
-    public function getCreatedon(): ?\DateTimeInterface
+    public function getCreatedon(): ?DateTimeInterface
     {
         return $this->createdon;
     }
 
-    public function setCreatedon(\DateTimeInterface $createdon): static
+    public function setCreatedon(DateTimeInterface $createdon): static
     {
         $this->createdon = $createdon;
 
@@ -115,4 +119,24 @@ class WebringImage
 
         return $this;
     }
+
+    /**
+     * @return bool|null
+     */
+    public function getVisibleInRing(): ?bool
+    {
+        return $this->visibleInRing;
+    }
+
+    /**
+     * @param bool $visibleInRing
+     * @return WebringImage
+     */
+    public function setVisibleInRing(bool $visibleInRing): self
+    {
+        $this->visibleInRing = $visibleInRing;
+        return $this;
+    }
+
+
 }
