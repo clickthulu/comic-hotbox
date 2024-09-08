@@ -212,7 +212,7 @@ class PublicController extends AbstractController
         foreach ($carousels as $carousel) {
             $data['carousel'][] = [
                 'name' => $carousel->getName(),
-                'size' => "{$carousel->getImageWidth()} x {$carousel->getImageHeight()}",
+                'size' => "{$carousel->getWidth()} x {$carousel->getHeight()}",
                 'code' => $carousel->getCode()
             ];
         }
