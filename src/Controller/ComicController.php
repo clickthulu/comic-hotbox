@@ -167,8 +167,8 @@ class ComicController extends AbstractController
     /**
      * @throws HotBoxException
      */
-    #[Route('/carousel/uploadimage/{comicid}/{carouselid?}', name: 'app_uploadcarouselimage')]
-    public function uploadcarouselimage(EntityManagerInterface $entityManager, int $comicid, ?int $carouselid = null): Response
+    #[Route('/carousel/uploadimage/{comicid}/{carouselid}', name: 'app_uploadcarouselimage')]
+    public function uploadcarouselimage(EntityManagerInterface $entityManager, int $comicid, int $carouselid): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
