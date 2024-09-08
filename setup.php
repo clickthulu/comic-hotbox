@@ -76,7 +76,7 @@ if (!$skipENV) {
     $ownpass = prompt('Owner password', null, true);
     $ownemail = prompt("Owner email");
 
-    @exec("./bin/console app:new-user {$owner} {$ownpass} {$ownemail} OWNER,ADMINISTRATOR,CREATOR", $return, $retval);
+    @exec("./bin/console hotbox:new-user {$owner} {$ownpass} {$ownemail} OWNER,ADMINISTRATOR,CREATOR", $return, $retval);
 
     if ($retval !==0 ) {
         die("Error.  Did not create initial user.\n");
@@ -85,10 +85,10 @@ if (!$skipENV) {
     $servername = prompt("What is the name/title of this server? e.g. Fred's Hotbox");
     $hostname = prompt("Server URL (please include http(s):// in your url)");
 
-    @exec("./bin/console app:set-config server_name $servername");
-    @exec("./bin/console app:set-config server_url $hostname");
-    @exec("./bin/console app:set-config email_from_name $emailname");
-    @exec("./bin/console app:set-config email_from_address $emailfrom");
+    @exec("./bin/console hotbox:set-config server_name $servername");
+    @exec("./bin/console hotbox:set-config server_url $hostname");
+    @exec("./bin/console hotbox:set-config email_from_name $emailname");
+    @exec("./bin/console hotbox:set-config email_from_address $emailfrom");
 
 }
 
