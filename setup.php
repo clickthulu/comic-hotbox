@@ -72,11 +72,10 @@ if ($retval !==0 ) {
 if (!$skipENV) {
     echo "Creating initial user account.\n";
 
-    $owner = prompt("Owner username");
-    $ownpass = prompt('Owner password', null, true);
     $ownemail = prompt("Owner email");
+    $ownpass = prompt('Owner password', null, true);
 
-    @exec("./bin/console hotbox:new-user {$owner} {$ownpass} {$ownemail} OWNER,ADMINISTRATOR,CREATOR", $return, $retval);
+    @exec("./bin/console hotbox:new-user {$ownemail} {$ownpass} OWNER,ADMINISTRATOR,CREATOR", $return, $retval);
 
     if ($retval !==0 ) {
         die("Error.  Did not create initial user.\n");
