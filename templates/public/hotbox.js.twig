@@ -128,7 +128,7 @@ function Carousel() {
         }
         let output = "<div class='hb-carousel-slider slider-" + code + " slide-" + data.transition.toLowerCase() + "'><div class='slides'>"
         for(const d of data['items']) {
-            output += "<div class='slide slide-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + d.image + "' alt='" + d.name + "'></a></div>";
+            output += "<div class='slide slide-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
         }
         output += "</div></div>";
         target.innerHTML = output;
@@ -288,7 +288,7 @@ function Webring() {
         console.log(data['previous']);
         for(const d of data['items']) {
             console.log(d.url);
-            output += "<div class='ring-item ring-item-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + d.image + "' alt='" + d.name + "'></a></div>";
+            output += "<div class='ring-item ring-item-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
         }
 
         // Next icon
