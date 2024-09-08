@@ -10,6 +10,16 @@ $(document).ready(function(){
         alert("Code copied");
     });
 
+    $(".copyinput-button").on('click', function(event){
+        event.preventDefault();
+        let target = $(this).data('target');
+        let text = $("#" + target).val();
+
+        navigator.clipboard.writeText(text);
+        alert("Code copied");
+    });
+
+
     $(".copy-data").on('click', function(event){
         event.preventDefault();
         let text = $(this).data('copy');

@@ -80,14 +80,14 @@
                 {% for wimage in webring.getwebringImages %}
                     <div class="row mb-3 {% if wimage.active %}sortable-item{% endif %}"
                          {% if wimage.active %}data-comic="{{ wimage.id }}"{% endif %}>
+                        <div class="col-1 {% if wimage.active %}sortable-handle{% endif %}">{% if wimage.active %}<i
+                                    class="fas fa-grip-vertical"></i>{% endif %}</div>
                         <div class="col-1"><a
                                     href="{{ url('app_togglewebringimage', { webringid:webringform.vars.data.id, id: webring.id, wid: wimage.id }) }}"
                                     title="{% if wimage.active %}Deactivate{% else %}Activate{% endif %}"
                                     class="btn {% if wimage.active %}btn-outline-primary{% else %}btn-primary{% endif %}"><i
                                         class="fas {% if wimage.active %}fa-minus{% else %}fa-plus{% endif %}"></i></a>
                         </div>
-                        <div class="col-1 {% if wimage.active %}sortable-handle{% endif %}">{% if wimage.active %}<i
-                                    class="fas fa-grip-vertical"></i>{% endif %}</div>
                         <div class="col"><strong>{{ wimage.comic.name }}</strong> by <i>{{ wimage.comic.user.name }}</i>
                         </div>
                     </div>
