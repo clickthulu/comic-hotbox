@@ -22,8 +22,8 @@ use function Symfony\Component\String\u;
 
 
 #[AsCommand(
-    name: 'add:user',
-    description: 'Creates a new administrator'
+    name: 'hotbox:new-user',
+    description: 'Creates a new user and assigns appropriate roles'
 )]
 final class AddUserCommand extends Command
 {
@@ -43,6 +43,7 @@ final class AddUserCommand extends Command
             // see https://symfony.com/doc/current/components/console/console_arguments.html
             ->addArgument('email', InputArgument::OPTIONAL, 'The email of the new admin')
             ->addArgument('password', InputArgument::OPTIONAL, 'The plain password of the new user')
+            ->addArgument('roles', InputArgument::IS_ARRAY, 'Roles for this user Owner, Admin, Moderator', ['ROLE_CREATOR'] )
         ;
     }
 
@@ -66,8 +67,6 @@ final class AddUserCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $this->io->title('Add a new User');
-
-
         // Ask for the email if it's not defined
         $email = $input->getArgument('email');
         if (null !== $email) {
@@ -87,16 +86,13 @@ final class AddUserCommand extends Command
             $password = $this->io->askHidden('Password (your type will be hidden)');
             $input->setArgument('password', $password);
         }
-
-
-
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
-     * @throws RoleNotFoundException
+     * @throws HotBoxException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -114,9 +110,19 @@ final class AddUserCommand extends Command
         if (!empty($user)) {
             throw new HotBoxException("User already exists.");
         }
+
+        $roles = $input->getArgument('roles');
+        $roles = array_map('trim', $roles);
+        $roleList = [RoleEnumeration::ROLE_CREATOR]; // Always get this role no matter what
+        foreach ($roles as $r) {
+            $roleList[] = RoleEnumeration::getRole($r);
+        }
+
+        $roleList = array_unique($roleList);
+
         $user = new User();
         $user->setEmail($email);
-        $user->setRoles([RoleEnumeration::ROLE_CREATOR]);
+        $user->setRoles($roleList);
 
         // See https://symfony.com/doc/5.4/security.html#registering-the-user-hashing-passwords
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
