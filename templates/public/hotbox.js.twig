@@ -58,50 +58,50 @@ function Carousel() {
 //        let overflow = "";
 //        let border = "border: 1px solid red;"
         let code = data.code;
-        addStyle(".slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
-        addStyle(".slide-fade { overflow: visible !important; }")
-        addStyle(".slides { position: relative; display: flex; "  + overflow +  "}");
-        addStyle(".slide-fade > .slides { overflow: visible !important; }");
-        addStyle(".slider > div.slide-" + code + ".slide {\
+        addStyle(".hb-slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
+        addStyle(".hb-slide-fade { overflow: visible !important; }")
+        addStyle(".hb-slides { position: relative; display: flex; "  + overflow +  "}");
+        addStyle(".hb-slide-fade > .hb-slides { overflow: visible !important; }");
+        addStyle(".hb-slider > div.hb-slide-" + code + ".hb-slide {\
     width: " + data.width + "px; \
     height: " + data.height + "px; \
     }");
 
-        addStyle(".slide-fade  div.slide {\
+        addStyle(".hb-slide-fade  div.hb-slide {\
     position: absolute;\
     top: 0;\
     left: 0;\
     }");
 
-        addStyle("@keyframes slidefadeinanim { \
+        addStyle("@keyframes hb-slidefadeinanim { \
     0% { opacity: 0%; }\
     100% { opacity: 100%; }\
     }");
 
-        addStyle("@keyframes slideshiftleftanim {\
+        addStyle("@keyframes hb-slideshiftleftanim {\
     0% { transform: translateX(0%); }\
     100% { transform: translateX(-100%); }\
     }");
 
-        addStyle("@keyframes slidefadeoutanim { \
+        addStyle("@keyframes hb-slidefadeoutanim { \
     0% { opacity: 100%; }\
     100% { opacity: 0%; }\
     }");
 
-        addStyle(".slider-" + code + " .slidefadein { \
-    animation: slidefadeinanim 3s forwards;\
+        addStyle(".hb-slider-" + code + " .hb-slidefadein { \
+    animation: hb-slidefadeinanim 3s forwards;\
     }");
 
-        addStyle(".slider-" + code + " .slidefadeout { \
-    animation: slidefadeoutanim 3s forwards;\
+        addStyle(".hb-slider-" + code + " .hb-slidefadeout { \
+    animation: hb-slidefadeoutanim 3s forwards;\
     }");
 
-        addStyle(".slider-" + code + " .slideshiftleft {\
-    animation: slideshiftleftanim 3s forwards;\
+        addStyle(".hb-slider-" + code + " .hb-slideshiftleft {\
+    animation: hb-slideshiftleftanim 3s forwards;\
     }");
 
-        addStyle(".slider-" + code + " .slidecrawlleft {\
-    animation: slideshiftleftanim " + data.delay + "s;\
+        addStyle(".hb-slider-" + code + " .hb-slidecrawlleft {\
+    animation: hb-slideshiftleftanim " + data.delay + "s;\
     }");
     }
 
@@ -126,9 +126,9 @@ function Carousel() {
                 transitionFunction = this.showFlip.bind(this);
                 break;
         }
-        let output = "<div class='hb-carousel-slider slider-" + code + " slide-" + data.transition.toLowerCase() + "'><div class='slides'>"
+        let output = "<div class='hb-carousel-slider hb-slider-" + code + " hb-slide-" + data.transition.toLowerCase() + "'><div class='hb-slides'>"
         for(const d of data['items']) {
-            output += "<div class='slide slide-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
+            output += "<div class='hb-slide hb-slide-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
         }
         output += "</div></div>";
         target.innerHTML = output;
@@ -139,7 +139,7 @@ function Carousel() {
 
     this.start = function(delay, slider) {
         setTimeout(function(){
-            let slides = document.getElementsByClassName('slide');
+            let slides = document.getElementsByClassName('hb-slide');
             if (slides.length > 1) {
                 slider();
                 setInterval(function() {
@@ -156,14 +156,13 @@ function Carousel() {
 
     this.showCrawl = function(delay)
     {
-        let slides = document.getElementsByClassName('slide');
+        let slides = document.getElementsByClassName('hb-slide');
         for (let i = 0; i < slides.length; i++) {
-            slides[i].classList.add('slidecrawlleft');
+            slides[i].classList.add('hb-slidecrawlleft');
         }
         setTimeout(function(){
-            console.log("Timeout hit");
             for (let j = 0; j < slides.length; j++){
-                slides[j].classList.remove('slidecrawlleft');
+                slides[j].classList.remove('hb-slidecrawlleft');
             }
             let currentSlide = slides[0].parentNode.removeChild(slides[0]);
             slides[0].parentNode.appendChild(currentSlide);
@@ -172,13 +171,13 @@ function Carousel() {
 
     this.showSlide = function()
     {
-        let slides = document.getElementsByClassName('slide');
+        let slides = document.getElementsByClassName('hb-slide');
         for (let i = 0; i < slides.length; i++) {
-            slides[i].classList.add('slideshiftleft');
+            slides[i].classList.add('hb-slideshiftleft');
         }
         setTimeout(function(){
             for (let j = 0; j < slides.length; j++){
-                slides[j].classList.remove('slideshiftleft');
+                slides[j].classList.remove('hb-slideshiftleft');
             }
             let currentSlide = slides[0].parentNode.removeChild(slides[0]);
             slides[0].parentNode.appendChild(currentSlide);
@@ -188,15 +187,15 @@ function Carousel() {
 
     this.showFade = function(delay)
     {
-        let slides = document.getElementsByClassName('slide');
+        let slides = document.getElementsByClassName('hb-slide');
 
 
 
         for (let i = 0; i < slides.length-1; i++) {
-            slides[i].classList.remove('slidefadeout');
+            slides[i].classList.remove('hb-slidefadeout');
         }
 
-        slides[slides.length-1].classList.add('slidefadeout');
+        slides[slides.length-1].classList.add('hb-slidefadeout');
 
         setTimeout(function (){
             let currentSlide = slides[0].parentNode.removeChild(slides[slides.length-1]);
@@ -208,7 +207,7 @@ function Carousel() {
 
     this.showFlip = function()
     {
-        let slides = document.getElementsByClassName('slide');
+        let slides = document.getElementsByClassName('hb-slide');
         if (this.slideIndex > slides.length-1) {
             this.slideIndex = 0;
         }
@@ -269,10 +268,10 @@ function Webring() {
 //        let border = "border: 1px solid red;"
         let code = data.code;
         addStyle(".hb-webring { display: inline-block; }");
-        addStyle(".webring-" + code + " { " + border + " text-align:center; max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
-        addStyle(".webring-" + code + " .nav-box { " + border + " position:relative; float: left; vertical-align: middle; max-width: " + data.nav + "px; width: " + data.nav + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; }");
-        addStyle(".webring-" + code + " .ring-item { " + border + " position: relative; float: left; }");
-        addStyle(".webring-" + code + " .nav-box a { color: black; }");
+        addStyle(".hb-webring-" + code + " { " + border + " text-align:center; max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
+        addStyle(".hb-webring-" + code + " .hb-nav-box { " + border + " position:relative; float: left; vertical-align: middle; max-width: " + data.nav + "px; width: " + data.nav + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; }");
+        addStyle(".hb-webring-" + code + " .hb-ring-item { " + border + " position: relative; float: left; }");
+        addStyle(".hb-webring-" + code + " .hb-nav-box a { color: black; }");
 
     }
 
@@ -281,19 +280,16 @@ function Webring() {
         this.injectstylesheets(data);
         let code = data['code'];
 
-        let output = "<div class='hb-webring-webring webring-" + code + "'><div class='webring'>"
+        let output = "<div class='hb-webring-webring hb-webring-" + code + "'><div class='hb-webring'>"
         // Previous icon
-        output += "<div class='nav-box'><a href='" + data['previous'] + "' target='_blank'>" + data['navprev'] + "</a></div>";
+        output += "<div class='hb-nav-box'><a href='" + data['previous'] + "' target='_blank'>" + data['navprev'] + "</a></div>";
 
-        console.log(data['previous']);
         for(const d of data['items']) {
-            console.log(d.url);
-            output += "<div class='ring-item ring-item-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
+            output += "<div class='hb-ring-item hb-ring-item-" + code + "' data-url='" + d.url + "' ><a href='" + d.url + "' target='_blank'><img src='" + this.SERVERURL + "/" + d.image + "' alt='" + d.name + "'></a></div>";
         }
 
         // Next icon
-        output += "<div class='nav-box'><a href='" + data['next'] + "' target='_blank'>" + data['navnext'] + "</a></div>";
-        console.log(data['next']);
+        output += "<div class='hb-nav-box'><a href='" + data['next'] + "' target='_blank'>" + data['navnext'] + "</a></div>";
 
         output += "</div></div>";
         target.innerHTML = output;
