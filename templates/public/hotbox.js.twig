@@ -58,9 +58,11 @@ function Carousel() {
 //        let overflow = "";
 //        let border = "border: 1px solid red;"
         let code = data.code;
+        let slideWidth = data.width * data.items.length;
         addStyle(".hb-slider-" + code + " { " + border + " max-width: " + data.width + "px; width: " + data.width + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; " + overflow + " }");
         addStyle(".hb-slide-fade { overflow: visible !important; }")
-        addStyle(".hb-slides { position: relative; display: flex; "  + overflow +  "}");
+        addStyle(".hb-slides { position: relative; display: flex;  height: " + data.height + "px; width: " + slideWidth + "px; "  + overflow +  "}");
+//        addStyle(".hb-slides { position: relative; height: " + data.height + "px; "  + overflow +  "}");
         addStyle(".hb-slide-fade > .hb-slides { overflow: visible !important; }");
         addStyle(".hb-slider > div.hb-slide-" + code + ".hb-slide { width: " + data.width + "px; height: " + data.height + "px; }");
         addStyle(".hb-slide-fade  div.hb-slide { position: absolute; top: 0; left: 0; }");
