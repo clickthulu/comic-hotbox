@@ -62,47 +62,16 @@ function Carousel() {
         addStyle(".hb-slide-fade { overflow: visible !important; }")
         addStyle(".hb-slides { position: relative; display: flex; "  + overflow +  "}");
         addStyle(".hb-slide-fade > .hb-slides { overflow: visible !important; }");
-        addStyle(".hb-slider > div.hb-slide-" + code + ".hb-slide {\
-    width: " + data.width + "px; \
-    height: " + data.height + "px; \
-    }");
-
-        addStyle(".hb-slide-fade  div.hb-slide {\
-    position: absolute;\
-    top: 0;\
-    left: 0;\
-    }");
-
-        addStyle("@keyframes hb-slidefadeinanim { \
-    0% { opacity: 0%; }\
-    100% { opacity: 100%; }\
-    }");
-
-        addStyle("@keyframes hb-slideshiftleftanim {\
-    0% { transform: translateX(0%); }\
-    100% { transform: translateX(-100%); }\
-    }");
-
-        addStyle("@keyframes hb-slidefadeoutanim { \
-    0% { opacity: 100%; }\
-    100% { opacity: 0%; }\
-    }");
-
-        addStyle(".hb-slider-" + code + " .hb-slidefadein { \
-    animation: hb-slidefadeinanim 3s forwards;\
-    }");
-
-        addStyle(".hb-slider-" + code + " .hb-slidefadeout { \
-    animation: hb-slidefadeoutanim 3s forwards;\
-    }");
-
-        addStyle(".hb-slider-" + code + " .hb-slideshiftleft {\
-    animation: hb-slideshiftleftanim 3s forwards;\
-    }");
-
-        addStyle(".hb-slider-" + code + " .hb-slidecrawlleft {\
-    animation: hb-slideshiftleftanim " + data.delay + "s;\
-    }");
+        addStyle(".hb-slider > div.hb-slide-" + code + ".hb-slide { width: " + data.width + "px; height: " + data.height + "px; }");
+        addStyle(".hb-slide-fade  div.hb-slide { position: absolute; top: 0; left: 0; }");
+        addStyle("@keyframes hb-slidefadeinanim { 0% { opacity: 0%; } 100% { opacity: 100%; } }");
+        addStyle("@keyframes hb-slideshiftleftanim { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }");
+        addStyle("@keyframes hb-slidefadeoutanim { 0% { opacity: 100%; } 100% { opacity: 0%; } }");
+        addStyle(".hb-slider-" + code + " .hb-slidefadein { animation: hb-slidefadeinanim 3s forwards; }");
+        addStyle(".hb-slider-" + code + " .hb-slidefadeout { animation: hb-slidefadeoutanim 3s forwards; }");
+        addStyle(".hb-slider-" + code + " .hb-slideshiftleft { animation: hb-slideshiftleftanim 3s forwards; }");
+        addStyle(".hb-slider-" + code + " .hb-slidecrawlleft { animation: hb-slideshiftleftanim " + data.delay + "s; }");
+        addStyle(".hb-slider-" + code + " img { padding: 0 !important; }")
     }
 
     this.build = function(data, target) {
@@ -272,6 +241,7 @@ function Webring() {
         addStyle(".hb-webring-" + code + " .hb-nav-box { " + border + " position:relative; float: left; vertical-align: middle; max-width: " + data.nav + "px; width: " + data.nav + "px; max-height: " + data.height + "px; height: " + data.height + "px; text-align: center; }");
         addStyle(".hb-webring-" + code + " .hb-ring-item { " + border + " position: relative; float: left; }");
         addStyle(".hb-webring-" + code + " .hb-nav-box a { color: black; }");
+        addStyle(".hb-webring-" + code + " img { padding: 0 !important; }")
 
     }
 
