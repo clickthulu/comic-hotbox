@@ -44,6 +44,8 @@ if (!$skipENV) {
     MAILER_DSN=\"{$smtptype}+smtp://{$smtpuser}:{$smtppass}@default\"
     MAILER_FROMADDR=\"{$emailfrom}\"
     MAILERFROMNAME=\"{$emailname}\"
+    
+    APP_TIMEZONE=America/New_York
     ";
 
     file_put_contents("./.env", $out);

@@ -24,6 +24,7 @@
         <script src="/js/common.js"></script>
     {% endblock %}
 </head>
+{{ "now"|date("Y-m-d H:i:s") }}
 <body class="blue">
 <div class="mx-5">
     {% if settings.get('brand_header').value != '' or settings.get('brand_header').value is not null %}
