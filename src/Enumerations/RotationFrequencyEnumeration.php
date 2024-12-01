@@ -31,9 +31,8 @@ class RotationFrequencyEnumeration extends AbstractEnumeration
                 $current->setTime($current->format('H'), 0, 0);
                 break;
             case self::LENGTH_WEEK:
-                $week = strtotime("Last Sunday");
-
-                $current->setTimestamp($week);
+                $sunday = strtotime(date('D') == 'Sun' ? 'today' : 'last sunday');
+                $current->setTimestamp($sunday);
                 $current->setTime(0,0,0);
                 break;
             case self::LENGTH_MONTH:

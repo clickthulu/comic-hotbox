@@ -193,14 +193,16 @@ class HotBoxController extends AbstractController
         });
 
         $started = RotationFrequencyEnumeration::getStarting($hotbox->getRotationFrequency());
+        $startOrd = 0;
         $startedflag = false;
         foreach ($rotations as &$rotation) {
             if (!$startedflag) {
-                $rotation->setStart($started);
+                $rotation->setStart($started)->setOrdinal($startOrd);
                 $startedflag = true;
             } else {
-                $rotation->setStart(RotationFrequencyEnumeration::getNextStart($hotbox->getRotationFrequency(), $started));
+                $rotation->setStart(RotationFrequencyEnumeration::getNextStart($hotbox->getRotationFrequency(), $started))->setOrdinal($startOrd);
             }
+            $startOrd++;
             $rotation->calculateExpire();
             $entityManager->persist($rotation);
             $started = $rotation->getStart();
