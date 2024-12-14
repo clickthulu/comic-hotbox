@@ -33,6 +33,24 @@ class Kernel extends BaseKernel
             }
         }
         if ($saveFlag) {
+            // We need to re-ordinal the rotations
+            usort($rotations, function($a, $b) {
+                if ($a->getStart() === $b->getStart()) {
+                    return 0;
+                }
+                return ($a->getStart() < $b->getStart()) ? -1 : 1;
+            });
+            $ord = 0;
+            /**
+             * @var Rotation $rotation
+             */
+            foreach ($rotations as $rotation) {
+                $rotation->setOrdinal($ord);
+                $ord++;
+                $entityManager->persist($rotation);
+            }
+
+
             $entityManager->flush();
         }
     }

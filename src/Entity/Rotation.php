@@ -104,6 +104,7 @@ class Rotation
     function calculateExpire(): static
     {
         $this->expire = RotationFrequencyEnumeration::getNextStart($this->hotbox->getRotationFrequency(), $this->start);
+        $this->expire->modify("-1 second");
         return $this;
     }
 
