@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ImageRepository;
+use App\Validator\RequiresHTTP;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,6 +42,7 @@ class Image
 
     private bool $matchesHotboxSize = false;
 
+    #[RequiresHTTP]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 

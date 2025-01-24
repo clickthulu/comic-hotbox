@@ -20,12 +20,22 @@
                     <div class="row mb-2">
                         {{ form_label(comicform.Name) }}
                         <div class="col">{{ form_widget(comicform.Name) }}</div>
+                        {{ form_errors(comicform.Name) }}
                     </div>
+
+                    {% if comicform.Name.vars.errors|length %}
+                        <div class="row mb-2">
+                            <div class="col-2">&nbsp;</div>
+                            <div class="col alert alert-danger">
+                                {{ form_errors(comicform.Name) }}
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="row mb-2">
-                        {{ form_label(comicform.code) }}
-                        <div class="col input-group">{{ form_widget(comicform.code) }}
+                        {{ form_label(comicform.codeshow) }}
+                        <div class="col input-group">{{ form_widget(comicform.codeshow) }}
                             <div class="input-group-append">
-                                <button class="btn btn-sm btn-primary copyinput-button" data-target="comic_form_code"
+                                <button class="btn btn-primary copyinput-button" data-target="comic_form_code"
                                         title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
                             </div>
                         </div>
@@ -34,10 +44,30 @@
                         {{ form_label(comicform.url) }}
                         <div class="col">{{ form_widget(comicform.url) }}</div>
                     </div>
+
+                    {% if comicform.url.vars.errors|length %}
+                        <div class="row mb-2">
+                            <div class="col-2">&nbsp;</div>
+                            <div class="col alert alert-danger">
+                                {{ form_errors(comicform.url) }}
+                            </div>
+                        </div>
+                    {% endif %}
+
                     <div class="row mb-2">
                         {{ form_label(comicform.description) }}
                         <div class="col">{{ form_widget(comicform.description) }}</div>
+                        {{ form_errors(comicform.description) }}
                     </div>
+
+                    {% if comicform.description.vars.errors|length %}
+                        <div class="row mb-2">
+                            <div class="col-2">&nbsp;</div>
+                            <div class="col alert alert-danger">
+                                {{ form_errors(comicform.description) }}
+                            </div>
+                        </div>
+                    {% endif %}
                     {{ form_rest(comicform) }}
                     <div class="row mb-2">
                         <div class="col offset-2">

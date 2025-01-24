@@ -41,6 +41,16 @@
                         </div>
                     </div>
                 </div>
+                {% if imageform.url.vars.errors|length %}
+                    <div class="row mb-2">
+                        <div class="col-2">&nbsp;</div>
+                        <div class="col alert alert-danger">
+                            {{ form_errors(imageform.url) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+
                 {{ form_rest(imageform) }}
                 <div class="row mb-2">
                     <div class="col offset-2">
