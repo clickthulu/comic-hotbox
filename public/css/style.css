@@ -1,3 +1,19 @@
+.alert {
+    --bs-alert-padding-x: 12px;
+    --bs-alert-padding-y: 12px;
+    margin-left: .75rem;
+    margin-right: .75rem;
+}
+
+.alert > ul {
+
+    padding: unset;
+}
+
+.alert > ul >li {
+    list-style: none;
+}
+
 .hidden-file-input {
     display: none;
 }

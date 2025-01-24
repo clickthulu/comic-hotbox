@@ -4,7 +4,7 @@ namespace App\Traits;
 
 trait CodeTrait
 {
-    private function generateCode($length = 16): string
+    public function generateCode($length = 16): string
     {
         if (function_exists("random_bytes")) {
             $bytes = random_bytes(ceil($length / 2));

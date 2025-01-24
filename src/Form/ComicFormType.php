@@ -21,7 +21,7 @@ class ComicFormType extends AbstractType
                 'attr' => ['class' => 'form-horizontal form-control'],
                 'label_attr' => ['class' => 'col-form-label col-2 text-end']
             ])
-            ->add('code', TextType::class, [
+            ->add('codeshow', TextType::class, [
                 'required' => false,
                 'attr' => ['class' => 'form-horizontal form-control', 'disabled' => true],
                 'label_attr' => ['class' => 'col-form-label col-2 text-end'],

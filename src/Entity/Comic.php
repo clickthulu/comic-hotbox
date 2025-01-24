@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Validator\RequiresHTTP;
 
 #[ORM\Entity(repositoryClass: ComicRepository::class)]
 class Comic
@@ -22,6 +23,7 @@ class Comic
     #[ORM\Column(length: 255)]
     private ?string $Name = null;
 
+    #[RequiresHTTP]
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
@@ -58,6 +60,8 @@ class Comic
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $code = null;
 
+    private ?string $codeshow = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -66,6 +70,7 @@ class Comic
         $this->carouselImages = new ArrayCollection();
         $this->webringImages = new ArrayCollection();
         $this->code = $this->generateCode();
+        $this->codeshow = $this->code;
     }
 
     public function getId(): ?int
@@ -369,10 +374,20 @@ class Comic
 
     public function setCode(?string $code): static
     {
-        $this->code = $code;
+        $this->code = $this->codeshow = $code;
 
         return $this;
     }
 
+    public function getCodeshow(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCodeshow(): static
+    {
+        $this->codeshow = $this->code;
+        return $this;
+    }
 
 }

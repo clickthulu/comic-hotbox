@@ -41,6 +41,7 @@ class ComicController extends AbstractController
              * @var Comic $comic
              */
             $comic = $entityManager->getRepository(Comic::class)->find($id);
+            $comic->setCodeshow();
             if ($user->getId() !== $comic->getUser()->getId()) {
                 throw new HotBoxException("This comic does not belong to the logged in user");
             }
@@ -57,6 +58,10 @@ class ComicController extends AbstractController
             $name = $form->get('Name')->getData();
             $url = $form->get('url')->getData();
             $desc = $form->get('description')->getData();
+            if (empty($comic->getCode())) {
+                $comic->setCode($comic->generateCode());
+            }
+
             $comic->setName($name)->setUrl($url)->setDescription($desc)->setApproved(false);
             $entityManager->persist($comic);
             $entityManager->flush();
